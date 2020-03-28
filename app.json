@@ -25,6 +25,10 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "extra": {
+        "pubnubsubkey": "sub-c-aac4441c-6ee4-11ea-a7c4-5e95b827fd71",
+        "pubnubpubkey": "pub-c-283cda71-52d7-491a-b150-dc7bba71a9cf"
     }
   }
 }

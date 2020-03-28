@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
 import styled from 'styled-components/native'
+import shortid from 'shortid'
 
 const Wrapper = styled.View`
     /* width: 100%; */
@@ -26,20 +27,38 @@ const BlueButtonText = styled.Text`
     text-align: center;
 `
 
+class HomeScreen extends Component {
 
-const HomeScreen = () => {
-  return (
-        <Wrapper>
-            <HomeText>HomeScreen</HomeText>
-            <BlueButton
-                onPress={() => console.log("you touched the boob")}
-                // title="Touch me"
-                >
-                <BlueButtonText>Touch Me</BlueButtonText>
-            </BlueButton>
-        </Wrapper>
-    );
-};
+    state = {
+        currentRoomID: ''
+    }
+
+    onCreateShortID = () => {
+        let roomID = shortid.generate();
+        console.log('[App] roomID: ', roomID)
+        this.setState({ currentRoomID : roomID })
+    }
+
+    render() {
+    const displayroomID = <Text>{this.state.currentRoomID}</Text>
+
+        return (
+            <Wrapper>
+                <HomeText>HomeScreen</HomeText>
+
+                <BlueButton
+                    onPress={this.onCreateShortID}
+                    >
+                    <BlueButtonText>Touch Me</BlueButtonText>
+                </BlueButton>
+                {
+                    this.state.currentRoomID !== '' &&
+                    displayroomID
+                }
+            </Wrapper>
+        )
+    }
+}
 
 // const styles = StyleSheet.create({
 //   text: {
