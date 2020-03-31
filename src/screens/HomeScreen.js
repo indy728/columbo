@@ -40,12 +40,18 @@ class HomeScreen extends Component {
     }
 
     render() {
+    console.log('[CardDemo] this.props: ', this.props)
+
     const displayroomID = <Text>{this.state.currentRoomID}</Text>
 
         return (
             <Wrapper>
                 <HomeText>HomeScreen</HomeText>
-
+                <BlueButton
+                    onPress={() => this.props.navigation.navigate('CardDemo')}
+                >
+                    <BlueButtonText>Go To Cards</BlueButtonText>
+                </BlueButton>
                 <BlueButton
                     onPress={this.onCreateShortID}
                     >
@@ -59,11 +65,5 @@ class HomeScreen extends Component {
         )
     }
 }
-
-// const styles = StyleSheet.create({
-//   text: {
-//     fontSize: 30
-//   }
-// });
 
 export default HomeScreen;
