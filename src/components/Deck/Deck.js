@@ -56,10 +56,6 @@ class Deck extends Component {
         this.setState({ drawPile })
     }
 
-    shufflePile = pile => {
-
-    }
-
     drawAndDiscard = () => {
         const { drawPile, discardPile, currentCard } = this.state
 

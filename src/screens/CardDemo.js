@@ -3,6 +3,9 @@ import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
 import styled from 'styled-components/native'
 import shortid from 'shortid'
 import Deck from '../components/Deck/Deck'
+import { initCards, shuffleCards } from '../components/Deck/util/cardUtil'
+import Card from '../components/Deck/Card/Card'
+// import Spinner from 'react-native-spinkit'
 
 const Wrapper = styled.View`
     flex: 1;
@@ -30,6 +33,12 @@ const DrawButton = styled.TouchableOpacity`
     width: 33%;
     height: 66%;
     background-color: skyblue;
+`
+
+const DiscardPileButton = styled.TouchableOpacity`
+    width: 33%;
+    height: 66%;
+    background-color: whitesmoke;
 `
 
 const ActionWrapper = styled.View`
@@ -79,28 +88,119 @@ const PlayerCardWrapper = styled.View`
 
 class CardDemo extends Component {
     state = {
-        suit: null
+        drawPile: [],
+        discardPile: [],
+        currentCard: null,
+        currentPhase: 'draw',
+        built: false
     }
 
-    onUpdateSuit = suit => {
-        this.setState({suit})
+    componentDidMount() {
+        this.initDrawPile()
+        this.setState({ built: true })
+    }
+
+    initDrawPile = () => {
+        const suits = [
+            'spades',
+            'hearts',
+            'diamonds',
+            'clubs',
+        ]
+        let drawPile = []
+        
+        suits.forEach(suit => {
+            drawPile = drawPile.concat(initCards(suit))
+        })
+        drawPile = shuffleCards(drawPile)
+        this.setState({ drawPile })
+    }
+
+    drawCard = (pile) => {
+        if (this.state.currentPhase !== 'draw') return
+        const { drawPile, discardPile, currentCard } = this.state
+        const switchPile = (
+            pile === 'drawPile' ?
+                drawPile :
+                discardPile.length ?
+                    discardPile : null
+            )
+        if (!switchPile) return
+
+        const drawnCard = switchPile.shift()
+        this.setState({
+            [pile]: switchPile,
+            currentCard: drawnCard,
+            currentPhase: 'has-drawn'
+        })
+    }
+
+    playCard = () => {
+        if (this.state.currentPhase !== 'has-drawn') return
+        const { discardPile, currentCard } = this.state
+
+        discardPile.unshift(currentCard)
+        this.setState({
+            discardPile,
+            currentCard: null,
+            currentPhase: 'draw'
+        })
     }
 
     render() {
-        return (
-            <Wrapper>
-                <DeckWrapper>
-                    <DeckCounters>
-                        <Text>Draw Pile: </Text>
-                        <Text>Discard Pile: </Text>
-                    </DeckCounters>
-                    <DrawButton>
+        let gameCenter = (
+            // <Spinner 
+            //     color={"red"}
+            //     size={37}
+            //     type={"CircleFlip"}
+            //     />
+            <Text>"SPINNER"</Text>
+        )
+        if (this.state.built) {
+            const { drawPile, discardPile, currentCard } = this.state
+            let cardDetails = null
+            let currentCardRender = <CurrentCardWrapper />
+            if (currentCard) {
+                cardDetails = currentCard.props.cardDetails
+                currentCardRender = (
+                    <CurrentCardWrapper>
+                        <Text>{cardDetails.value}</Text>
+                        <Text>{cardDetails.suit}</Text>
+                        <Text>{cardDetails.action}</Text>
+                    </CurrentCardWrapper>
+                )
+
+            }
+            let discardPileText = <Text>"EMPTY"</Text>
+            if (discardPile.length) {
+                discardPileText = (
+                    <React.Fragment>
+                        <Text>{discardPile[0].props.cardDetails.value}</Text>
+                        <Text>{discardPile[0].props.cardDetails.suit}</Text>
+                    </React.Fragment>
+                )
+            }
+            gameCenter = (
+                <React.Fragment>
+                    <Text>Draw Pile: {drawPile.length}</Text>
+                    <Text>Discard Pile: {discardPile.length}</Text>
+                    <DeckWrapper>
+                    <DrawButton
+                        onPress={() => this.drawCard("drawPile")}
+                        >
                         <Text>Draw</Text>
                     </DrawButton>
+                    <DiscardPileButton
+                        onPress={() => this.drawCard("discardPile")}
+                        >
+                        {discardPileText}
+                    </DiscardPileButton>
                 </DeckWrapper>
                 <ActionWrapper>
-                    <CurrentCardWrapper />
-                    <PlayButton>
+                    {currentCardRender}
+                    <PlayButton
+                        onPress={this.playCard}
+                        >
                         <Text>PLAY</Text>
                     </PlayButton>
                 </ActionWrapper>
@@ -112,6 +212,13 @@ class CardDemo extends Component {
                         <PlayerCardWrapper />
                     </PlayerHandWrapper>
                 </PlayerWrapper>
+                </React.Fragment>
+            )
+        }
+
+        return (
+            <Wrapper>
+                {gameCenter}
             </Wrapper>
         )
     }
