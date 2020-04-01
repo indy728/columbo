@@ -1,10 +1,12 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux'
 import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
 import styled from 'styled-components/native'
 import shortid from 'shortid'
 import Deck from '../components/Deck/Deck'
 import { initCards, shuffleCards } from '../components/Deck/util/cardUtil'
 import Card from '../components/Deck/Card/Card'
+import * as actions from '../../store/actions'
 // import Spinner from 'react-native-spinkit'
 
 const Wrapper = styled.View`
@@ -88,10 +90,7 @@ const PlayerCardWrapper = styled.View`
 
 class CardDemo extends Component {
     state = {
-        drawPile: [],
-        discardPile: [],
-        currentCard: null,
-        currentPhase: 'draw',
+        
         built: false
     }
 
@@ -113,39 +112,20 @@ class CardDemo extends Component {
             drawPile = drawPile.concat(initCards(suit))
         })
         drawPile = shuffleCards(drawPile)
-        this.setState({ drawPile })
+        this.props.onInitDeck(drawPile)
     }
 
-    drawCard = (pile) => {
-        if (this.state.currentPhase !== 'draw') return
-        const { drawPile, discardPile, currentCard } = this.state
-        const switchPile = (
-            pile === 'drawPile' ?
-                drawPile :
-                discardPile.length ?
-                    discardPile : null
-            )
-        if (!switchPile) return
+    // playCard = () => {
+    //     if (this.state.currentPhase !== 'has-drawn') return
+    //     const { discardPile, currentCard } = this.state
 
-        const drawnCard = switchPile.shift()
-        this.setState({
-            [pile]: switchPile,
-            currentCard: drawnCard,
-            currentPhase: 'has-drawn'
-        })
-    }
-
-    playCard = () => {
-        if (this.state.currentPhase !== 'has-drawn') return
-        const { discardPile, currentCard } = this.state
-
-        discardPile.unshift(currentCard)
-        this.setState({
-            discardPile,
-            currentCard: null,
-            currentPhase: 'draw'
-        })
-    }
+    //     discardPile.unshift(currentCard)
+    //     this.setState({
+    //         discardPile,
+    //         currentCard: null,
+    //         currentPhase: 'draw'
+    //     })
+    // }
 
     render() {
         let gameCenter = (
@@ -157,7 +137,7 @@ class CardDemo extends Component {
             <Text>"SPINNER"</Text>
         )
         if (this.state.built) {
-            const { drawPile, discardPile, currentCard } = this.state
+            const { drawPile, discardPile, currentCard } = this.props.game
             let cardDetails = null
             let currentCardRender = <CurrentCardWrapper />
             if (currentCard) {
@@ -186,12 +166,12 @@ class CardDemo extends Component {
                     <Text>Discard Pile: {discardPile.length}</Text>
                     <DeckWrapper>
                     <DrawButton
-                        onPress={() => this.drawCard("drawPile")}
+                        onPress={() => this.props.onDrawCard("draw-pile")}
                         >
                         <Text>Draw</Text>
                     </DrawButton>
                     <DiscardPileButton
-                        onPress={() => this.drawCard("discardPile")}
+                        onPress={() => this.props.onDrawCard("discard-pile")}
                         >
                         {discardPileText}
                     </DiscardPileButton>
@@ -199,7 +179,7 @@ class CardDemo extends Component {
                 <ActionWrapper>
                     {currentCardRender}
                     <PlayButton
-                        onPress={this.playCard}
+                        onPress={() => this.props.onPlay(currentCard)}
                         >
                         <Text>PLAY</Text>
                     </PlayButton>
@@ -224,4 +204,19 @@ class CardDemo extends Component {
     }
 }
 
-export default CardDemo;
+const mapStateToProps = state => {
+    return {
+        game: state.game
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onInitDeck: deck => dispatch(actions.initDeck(deck)),
+        onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
+        onDrawCard: card => dispatch(actions.drawCard(card)),
+        onPlay: card => dispatch(actions.playCard(card)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CardDemo)

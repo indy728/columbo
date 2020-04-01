@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import HomeScreen from "./src/screens/HomeScreen"
 import CardDemo from "./src/screens/CardDemo"
-
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 // import PubNubReact from 'pubnub-react'
 import PubNub from 'pubnub';
-import { PubNubProvider, usePubNub } from 'pubnub-react';
+// import { PubNubProvider, usePubNub } from 'pubnub-react';
+import rootReducer from './store/configureStore'
 
 const Stack = createStackNavigator()
 
@@ -16,6 +19,13 @@ const Stack = createStackNavigator()
 //   });
   
 // const channels = ['awesomeChannel'];
+
+const store = createStore(
+    rootReducer,
+    applyMiddleware(
+        thunk
+    )
+)
 
 class App extends Component {
 
@@ -51,12 +61,14 @@ class App extends Component {
     render() {
         // if (this.state.pubnub) console.log('[App] pubnub: ', this.state.pubnub)
         return (
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
-              <Stack.Screen name="Home" component={HomeScreen} />
-              <Stack.Screen name="CardDemo" component={CardDemo} />
-            </Stack.Navigator>
-          </NavigationContainer>
+            <Provider store={store}>
+                <NavigationContainer>
+                    <Stack.Navigator initialRouteName="Home">
+                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="CardDemo" component={CardDemo} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </Provider>
         )
     }
 }
