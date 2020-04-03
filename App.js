@@ -10,6 +10,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import PubNub from 'pubnub';
 // import { PubNubProvider, usePubNub } from 'pubnub-react';
 import rootReducer from './store/configureStore'
+import cardImg from '@assets/cardImg'
 
 const Stack = createStackNavigator()
 

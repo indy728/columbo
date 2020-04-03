@@ -24,6 +24,9 @@ web-report/
 # production
 /build
 
+#assets
+assets/cardImg
+
 # misc
 .DS_Store
 .env

@@ -5,6 +5,7 @@ const initialState = {
     lobbyID: '',
     drawPile: [],
     discardPile: [],
+    deckBuilt: false,
     currentCard: null,
     currentPhase: 'draw',
 }
@@ -14,7 +15,7 @@ const setLobbyID = (state, action) => {
 }
 
 const initDeck = (state, action) => {
-    return updateObject(state, { drawPile: action.deck })
+    return updateObject(state, { drawPile: action.deck, deckBuilt: true })
 }
 
 const updatePhase = (state, action) => {

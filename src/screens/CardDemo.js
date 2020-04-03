@@ -17,11 +17,7 @@ const Wrapper = styled.View`
 `
 
 const DeckWrapper = styled.View`
-    flex: 1;
-    background-color: salmon;
-    flex-flow: row;
-    align-items: center;
-    justify-content: space-around;
+
 `
 
 const DeckCounters = styled.View`
@@ -31,17 +27,6 @@ const DeckCounters = styled.View`
     justify-content: center;
 `
 
-const DrawButton = styled.TouchableOpacity`
-    width: 33%;
-    height: 66%;
-    background-color: skyblue;
-`
-
-const DiscardPileButton = styled.TouchableOpacity`
-    width: 33%;
-    height: 66%;
-    background-color: whitesmoke;
-`
 
 const ActionWrapper = styled.View`
     flex: 3;
@@ -90,12 +75,11 @@ const PlayerCardWrapper = styled.View`
 
 class CardDemo extends Component {
     state = {
-        
         built: false
     }
 
     componentDidMount() {
-        this.initDrawPile()
+        // this.initDrawPile()
         this.setState({ built: true })
     }
 
@@ -114,18 +98,6 @@ class CardDemo extends Component {
         drawPile = shuffleCards(drawPile)
         this.props.onInitDeck(drawPile)
     }
-
-    // playCard = () => {
-    //     if (this.state.currentPhase !== 'has-drawn') return
-    //     const { discardPile, currentCard } = this.state
-
-    //     discardPile.unshift(currentCard)
-    //     this.setState({
-    //         discardPile,
-    //         currentCard: null,
-    //         currentPhase: 'draw'
-    //     })
-    // }
 
     render() {
         let gameCenter = (
@@ -151,31 +123,12 @@ class CardDemo extends Component {
                 )
 
             }
-            let discardPileText = <Text>"EMPTY"</Text>
-            if (discardPile.length) {
-                discardPileText = (
-                    <React.Fragment>
-                        <Text>{discardPile[0].props.cardDetails.value}</Text>
-                        <Text>{discardPile[0].props.cardDetails.suit}</Text>
-                    </React.Fragment>
-                )
-            }
+            
             gameCenter = (
                 <React.Fragment>
                     <Text>Draw Pile: {drawPile.length}</Text>
                     <Text>Discard Pile: {discardPile.length}</Text>
-                    <DeckWrapper>
-                    <DrawButton
-                        onPress={() => this.props.onDrawCard("draw-pile")}
-                        >
-                        <Text>Draw</Text>
-                    </DrawButton>
-                    <DiscardPileButton
-                        onPress={() => this.props.onDrawCard("discard-pile")}
-                        >
-                        {discardPileText}
-                    </DiscardPileButton>
-                </DeckWrapper>
+                    <Deck />
                 <ActionWrapper>
                     {currentCardRender}
                     <PlayButton
@@ -214,7 +167,6 @@ const mapDispatchToProps = dispatch => {
     return {
         onInitDeck: deck => dispatch(actions.initDeck(deck)),
         onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
-        onDrawCard: card => dispatch(actions.drawCard(card)),
         onPlay: card => dispatch(actions.playCard(card)),
     }
 }

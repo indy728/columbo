@@ -1,102 +1,95 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
 import { View, TouchableOpacity, Text } from 'react-native'
-import { initCards, shuffleCards } from './util/cardUtil'
+import { initDeck, shuffleCards } from './util/cardUtil'
 import Card from './Card/Card'
+import * as actions from '../../../store/actions'
 
 
 const Wrapper = styled.View`
-    width: 80%;
-    height: 200px;
-    background-color: red;
-
-`
-
-const Piles = styled.View`
-    width: 100%;
-    display: flex;
+    flex: 1;
+    background-color: salmon;
     flex-flow: row;
+    align-items: center;
     justify-content: space-around;
 `
 
-const Pile = styled.TouchableOpacity`
-    width: 100px;
-    height: 190px;
-    border: 1px solid black;
+const DrawPile = styled.TouchableOpacity`
+    width: 33%;
+    height: 66%;
+    background-color: skyblue;
+`
 
-    display: flex;
-    
+const DiscardPile = styled.TouchableOpacity`
+    width: 33%;
+    height: 66%;
+    background-color: whitesmoke;
 `
 
 class Deck extends Component {
 
     state = {
-        drawPile: [],
-        discardPile: [],
-        currentCard: null
     }
 
     componentDidMount() {
-        this.initDrawPile()
-    }
-
-    initDrawPile = () => {
-        const suits = [
-            'spades',
-            'hearts',
-            'diamonds',
-            'clubs',
-        ]
-        let drawPile = []
-        
-        suits.forEach(suit => {
-            drawPile = drawPile.concat(initCards(suit))
-        })
-        drawPile = shuffleCards(drawPile)
-        this.setState({ drawPile })
-    }
-
-    drawAndDiscard = () => {
-        const { drawPile, discardPile, currentCard } = this.state
-
-        const drawnCard = drawPile.shift()
-        if (currentCard) {
-            discardPile.unshift(currentCard)
+        if (!this.props.game.deckBuilt) {
+            this.props.onInitDeck(shuffleCards(initDeck()))
         }
-        this.setState({
-            drawPile,
-            discardPile,
-            currentCard: drawnCard
-        })
     }
     
     render() {
-        const drawPile = (
-            <Pile 
-                onPress = {this.drawAndDiscard}
-            >
-                <Text>Draw Pile</Text>
-                <Text>Count: {this.state.drawPile.length}</Text>
-            </Pile>
-        )
+        let deck = null
 
-        const discardPile = (
-            <Pile>
-                <Text>Discard Pile</Text>
-                <Text>Count: {this.state.discardPile.length}</Text>
-            </Pile>
-        )
+        if (this.props.game.deckBuilt){
+            const { drawPile, discardPile, currentCard } = this.props.game
+            let discardPileText = <Text>"EMPTY"</Text>
 
+            if (discardPile.length) {
+                console.log('[Deck] discardPile: ', discardPile)
+                discardPileText = (
+                    <React.Fragment>
+                        <Text>{discardPile[0].props.cardDetails.value}</Text>
+                        <Text>{discardPile[0].props.cardDetails.suit}</Text>
+                    </React.Fragment>
+                )
+            }
+            deck = (
+                <React.Fragment>
+                    <DrawPile
+                        onPress={() => this.props.onDrawCard("draw-pile")}
+                        >
+                        <Text>Draw</Text>
+                    </DrawPile>
+                    <DiscardPile
+                        onPress={() => this.props.onDrawCard("discard-pile")}
+                        >
+                        {discardPileText}
+                    </DiscardPile>
+                </React.Fragment>
+            )
+        }
         return (
             <Wrapper>
-                <Piles>
-                    {drawPile}
-                    {discardPile}
-                </Piles>
-                {this.state.currentCard}
+                {deck}
             </Wrapper>
         )
     }
 }
 
-export default Deck
+
+const mapStateToProps = state => {
+    return {
+        game: state.game
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onInitDeck: deck => dispatch(actions.initDeck(deck)),
+        onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
+        onDrawCard: card => dispatch(actions.drawCard(card)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Deck)
