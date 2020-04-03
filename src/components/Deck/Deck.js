@@ -6,7 +6,6 @@ import { initDeck, shuffleCards } from './util/cardUtil'
 import Card from './Card/Card'
 import * as actions from '../../../store/actions'
 
-
 const Wrapper = styled.View`
     flex: 1;
     background-color: salmon;
@@ -29,9 +28,6 @@ const DiscardPile = styled.TouchableOpacity`
 
 class Deck extends Component {
 
-    state = {
-    }
-
     componentDidMount() {
         if (!this.props.game.deckBuilt) {
             this.props.onInitDeck(shuffleCards(initDeck()))
@@ -42,11 +38,10 @@ class Deck extends Component {
         let deck = null
 
         if (this.props.game.deckBuilt){
-            const { drawPile, discardPile, currentCard } = this.props.game
+            const { drawPile, discardPile } = this.props.game
             let discardPileText = <Text>"EMPTY"</Text>
 
             if (discardPile.length) {
-                console.log('[Deck] discardPile: ', discardPile)
                 discardPileText = (
                     <React.Fragment>
                         <Text>{discardPile[0].props.cardDetails.value}</Text>
@@ -60,11 +55,13 @@ class Deck extends Component {
                         onPress={() => this.props.onDrawCard("draw-pile")}
                         >
                         <Text>Draw</Text>
+                        <Text>Card count: {drawPile.length}</Text>
                     </DrawPile>
                     <DiscardPile
                         onPress={() => this.props.onDrawCard("discard-pile")}
                         >
                         {discardPileText}
+                        <Text>Card count: {discardPile.length}</Text>
                     </DiscardPile>
                 </React.Fragment>
             )
