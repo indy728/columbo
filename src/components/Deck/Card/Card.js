@@ -9,7 +9,8 @@ const Wrapper = styled.View`
 `
 
 const Card = props => {
-    console.log('[Card] props: ', props)
+    
+
     return (
         <Wrapper>
             <Text>{props.cardDetails.value}</Text>

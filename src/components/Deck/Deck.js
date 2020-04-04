@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { View, TouchableOpacity, Text } from 'react-native'
 import { initDeck, shuffleCards } from './util/cardUtil'
-import Card from './Card/Card'
+import styled from 'styled-components'
 import * as actions from '../../../store/actions'
+import Pile from './Pile/Pile'
+import { CardBack, CardFace } from '../UI'
 
 const Wrapper = styled.View`
     flex: 1;
@@ -12,18 +13,6 @@ const Wrapper = styled.View`
     flex-flow: row;
     align-items: center;
     justify-content: space-around;
-`
-
-const DrawPile = styled.TouchableOpacity`
-    width: 33%;
-    height: 66%;
-    background-color: skyblue;
-`
-
-const DiscardPile = styled.TouchableOpacity`
-    width: 33%;
-    height: 66%;
-    background-color: whitesmoke;
 `
 
 class Deck extends Component {
@@ -36,39 +25,20 @@ class Deck extends Component {
     
     render() {
         let deck = null
+        const { drawPile, discardPile } = this.props.game
 
-        if (this.props.game.deckBuilt){
-            const { drawPile, discardPile } = this.props.game
-            let discardPileText = <Text>"EMPTY"</Text>
-
-            if (discardPile.length) {
-                discardPileText = (
-                    <React.Fragment>
-                        <Text>{discardPile[0].props.cardDetails.value}</Text>
-                        <Text>{discardPile[0].props.cardDetails.suit}</Text>
-                    </React.Fragment>
-                )
-            }
-            deck = (
-                <React.Fragment>
-                    <DrawPile
-                        onPress={() => this.props.onDrawCard("draw-pile")}
-                        >
-                        <Text>Draw</Text>
-                        <Text>Card count: {drawPile.length}</Text>
-                    </DrawPile>
-                    <DiscardPile
-                        onPress={() => this.props.onDrawCard("discard-pile")}
-                        >
-                        {discardPileText}
-                        <Text>Card count: {discardPile.length}</Text>
-                    </DiscardPile>
-                </React.Fragment>
-            )
-        }
         return (
             <Wrapper>
-                {deck}
+                <Pile
+                    cardComponent={CardBack}
+                    pile={drawPile}
+                    pressed={() => this.props.onDrawCard("draw-pile")}
+                    />
+                <Pile
+                    cardComponent={CardFace}
+                    pile={discardPile}
+                    pressed={() => this.props.onDrawCard("discard-pile")}
+                    />
             </Wrapper>
         )
     }
