@@ -1,39 +1,35 @@
 import React from 'react'
-import { View, TouchableOpacity, Text } from 'react-native'
+import { View } from 'react-native'
 import styled from 'styled-components'
+import Card from '../Card/Card'
+import cardImg from '@assets/cardImg'
+
 
 const Wrapper = styled.View`
-    width: 33%;
-    height: 66%;
+    width: 93px;
+    height: 132px;
     border: 1px solid black;
     position: relative;
-`
-
-const CardBack = styled.TouchableOpacity`
-    width: 100%;
-    height: 100%;
-    padding: 3px;
-    background-color: lightgreen;
-    position: absolute;
-    top: 0;
-    left: 0;
+    transform: rotate(270deg);
 `
 
 const Pile = props => {
     const renderPile = [] 
-    const CardComponent = props.cardComponent
+    let cardSource = cardImg.back
     
     props.pile.forEach((card, i) => {
-        const { value, suit } = card.props.cardDetails
+        const { value, suit } = card
+        if (props.face) {
+            cardSource = cardImg[suit][value]
+        }
 
-        renderPile.push(
-            <CardComponent
+        renderPile.unshift(
+            <Card
                 key={value + suit}
                 onPress={props.pressed}
-                card={card}
-                index={i}
+                source={cardSource}
                 >
-            </CardComponent>
+            </Card>
         )
     })
 

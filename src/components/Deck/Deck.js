@@ -8,7 +8,7 @@ import Pile from './Pile/Pile'
 import { CardBack, CardFace } from '../UI'
 
 const Wrapper = styled.View`
-    flex: 1;
+    flex: 1.5;
     background-color: salmon;
     flex-flow: row;
     align-items: center;
@@ -30,12 +30,12 @@ class Deck extends Component {
         return (
             <Wrapper>
                 <Pile
-                    cardComponent={CardBack}
+                    face={false}
                     pile={drawPile}
                     pressed={() => this.props.onDrawCard("draw-pile")}
                     />
                 <Pile
-                    cardComponent={CardFace}
+                    face={true}
                     pile={discardPile}
                     pressed={() => this.props.onDrawCard("discard-pile")}
                     />

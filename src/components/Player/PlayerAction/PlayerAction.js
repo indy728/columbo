@@ -3,6 +3,9 @@ import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
 import * as actions from '../../../../store/actions'
 import styled from 'styled-components'
+import Card from '../../Deck/Card/Card'
+import cardImg from '@assets/cardImg'
+
 
 const Wrapper = styled.View`
     flex: 3;
@@ -12,8 +15,8 @@ const Wrapper = styled.View`
 `
 
 const CurrentCardWrapper = styled.View`
-    width: 40%;
-    height: 66%;
+    width: 124px;
+    height: 176px;
     border: 2px dashed black;
 `
 
@@ -27,16 +30,15 @@ class PlayerAction extends Component {
     
     render() {
         const { currentCard } = this.props
-        let cardDetails = null
         let currentCardRender = <CurrentCardWrapper />
         
         if (currentCard) {
-            cardDetails = currentCard.props.cardDetails
+            const { value, suit } = currentCard
             currentCardRender = (
                 <CurrentCardWrapper>
-                    <Text>{cardDetails.value}</Text>
-                    <Text>{cardDetails.suit}</Text>
-                    <Text>{cardDetails.action}</Text>
+                    <Card 
+                        source={cardImg[suit][value]}
+                    />
                 </CurrentCardWrapper>
             )
 

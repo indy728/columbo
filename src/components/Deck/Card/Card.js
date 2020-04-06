@@ -1,22 +1,30 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { TouchableOpacity, Image } from 'react-native'
 import styled from 'styled-components'
 
-const Wrapper = styled.View`
-    width: 80px;
-    height: 140px;
-    border: solid 1px black;
+const Wrapper = styled.TouchableOpacity`
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    padding: 2%;
+    position: absolute;
+    top: 0;
+    left: 0;
+`
+
+const CardImage = styled.Image`
+    flex: 1;
+    height: undefined; 
+    width: undefined;
 `
 
 const Card = props => {
-    
-
     return (
-        <Wrapper>
-            <Text>{props.cardDetails.value}</Text>
-            <Text>{props.cardDetails.suit}</Text>
-            <Text>{props.cardDetails.action}</Text>
-            <Text>{props.cardDetails.points}</Text>
+        <Wrapper {...props}>
+            <CardImage
+                source={props.source} 
+                resizeMode="cover"
+                />
         </Wrapper>
     )
 }

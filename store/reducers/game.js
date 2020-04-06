@@ -38,10 +38,9 @@ const drawCard = (state, action) => {
         switchPile = discardPile
     }
 
-    const drawnCard = switchPile.shift()
     return updateObject(state, { 
         [pile]: switchPile,
-        currentCard: drawnCard,
+        currentCard: switchPile.shift(),
         currentPhase: 'play'
     })
 }
