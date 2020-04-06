@@ -5,28 +5,27 @@ import styled from 'styled-components'
 const Wrapper = styled.TouchableOpacity`
     width: 100%;
     height: 100%;
-    background-color: white;
-    padding: 2%;
+    /* padding: 3px; */
+    /* background-color: lightgreen; */
     position: absolute;
     top: 0;
     left: 0;
 `
 
-const CardImage = styled.Image`
-    flex: 1;
-    height: undefined; 
-    width: undefined;
-`
-
-const Card = props => {
+const CardBack = props => {
     return (
         <Wrapper {...props}>
-            <CardImage
-                source={props.source} 
+            <Image
+                style={{
+                    flex: 1,
+                    height: undefined, 
+                    width: undefined,
+                }}
+                source={require('@assets/cardImg/back.png')} 
                 resizeMode="cover"
                 />
         </Wrapper>
     )
 }
 
-export default Card;
+export default CardBack

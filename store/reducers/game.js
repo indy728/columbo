@@ -15,7 +15,11 @@ const setLobbyID = (state, action) => {
 }
 
 const initDeck = (state, action) => {
-    return updateObject(state, { drawPile: action.deck, deckBuilt: true })
+    return updateObject(state, { 
+        drawPile: action.deck,
+        discardPile: [],
+        deckBuilt: true
+     })
 }
 
 const updatePhase = (state, action) => {
@@ -34,10 +38,9 @@ const drawCard = (state, action) => {
         switchPile = discardPile
     }
 
-    const drawnCard = switchPile.shift()
     return updateObject(state, { 
         [pile]: switchPile,
-        currentCard: drawnCard,
+        currentCard: switchPile.shift(),
         currentPhase: 'play'
     })
 }

@@ -18,8 +18,9 @@ const initCards = suit => {
 
     const makeCardObj = (value, points, suit, action) => {
         return (
-            <Card cardDetails={{value, points, suit, action}} />
-        )
+            {value, points, suit, action}
+            // <Card cardDetails={{value, points, suit, action}} />
+            )
     }
 
     const cards = []
