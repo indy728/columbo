@@ -30,7 +30,7 @@ const drawCard = (state, action) => {
     if (state.currentPhase !== 'draw') return state
 
     const { pile } = action
-    const { drawPile, discardPile, currentCard } = state
+    const { drawPile, discardPile} = state
     let switchPile = drawPile
     
     if (pile !== 'draw-pile') {
@@ -43,6 +43,10 @@ const drawCard = (state, action) => {
         currentCard: switchPile.shift(),
         currentPhase: 'play'
     })
+}
+
+const updateDeck = (state, action) => {
+    return updateObject(state, { drawpile: action.drawPile })
 }
 
 const playCard = (state, action) => {
@@ -64,6 +68,7 @@ const gameReducer = (state = initialState, action) => {
         case actions.INIT_DECK: return initDeck(state, action)
         case actions.DRAW_CARD: return drawCard(state, action)
         case actions.PLAY_CARD: return playCard(state, action)
+        case actions.UPDATE_DECK: return updateDeck(state, action)
         default: return state
     }
 }

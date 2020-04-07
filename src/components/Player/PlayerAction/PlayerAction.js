@@ -26,10 +26,14 @@ const PlayButton = styled.TouchableOpacity`
     background-color: steelblue;
 `
 
+const DeckCounter = styled.Text`
+
+`
+
 class PlayerAction extends Component {
     
     render() {
-        const { currentCard } = this.props
+        const { currentCard, drawPile, discardPile } = this.props
         let currentCardRender = <CurrentCardWrapper />
         
         if (currentCard) {
@@ -46,6 +50,8 @@ class PlayerAction extends Component {
 
         return (
             <Wrapper>
+                <DeckCounter>Draw Pile: {drawPile.length}</DeckCounter>
+                <DeckCounter>Discard Pile: {discardPile.length}</DeckCounter>
                 {currentCardRender}
                 <PlayButton
                     onPress={() => this.props.onPlay(currentCard)}
@@ -59,7 +65,9 @@ class PlayerAction extends Component {
 
 const mapStateToProps = state => {
     return {
-        currentCard: state.game.currentCard
+        currentCard: state.game.currentCard,
+        drawPile: state.game.drawPile,
+        discardPile: state.game.discardPile
     }
 }
 

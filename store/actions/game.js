@@ -14,13 +14,6 @@ export const initDeck = deck => {
     }
 }
 
-export const updatePhase = phase => {
-    return {
-        type: actions.UPDATE_PHASE,
-        phase
-    }
-}
-
 export const drawCard = pile => {
     return {
         type: actions.DRAW_CARD,
@@ -32,5 +25,12 @@ export const playCard = card => {
     return {
         type: actions.PLAY_CARD,
         card
+    }
+}
+
+export const updateDeck = drawPile => {
+    return { 
+        type: actions.UPDATE_DECK,
+        drawPile
     }
 }

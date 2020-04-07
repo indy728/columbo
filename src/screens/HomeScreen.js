@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, View, Button, TouchableOpacity, Image, ImageStore } from "react-native";
+import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from "react-native";
 import styled from 'styled-components/native'
 import shortid from 'shortid'
-import CardImages from '@assets/cardImg'
+import Modal from '../hoc/Modal'
 
 const Wrapper = styled.View`
     /* width: 100%; */
     display: flex;
     align-items: center;
-
+    flex: 1;
 `
 
 const HomeText = styled.Text`
@@ -19,6 +19,11 @@ const HomeText = styled.Text`
 
 const BlueButton = styled.TouchableOpacity`
     background-color: blue;
+    width: 80%;
+`
+
+const PurpleButton = styled.TouchableOpacity`
+    background-color: purple;
     width: 80%;
 `
 
@@ -33,10 +38,14 @@ const CardImage = styled.Image`
     height: 400px;
 `
 
+
 class HomeScreen extends Component {
 
     state = {
-        currentRoomID: ''
+        currentRoomID: '',
+        isModalVisible: false,
+        playerID: '',
+        numberPlayers: 0
     }
 
     onCreateShortID = () => {
@@ -45,11 +54,23 @@ class HomeScreen extends Component {
         this.setState({ currentRoomID : roomID })
     }
 
+    toggleModal = () => {
+        this.setState({ isModalVisible: !this.state.isModalVisible })
+    }
+
+    changeTextInputHandler = (field, text) => {
+        this.setState({
+            [field]: text
+        })
+    }
+
     render() {
     // console.log('[CardDemo] this.props: ', this.props)
     // console.log('[HomeScreen] CardImages.clubs: ', CardImages.spades)
 
     const displayroomID = <Text>{this.state.currentRoomID}</Text>
+
+    console.log('[HomeScreen] this.state: ', this.state)
 
         return (
             <Wrapper>
@@ -60,21 +81,37 @@ class HomeScreen extends Component {
                     <BlueButtonText>Go To Cards</BlueButtonText>
                 </BlueButton>
                 <BlueButton
-                    onPress={this.onCreateShortID}
+                    onPress={this.toggleModal}
+                >
+                    <BlueButtonText>Create Game</BlueButtonText>
+                </BlueButton>
+                <Modal
+                    visible={this.state.isModalVisible}
                     >
-                    <BlueButtonText>Touch Me</BlueButtonText>
-                </BlueButton>
-                {
-                    this.state.currentRoomID !== '' &&
-                    displayroomID
-                }
-                <CardImage source={CardImages.clubs.A} />
-                <CardImage source={require('../../assets/cardImg/clubs/ace.png')} />
-                <BlueButton>
-                    <BlueButtonText>
-                        GAY
-                    </BlueButtonText>
-                </BlueButton>
+
+                        <TextInput 
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={this.state.playerID}
+                            onChangeText={text => this.changeTextInputHandler('playerID', text)}
+                        />
+                        <TextInput 
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={this.state.numberPlayers}
+                            onChangeText={text => this.changeTextInputHandler('numberPlayers', parseInt(text))}
+                        />
+                        <PurpleButton
+                            onPress={() => this.props.navigation.navigate('CardDemo')}
+                            >
+                            <BlueButtonText>create game</BlueButtonText>
+                        </PurpleButton>
+                        <PurpleButton
+                            onPress={this.toggleModal}
+                            ><BlueButtonText>cancel</BlueButtonText>
+                        </PurpleButton>
+                </Modal>
+                    
             </Wrapper>
         )
     }

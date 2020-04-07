@@ -1,7 +1,7 @@
 export {
     setLobbyID,
     initDeck,
-    updatePhase,
     drawCard,
-    playCard
+    playCard,
+    updateDeck,
 } from './game'

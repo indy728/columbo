@@ -33,7 +33,7 @@ class Deck extends Component {
                     face={false}
                     pile={drawPile}
                     pressed={() => this.props.onDrawCard("draw-pile")}
-                    />
+                />
                 <Pile
                     face={true}
                     pile={discardPile}

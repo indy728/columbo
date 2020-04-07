@@ -2,7 +2,7 @@ import React from "react";
 import styled from 'styled-components/native'
 import Deck from '../components/Deck/Deck'
 import PlayerAction from '../components/Player/PlayerAction/PlayerAction'
-import PlayerHand from '../components/Player/PlayerHand/PlayerHand'
+import Player from '../components/Player/Player'
 
 const Wrapper = styled.View`
     flex: 1;
@@ -14,7 +14,7 @@ const CardDemo = () => {
         <Wrapper>
             <Deck />
             <PlayerAction />
-            <PlayerHand />
+            <Player />
         </Wrapper>
     )
 }
