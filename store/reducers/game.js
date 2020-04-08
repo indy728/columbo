@@ -1,74 +1,35 @@
 import * as actions from '../actions/actionTypes'
+import * as storeVariables from '../storeVariables'
 import { updateObject } from '../../shared/objectUtility'
 
 const initialState = {
     lobbyID: '',
-    drawPile: [],
-    discardPile: [],
-    deckBuilt: false,
-    currentCard: null,
-    currentPhase: 'draw',
+    phase: storeVariables.PHASE_DRAW,
+    playerCount: 0,
+    players: []
 }
 
 const setLobbyID = (state, action) => {
-    return updateObject(state, { lobbyID: action.lobbyID });
-}
-
-const initDeck = (state, action) => {
-    return updateObject(state, { 
-        drawPile: action.deck,
-        discardPile: [],
-        deckBuilt: true
-     })
+    return updateObject(state, { lobbyID: action.lobbyID })
 }
 
 const updatePhase = (state, action) => {
-    return updateObject(state, { currentPhase: action.phase })
+    return updateObject(state, { phase: action.phase })
 }
 
-const drawCard = (state, action) => {
-    if (state.currentPhase !== 'draw') return state
-
-    const { pile } = action
-    const { drawPile, discardPile} = state
-    let switchPile = drawPile
-    
-    if (pile !== 'draw-pile') {
-        if (!discardPile.length) return state
-        switchPile = discardPile
-    }
-
-    return updateObject(state, { 
-        [pile]: switchPile,
-        currentCard: switchPile.shift(),
-        currentPhase: 'play'
-    })
-}
-
-const updateDeck = (state, action) => {
-    return updateObject(state, { drawpile: action.drawPile })
-}
-
-const playCard = (state, action) => {
-    if (state.currentPhase !== 'play') return state
-
-    const { discardPile } = state
-    
-    discardPile.unshift(action.card)
+const initPlayers = (state, action) => {
     return updateObject(state, {
-        discardPile,
-        currentCard: null,
-        currentPhase: 'draw'
+        playerCount: action.playerCount,
+        players: action.players
     })
 }
 
 const gameReducer = (state = initialState, action) => {
     switch(action.type) {
         case actions.SET_LOBBY_ID: return setLobbyID(state, action)
-        case actions.INIT_DECK: return initDeck(state, action)
-        case actions.DRAW_CARD: return drawCard(state, action)
-        case actions.PLAY_CARD: return playCard(state, action)
-        case actions.UPDATE_DECK: return updateDeck(state, action)
+        case actions.DRAW_CARD: 
+        case actions.PLAY_CARD: return updatePhase(state, action)
+        case actions.INIT_PLAYERS: return initPlayers(state, action)
         default: return state
     }
 }

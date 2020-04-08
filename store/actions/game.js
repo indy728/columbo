@@ -1,36 +1,22 @@
 import * as actions from './actionTypes'
 
-export const setLobbyID = lobbyID => {
-    return {
-        type: actions.SET_LOBBY_ID,
-        lobbyID
-    }
+const player = {
+    id: '',
+    username: '',
+    hand: [],
+    totalPoints: 0
 }
 
-export const initDeck = deck => {
-    return {
-        type: actions.INIT_DECK,
-        deck
-    }
-}
+export const initPlayers = playerCount => {
+    const players = []
 
-export const drawCard = pile => {
-    return {
-        type: actions.DRAW_CARD,
-        pile
+    for (let i = 0; i < playerCount; i++) {
+        players.push({ ...player })
     }
-}
 
-export const playCard = card => {
     return {
-        type: actions.PLAY_CARD,
-        card
-    }
-}
-
-export const updateDeck = drawPile => {
-    return { 
-        type: actions.UPDATE_DECK,
-        drawPile
+        type: actions.INIT_PLAYERS,
+        playerCount,
+        players
     }
 }

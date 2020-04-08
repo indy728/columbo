@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
-import * as actions from '../../../../store/actions'
+import * as actions from '@store/actions'
+import * as storeVariables from '@store/storeVariables'
 import styled from 'styled-components'
 import Card from '../../Deck/Card/Card'
 import cardImg from '@assets/cardImg'
@@ -45,7 +46,6 @@ class PlayerAction extends Component {
                     />
                 </CurrentCardWrapper>
             )
-
         }
 
         return (
@@ -54,7 +54,10 @@ class PlayerAction extends Component {
                 <DeckCounter>Discard Pile: {discardPile.length}</DeckCounter>
                 {currentCardRender}
                 <PlayButton
-                    onPress={() => this.props.onPlay(currentCard)}
+                    onPress={() => {
+                        return this.props.phase === storeVariables.PHASE_PLAY ?
+                            this.props.onPlay(currentCard) : null
+                    }}
                     >
                     <Text>PLAY</Text>
                 </PlayButton>
@@ -65,9 +68,10 @@ class PlayerAction extends Component {
 
 const mapStateToProps = state => {
     return {
-        currentCard: state.game.currentCard,
-        drawPile: state.game.drawPile,
-        discardPile: state.game.discardPile
+        phase: state.game.phase,
+        currentCard: state.deck.currentCard,
+        drawPile: state.deck.drawPile,
+        discardPile: state.deck.discardPile
     }
 }
 

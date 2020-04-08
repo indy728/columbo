@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, TouchableOpacity, Text } from 'react-native'
+import { View } from 'react-native'
 import { initDeck, shuffleCards } from './util/cardUtil'
 import styled from 'styled-components'
 import * as actions from '../../../store/actions'
+import * as storeVariables from '@store/storeVariables'
 import Pile from './Pile/Pile'
-import { CardBack, CardFace } from '../UI'
 
 const Wrapper = styled.View`
     flex: 1.5;
@@ -18,26 +18,27 @@ const Wrapper = styled.View`
 class Deck extends Component {
 
     componentDidMount() {
-        if (!this.props.game.deckBuilt) {
-            this.props.onInitDeck(shuffleCards(initDeck()))
-        }
+    }
+
+    pileClickedHandler = pile => {
+        return this.props.phase === storeVariables.PHASE_DRAW ?
+            this.props.onDrawCard(pile) : null
     }
     
     render() {
-        let deck = null
-        const { drawPile, discardPile } = this.props.game
+        const { drawPile, discardPile } = this.props
 
         return (
             <Wrapper>
                 <Pile
                     face={false}
                     pile={drawPile}
-                    pressed={() => this.props.onDrawCard("draw-pile")}
-                />
+                    pressed={() => this.pileClickedHandler(storeVariables.DRAW_PILE)}
+                    />
                 <Pile
                     face={true}
                     pile={discardPile}
-                    pressed={() => this.props.onDrawCard("discard-pile")}
+                    pressed={() => this.pileClickedHandler(storeVariables.DISCARD_PILE)}
                     />
             </Wrapper>
         )
@@ -47,7 +48,10 @@ class Deck extends Component {
 
 const mapStateToProps = state => {
     return {
-        game: state.game
+        drawPile: state.deck.drawPile,
+        discardPile: state.deck.discardPile,
+        deckBuilt: state.deck.deckBuilt,
+        phase: state.game.phase
     }
 }
 

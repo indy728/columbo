@@ -9,3 +9,5 @@ export const DRAW_CARD = "DRAW_CARD"
 export const PLAY_CARD = "PLAY_CARD"
 export const DEAL_CARD = "DEAL_CARD"
 export const UPDATE_DECK = "UPDATE_DECK"
+
+export const INIT_PLAYERS = "INIT_PLAYERS"

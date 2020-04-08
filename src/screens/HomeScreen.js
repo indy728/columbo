@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux'
 import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from "react-native";
 import styled from 'styled-components/native'
 import shortid from 'shortid'
 import Modal from '../hoc/Modal'
+import * as actions from '@store/actions'
 
 const Wrapper = styled.View`
     /* width: 100%; */
@@ -45,7 +47,7 @@ class HomeScreen extends Component {
         currentRoomID: '',
         isModalVisible: false,
         playerID: '',
-        numberPlayers: 0
+        playerCount: 0
     }
 
     onCreateShortID = () => {
@@ -64,13 +66,15 @@ class HomeScreen extends Component {
         })
     }
 
+    createGameHandler = () => {
+        this.props.onInitPlayers(1)
+        this.props.onInitDeck()
+        this.props.navigation.navigate('CardDemo')
+    }
+
     render() {
-    // console.log('[CardDemo] this.props: ', this.props)
-    // console.log('[HomeScreen] CardImages.clubs: ', CardImages.spades)
 
     const displayroomID = <Text>{this.state.currentRoomID}</Text>
-
-    console.log('[HomeScreen] this.state: ', this.state)
 
         return (
             <Wrapper>
@@ -88,21 +92,20 @@ class HomeScreen extends Component {
                 <Modal
                     visible={this.state.isModalVisible}
                     >
-
                         <TextInput 
                             autoCapitalize="none"
                             autoCorrect={false}
                             value={this.state.playerID}
                             onChangeText={text => this.changeTextInputHandler('playerID', text)}
                         />
-                        <TextInput 
+                        {/* <TextInput 
                             autoCapitalize="none"
                             autoCorrect={false}
-                            value={this.state.numberPlayers}
-                            onChangeText={text => this.changeTextInputHandler('numberPlayers', parseInt(text))}
-                        />
+                            value={this.state.playerCount}
+                            onChangeText={text => this.changeTextInputHandler('playerCount', parseInt(text))}
+                        /> */}
                         <PurpleButton
-                            onPress={() => this.props.navigation.navigate('CardDemo')}
+                            onPress={this.createGameHandler}
                             >
                             <BlueButtonText>create game</BlueButtonText>
                         </PurpleButton>
@@ -117,4 +120,11 @@ class HomeScreen extends Component {
     }
 }
 
-export default HomeScreen;
+const mapDispatchToProps = dispatch => {
+    return {
+        onInitPlayers: playerCount => dispatch(actions.initPlayers(playerCount)),
+        onInitDeck: () => dispatch(actions.initDeck())
+    }
+}
+
+export default connect(null, mapDispatchToProps)(HomeScreen)

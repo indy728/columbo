@@ -1,8 +1,11 @@
 import { createStore, combineReducers } from 'redux'
+import deckReducer from './reducers/deck'
 import gameReducer from './reducers/game'
 
 const rootReducer = combineReducers({ 
-    game: gameReducer 
+    deck: deckReducer,
+    game: gameReducer,
+
 })
 
 const configureStore = () => {
