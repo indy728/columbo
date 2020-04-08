@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View } from 'react-native'
+import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import cardImg from '@assets/cardImg'
@@ -32,65 +32,59 @@ const PlayerCardWrapper = styled.View`
 
 class Player extends Component {
     state = {
-        id: '',
-        hand: [],
-        cumulativePoints: 0
     }
 
     componentDidMount() {
-        // this.initPlayer()
+        // const { drawPile } = this.props
+        // const initialHand = []
+        
+        // for (let i = 0; i < 2; i++){
+        //     const row = []
+        //     for (let j = 0; j< 2; j++) {
+        //         row.unshift(drawPile.shift())
+        //     }
+        //     initialHand.unshift(row)
+        // }
+
+        // this.props.onDealFromDeck(drawPile)
+        // this.props.onDealToPlayer(initialHand, "0")
+
+        console.log('[Player] here again: ')
     }
 
     initPlayer = (id = 'kyle') => {
-        
-        const { drawPile } = this.props
-        const initialHand = []
-        
-        for (let i = 0; i < 2; i++){
-            const row = []
-            for (let j = 0; j< 2; j++) {
-                row.unshift(drawPile.shift())
-            }
-            initialHand.unshift(row)
-        }
 
-        this.props.onDealCard(drawPile)
-        this.setState({
-            id,
-            hand: initialHand
-        })
     }
 
     render() {
         const { drawPile, deckBuilt } = this.props
         let cards = []
+        console.log('[Player] this.props.player: ', this.props.player)
 
-        if (deckBuilt && this.state.id === '') {
-            this.initPlayer()
-        }
+        // if (this.state.id !== '') {
+        //     this.state.hand.forEach(cardRow => {
+        //         cardRow.forEach(card => {
+        //             const { value, suit } = card
 
-        if (this.state.id !== '') {
-            this.state.hand.forEach(cardRow => {
-                cardRow.forEach(card => {
-                    const { value, suit } = card
-
-                    cards.unshift(
-                        <PlayerCardWrapper>
-                            <Card
-                                key={value + suit}
-                                // onPress={props.pressed}
-                                source={cardImg[suit][value]}
-                                >
-                            </Card>
-                        </PlayerCardWrapper>
-                    )
-                })
-            })
-        }
+        //             cards.unshift(
+        //                 <PlayerCardWrapper>
+        //                     <Card
+        //                         key={value + suit}
+        //                         // onPress={props.pressed}
+        //                         source={cardImg[suit][value]}
+        //                         >
+        //                     </Card>
+        //                 </PlayerCardWrapper>
+        //             )
+        //         })
+        //     })
+        // }
 
         return (
             <Wrapper>
                 <PlayerHandWrapper>
+                    <Text>{this.props.player.username}</Text>
+                    <Text>{this.props.lobbyID}</Text>
                     {cards}
                 </PlayerHandWrapper>
             </Wrapper>
@@ -100,14 +94,19 @@ class Player extends Component {
 
 const mapStateToProps = state => {
     return {
-        drawPile: state.game.drawPile,
-        deckBuilt: state.game.deckBuilt
+        drawPile: state.deck.drawPile,
+        deckBuilt: state.deck.deckBuilt,
+        players: state.game.players,
+        player: state.game.player,
+        lobbyID: state.game.lobbyID
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onDealCard: drawPile => dispatch(actions.updateDeck(drawPile)),
+        onDealFromDeck: drawPile => dispatch(actions.updateDeck(drawPile)),
+        onAddToHand: (card, id) => dispatch(actions.addCard(card, id)),
+        onDealToPlayer: (hand, id) => dispatch(actions.updateHand(hand, id))
     }
 }
 

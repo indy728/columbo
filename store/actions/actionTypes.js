@@ -11,3 +11,9 @@ export const DEAL_CARD = "DEAL_CARD"
 export const UPDATE_DECK = "UPDATE_DECK"
 
 export const INIT_PLAYERS = "INIT_PLAYERS"
+export const INIT_PLAYER = "INIT_PLAYER"
+export const INIT_GAME = "INIT_GAME"
+export const ADD_CARD = "ADD_CARD"
+export const UPDATE_HAND = "UPDATE_HAND"
+
+export const LAUNCH_GAME = "LAUNCH_GAME"

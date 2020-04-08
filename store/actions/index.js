@@ -6,4 +6,8 @@ export {
 } from './deck'
 export {
     initPlayers,
+    addCard,
+    updateHand,
+    initPlayer,
+    initGame
 } from './game'

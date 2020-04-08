@@ -22,6 +22,7 @@ const HomeText = styled.Text`
 const BlueButton = styled.TouchableOpacity`
     background-color: blue;
     width: 80%;
+    display: ${props => props.disabled ? "none" : "flex"};
 `
 
 const PurpleButton = styled.TouchableOpacity`
@@ -47,7 +48,7 @@ class HomeScreen extends Component {
         currentRoomID: '',
         isModalVisible: false,
         playerID: '',
-        playerCount: 0
+        username: '',
     }
 
     onCreateShortID = () => {
@@ -67,14 +68,19 @@ class HomeScreen extends Component {
     }
 
     createGameHandler = () => {
-        this.props.onInitPlayers(1)
+        // this.props.onInitPlayers(1)
+        this.props.onInitPlayer(this.state.username)
+        this.props.onInitGame(shortid.generate())
         this.props.onInitDeck()
+        this.toggleModal();
         this.props.navigation.navigate('CardDemo')
     }
 
     render() {
 
     const displayroomID = <Text>{this.state.currentRoomID}</Text>
+    console.log('[HomeScreen] this.props.lobbyID: ', this.props.lobbyID)    
+    const gameText = this.props.lobbyID === '' ? 'Create Game' : 'Go To Game'
 
         return (
             <Wrapper>
@@ -85,25 +91,26 @@ class HomeScreen extends Component {
                     <BlueButtonText>Go To Cards</BlueButtonText>
                 </BlueButton>
                 <BlueButton
+                    disabled={this.props.lobbyID !== ''}
                     onPress={this.toggleModal}
                 >
-                    <BlueButtonText>Create Game</BlueButtonText>
+                    <BlueButtonText>{gameText}</BlueButtonText>
                 </BlueButton>
                 <Modal
                     visible={this.state.isModalVisible}
                     >
-                        <TextInput 
+                        {/* <TextInput 
                             autoCapitalize="none"
                             autoCorrect={false}
                             value={this.state.playerID}
                             onChangeText={text => this.changeTextInputHandler('playerID', text)}
-                        />
-                        {/* <TextInput 
+                        /> */}
+                        <TextInput 
                             autoCapitalize="none"
                             autoCorrect={false}
-                            value={this.state.playerCount}
-                            onChangeText={text => this.changeTextInputHandler('playerCount', parseInt(text))}
-                        /> */}
+                            value={this.state.username}
+                            onChangeText={text => this.changeTextInputHandler('username', text)}
+                        />
                         <PurpleButton
                             onPress={this.createGameHandler}
                             >
@@ -120,11 +127,19 @@ class HomeScreen extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        lobbyID: state.game.lobbyID
+    }
+}
+
 const mapDispatchToProps = dispatch => {
     return {
-        onInitPlayers: playerCount => dispatch(actions.initPlayers(playerCount)),
+        // onInitPlayers: playerCount => dispatch(actions.initPlayers(playerCount)),
+        onInitPlayer: username => dispatch(actions.initPlayer(username)),
+        onInitGame: lobbyID => dispatch(actions.initGame(lobbyID)),
         onInitDeck: () => dispatch(actions.initDeck())
     }
 }
 
-export default connect(null, mapDispatchToProps)(HomeScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
