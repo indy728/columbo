@@ -12,13 +12,19 @@ const initialState = {
         id: '',
         username: '',
         position: -1,
-        hand: [['empty', 'empty']],
+        hand: [[null, null]],
         totalPoints: 0
-    }
+    },
+    isDealt: false
 }
 
 const setLobbyID = (state, action) => {
     return updateObject(state, { lobbyID: action.lobbyID })
+}
+
+const dealCards = (state, action) => {
+    console.log('[game] action.player: ', action.player)
+    return updateObject(state, { isDealt: true, player: action.player })
 }
 
 const launchGame = state => {
@@ -53,6 +59,8 @@ const updateHand = (state, action) => {
         })
     })
 }
+
+// const updatePlayer = (state, action) => updateObject(state, action.player)
 
 const addCard = (state, action) => {
     const { players } = state
@@ -96,6 +104,8 @@ const gameReducer = (state = initialState, action) => {
         case actions.INIT_PLAYER: return initPlayer(state, action)
         case action.UPDATE_HAND: return updateHand(state, action)
         case action.LAUNCH_GAME: return launchGame(state, action)
+        case actions.DEAL_CARD: return dealCards(state, action)
+
         default: return state
     }
 }

@@ -83,7 +83,7 @@ class Player extends Component {
         return (
             <Wrapper>
                 <PlayerHandWrapper>
-                    <Text>{this.props.player.username}</Text>
+                    {/* <Text>{this.props.player.username}</Text> */}
                     <Text>{this.props.lobbyID}</Text>
                     {cards}
                 </PlayerHandWrapper>

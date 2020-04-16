@@ -8,6 +8,7 @@ export {
     initPlayers,
     addCard,
     updateHand,
+    dealCards,
     initPlayer,
     initGame
 } from './game'

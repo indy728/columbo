@@ -34,7 +34,18 @@ const drawCard = (state, action) => {
 }
 
 const updateDeck = (state, action) => {
-    return updateObject(state, { drawpile: action.drawPile })
+    const { pile, deck } = action
+    const { drawPile, discardPile } = state
+    let switchPile = drawPile
+    
+    if (pile !== storeVariables.DRAW_PILE) {
+        if (!discardPile.length) return state
+        switchPile = discardPile
+    }
+
+    return updateObject(state, { 
+        [pile]: deck,
+    })
 }
 
 const playCard = (state, action) => {
@@ -53,6 +64,7 @@ const deckReducer = (state = initialState, action) => {
         case actions.DRAW_CARD: return drawCard(state, action)
         case actions.PLAY_CARD: return playCard(state, action)
         case actions.UPDATE_DECK: return updateDeck(state, action)
+        case actions.DEAL_CARD: return updateDeck(state, action)
         default: return state
     }
 }

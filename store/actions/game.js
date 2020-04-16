@@ -1,9 +1,10 @@
 import * as actions from './actionTypes'
+import * as storeVariables from '../storeVariables'
 
 const player = {
     username: '',
     hand: [],
-    totalPoints: 0
+    totalPoints: 0,
 }
 
 export const initPlayers = playerCount => {
@@ -36,6 +37,15 @@ export const addCard = (card, id) => {
         type: actions.ADD_CARD,
         card,
         id
+    }
+}
+
+export const dealCards = (deck, player) => {
+    return {
+        type: actions.DEAL_CARD,
+        pile: storeVariables.DRAW_PILE,
+        deck,
+        player,
     }
 }
 

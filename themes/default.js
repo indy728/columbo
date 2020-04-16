@@ -19,6 +19,4 @@ theme.fonts = {
     nameplate: "'Lobster', cursive",
 }
 
-console.log('[default] theme: ', palette)
-
 export default theme
