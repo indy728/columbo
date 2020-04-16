@@ -32,7 +32,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
-    "styled-components": "^5.0.1"
+    "styled-components": "^5.0.1",
+    "styled-theme": "^0.3.3"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

@@ -10,6 +10,7 @@ const Wrapper = styled.View`
     top: 0;
     left: 0;
     display: ${props => props.visible ? "flex" : "none"};
+    align-items: center;
 `
 
 const Modal = props => {

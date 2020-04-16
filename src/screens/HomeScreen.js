@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
-import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from "react-native";
+import { Text, StyleSheet, View, TextInput } from "react-native";
+import { DefaultButton, DefaultForm, FormInput } from '../components/UI'
 import styled from 'styled-components/native'
 import shortid from 'shortid'
 import Modal from '../hoc/Modal'
@@ -12,35 +13,6 @@ const Wrapper = styled.View`
     align-items: center;
     flex: 1;
 `
-
-const HomeText = styled.Text`
-    font-size: 30px;
-    color: red;
-    margin: 5px 0;
-`
-
-const BlueButton = styled.TouchableOpacity`
-    background-color: blue;
-    width: 80%;
-    display: ${props => props.disabled ? "none" : "flex"};
-`
-
-const PurpleButton = styled.TouchableOpacity`
-    background-color: purple;
-    width: 80%;
-`
-
-const BlueButtonText = styled.Text`
-    color: white;
-    font-size: 20px;
-    text-align: center;
-`
-
-const CardImage = styled.Image`
-    width: 200px;
-    height: 400px;
-`
-
 
 class HomeScreen extends Component {
 
@@ -79,47 +51,55 @@ class HomeScreen extends Component {
     render() {
 
     const displayroomID = <Text>{this.state.currentRoomID}</Text>
-    console.log('[HomeScreen] this.props.lobbyID: ', this.props.lobbyID)    
     const gameText = this.props.lobbyID === '' ? 'Create Game' : 'Go To Game'
 
         return (
             <Wrapper>
-                <HomeText>HomeScreen</HomeText>
-                <BlueButton
+                <DefaultButton
                     onPress={() => this.props.navigation.navigate('CardDemo')}
-                >
-                    <BlueButtonText>Go To Cards</BlueButtonText>
-                </BlueButton>
-                <BlueButton
+                    >
+                    Go To Cards
+                </DefaultButton>
+                <DefaultButton
                     disabled={this.props.lobbyID !== ''}
                     onPress={this.toggleModal}
                 >
-                    <BlueButtonText>{gameText}</BlueButtonText>
-                </BlueButton>
+                    {gameText}
+                </DefaultButton>
+                <DefaultButton disabled>
+                    disabled
+                </DefaultButton>
+                <DefaultButton hidden>
+                    hidden
+                </DefaultButton>
                 <Modal
                     visible={this.state.isModalVisible}
                     >
+                    <DefaultForm>
                         {/* <TextInput 
                             autoCapitalize="none"
                             autoCorrect={false}
                             value={this.state.playerID}
                             onChangeText={text => this.changeTextInputHandler('playerID', text)}
                         /> */}
-                        <TextInput 
+                        <FormInput 
                             autoCapitalize="none"
                             autoCorrect={false}
                             value={this.state.username}
                             onChangeText={text => this.changeTextInputHandler('username', text)}
                         />
-                        <PurpleButton
+                        <DefaultButton
                             onPress={this.createGameHandler}
                             >
-                            <BlueButtonText>create game</BlueButtonText>
-                        </PurpleButton>
-                        <PurpleButton
+                            create game
+                        </DefaultButton>
+                        <DefaultButton
                             onPress={this.toggleModal}
-                            ><BlueButtonText>cancel</BlueButtonText>
-                        </PurpleButton>
+                            >
+                            cancel
+                        </DefaultButton>
+                    </DefaultForm>
+                        
                 </Modal>
                     
             </Wrapper>

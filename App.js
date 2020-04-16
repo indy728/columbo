@@ -10,7 +10,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import PubNub from 'pubnub';
 // import { PubNubProvider, usePubNub } from 'pubnub-react';
 import rootReducer from './store/configureStore'
-import cardImg from '@assets/cardImg'
+import theme from './themes/default'
+
+import { ThemeProvider } from 'styled-components'
 
 const Stack = createStackNavigator()
 
@@ -63,12 +65,14 @@ class App extends Component {
         // if (this.state.pubnub) console.log('[App] pubnub: ', this.state.pubnub)
         return (
             <Provider store={store}>
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Home">
-                    <Stack.Screen name="Home" component={HomeScreen} />
-                    <Stack.Screen name="CardDemo" component={CardDemo} />
-                    </Stack.Navigator>
-                </NavigationContainer>
+                <ThemeProvider theme={theme}>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName="Home">
+                        <Stack.Screen name="Home" component={HomeScreen} />
+                        <Stack.Screen name="CardDemo" component={CardDemo} />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </ThemeProvider>
             </Provider>
         )
     }
