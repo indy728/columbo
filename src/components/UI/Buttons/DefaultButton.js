@@ -3,7 +3,7 @@ import { TouchableOpacity, Text } from 'react-native'
 import styled from 'styled-components'
 
 const ButtonWrapper = styled.TouchableOpacity`
-    width: 80%;
+    width: ${({width}) => width ? width + "px" : "350px"};
     height: 50px;
     margin: 10px 0;
     border-radius: 10px;
@@ -31,8 +31,8 @@ const TextWrapper = styled.Text`
 `
 
 const defaultButton = props => {
-    const { hidden, disabled, children, className, onPress } = props
-    const buttonProps = { hidden, disabled, className, onPress }
+    const { hidden, disabled, children, className, onPress, width } = props
+    const buttonProps = { hidden, disabled, className, onPress, width }
     const textProps = { disabled, children }
 
     return (

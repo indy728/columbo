@@ -33,6 +33,13 @@ const drawCard = (state, action) => {
     })
 }
 
+const swapCards = (state, action) => {
+    let updatedState = updateDeck(state, action)
+
+    updatedState = updateObject(updatedState, { currentCard: null })
+    return updateObject(state, updatedState)
+}
+
 const updateDeck = (state, action) => {
     const { pile, deck } = action
     const { drawPile, discardPile } = state
@@ -65,6 +72,7 @@ const deckReducer = (state = initialState, action) => {
         case actions.PLAY_CARD: return playCard(state, action)
         case actions.UPDATE_DECK: return updateDeck(state, action)
         case actions.DEAL_CARD: return updateDeck(state, action)
+        case actions.SWAP_CARDS: return swapCards(state, action)
         default: return state
     }
 }

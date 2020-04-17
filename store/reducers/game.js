@@ -18,13 +18,40 @@ const initialState = {
     isDealt: false
 }
 
+const updateTotalPoints = hand => {
+    let points = 0
+
+    for (let column in hand) {
+        for (let card in hand[column]) {
+            if (hand[column][card]) {
+                points += hand[column][card].points
+            }
+        }
+    }
+
+    return points
+}
+
 const setLobbyID = (state, action) => {
     return updateObject(state, { lobbyID: action.lobbyID })
 }
 
 const dealCards = (state, action) => {
-    console.log('[game] action.player: ', action.player)
-    return updateObject(state, { isDealt: true, player: action.player })
+    const { player } = action
+    const updatedPlayer = updateObject(player, {
+        totalPoints: updateTotalPoints(player.hand)
+    })
+
+    return updateObject(state, { isDealt: true, player: updatedPlayer })
+}
+
+const updatePlayer = (state, action) => {
+    const { player } = action
+    const updatedPlayer = updateObject(player, {
+        totalPoints: updateTotalPoints(player.hand)
+    })
+
+    return updateObject(state, { phase: storeVariables.PHASE_DRAW, player: updatedPlayer })
 }
 
 const launchGame = state => {
@@ -99,12 +126,14 @@ const gameReducer = (state = initialState, action) => {
         case actions.SET_LOBBY_ID: return setLobbyID(state, action)
         case actions.DRAW_CARD: 
         case actions.PLAY_CARD: return updatePhase(state, action)
+        case actions.UPDATE_PHASE: return updatePhase(state, action)
         case actions.ADD_CARD: return addCard(state, action)
         case actions.INIT_PLAYERS: return initPlayers(state, action)
         case actions.INIT_PLAYER: return initPlayer(state, action)
         case action.UPDATE_HAND: return updateHand(state, action)
         case action.LAUNCH_GAME: return launchGame(state, action)
         case actions.DEAL_CARD: return dealCards(state, action)
+        case actions.SWAP_CARDS: return updatePlayer(state, action)
 
         default: return state
     }

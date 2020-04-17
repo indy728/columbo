@@ -4,13 +4,16 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import cardImg from '@assets/cardImg'
 import Card from '../../components/Deck/Card/Card'
-import * as actions from '../../../store/actions'
+import PlayerHand from './PlayerHand/PlayerHand'
+import * as actions from '@store/actions'
+import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 4;
     background-color: honeydew;
     align-items: center;
     justify-content: center;
+    position: relative;
 `
 
 const PlayerHandWrapper = styled.View`
@@ -30,26 +33,14 @@ const PlayerCardWrapper = styled.View`
 
 `
 
+const ShowPoints = styled.View`
+    position: absolute;
+    top: 0;
+    left: 0;
+`
+
 class Player extends Component {
     state = {
-    }
-
-    componentDidMount() {
-        // const { drawPile } = this.props
-        // const initialHand = []
-        
-        // for (let i = 0; i < 2; i++){
-        //     const row = []
-        //     for (let j = 0; j< 2; j++) {
-        //         row.unshift(drawPile.shift())
-        //     }
-        //     initialHand.unshift(row)
-        // }
-
-        // this.props.onDealFromDeck(drawPile)
-        // this.props.onDealToPlayer(initialHand, "0")
-
-        console.log('[Player] here again: ')
     }
 
     initPlayer = (id = 'kyle') => {
@@ -57,36 +48,11 @@ class Player extends Component {
     }
 
     render() {
-        const { drawPile, deckBuilt } = this.props
-        let cards = []
-        console.log('[Player] this.props.player: ', this.props.player)
-
-        // if (this.state.id !== '') {
-        //     this.state.hand.forEach(cardRow => {
-        //         cardRow.forEach(card => {
-        //             const { value, suit } = card
-
-        //             cards.unshift(
-        //                 <PlayerCardWrapper>
-        //                     <Card
-        //                         key={value + suit}
-        //                         // onPress={props.pressed}
-        //                         source={cardImg[suit][value]}
-        //                         >
-        //                     </Card>
-        //                 </PlayerCardWrapper>
-        //             )
-        //         })
-        //     })
-        // }
 
         return (
             <Wrapper>
-                <PlayerHandWrapper>
-                    {/* <Text>{this.props.player.username}</Text> */}
-                    <Text>{this.props.lobbyID}</Text>
-                    {cards}
-                </PlayerHandWrapper>
+                <ShowPoints><Text>Total Points: {this.props.player.totalPoints}</Text></ShowPoints>
+                <PlayerHand hand={this.props.player.hand} />
             </Wrapper>
         )
     }
@@ -104,9 +70,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onDealFromDeck: drawPile => dispatch(actions.updateDeck(drawPile)),
-        onAddToHand: (card, id) => dispatch(actions.addCard(card, id)),
-        onDealToPlayer: (hand, id) => dispatch(actions.updateHand(hand, id))
+        onUpdatePhase: phase => dispatch(actions.updatePhase(phase))
     }
 }
 

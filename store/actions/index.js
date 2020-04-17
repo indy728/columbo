@@ -10,5 +10,7 @@ export {
     updateHand,
     dealCards,
     initPlayer,
-    initGame
+    initGame,
+    updatePhase,
+    swapCards
 } from './game'

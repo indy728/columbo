@@ -4,10 +4,12 @@ import styled from 'styled-components/native'
 import Deck from '../components/Deck/Deck'
 import PlayerAction from '../components/Player/PlayerAction/PlayerAction'
 import Player from '../components/Player/Player'
+import PlayerHand from '../components/Player/PlayerHand/PlayerHand'
 import Modal from '../hoc/Modal'
 import { DefaultButton } from "../components/UI";
 import { updateObject } from '../../shared/objectUtility'
 import * as actions from '@store/actions'
+import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 1;
@@ -25,9 +27,9 @@ class CardDemo extends Component {
 
     findFirstEmptyCardSlot = hand => {
         let i = 0
-        let j = 0
 
         while (i < hand.length) {
+            let j = 0
             while (j < 2) {
                 if (!hand[i][j]) {
                     return ([i, j])
@@ -42,46 +44,61 @@ class CardDemo extends Component {
     dealCardsHandler = () => {
         const { drawPile, player } = this.props
         const { hand } = player
-        const card = drawPile.shift()
-        const firstEmptyCardSlot = this.findFirstEmptyCardSlot(hand)
-        
-        if (!firstEmptyCardSlot) {
-            hand.push([card, null])
-        } else {
-            hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card
+
+        for (let i = 0; i < 4; i++) {
+            let firstEmptyCardSlot = this.findFirstEmptyCardSlot(hand)
+            let card = drawPile.shift()
+
+            if (!firstEmptyCardSlot) {
+                hand.push([card, null])
+            } else {
+                hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card
+            }
         }
 
-        // update deck
-        // update player hand
-
-        console.log('[CardDemo] firstEmptyCardSlot: ', firstEmptyCardSlot)
-        console.log('[CardDemo] hand: ', hand)
         const updatedPlayer = updateObject(player, { hand })
-        // console.log('[CardDemo] player, hand: ', player, hand)
-        console.log('[CardDemo] player: ', updatedPlayer)
+
         this.props.onDealCards(drawPile, updatedPlayer)
     }
 
+    swapCardsHandler = (cardLocationArray) => {
+        const { player, discardPile, currentCard } = this.props
+        const { hand } = player
+        const col = cardLocationArray[0]
+        const row = cardLocationArray[1]
+
+        discardPile.unshift(hand[col][row])
+        hand[col][row] = currentCard
+
+        this.props.onSwapCards(discardPile, updateObject(player, { hand }))
+    }
+
     render() {
-        const modal = null
+        let modalContent = null
 
-        // if (this.props.isDealt) {
-        //     modal = (
-        //         <Modal>
+        if (!this.props.isDealt) {
+            modalContent = (
+                <DefaultButton
+                    onPress={this.dealCardsHandler}
+                    >
+                    deal
+                </DefaultButton>
+            )
+        } else if (this.props.phase === storeVariables.PHASE_SWAP) {
+            modalContent = (
+                <PlayerHand 
+                    hand={this.props.player.hand}
+                    pressed={this.swapCardsHandler}
+                    />
+            )
+        }
 
-        //         </Modal>
-        //     )
-        // }
-        console.log('[CardDemo] this.props.isDealt: ', this.props.isDealt)
+        const modalVisible = modalContent !== null
 
         return (
             <Wrapper>
-                <Modal visible={!this.props.isDealt}>
-                    <DefaultButton
-                        onPress={this.dealCardsHandler}
-                        >
-                        deal
-                    </DefaultButton>
+                <Modal visible={modalVisible}>
+                    {modalContent}
                 </Modal>
                 <Deck />
                 <PlayerAction />
@@ -94,14 +111,18 @@ class CardDemo extends Component {
 const mapStateToProps = state => {
     return {
         drawPile: state.deck.drawPile,
+        discardPile: state.deck.discardPile,
+        currentCard: state.deck.currentCard,
         player: state.game.player,
-        isDealt: state.game.isDealt
+        isDealt: state.game.isDealt,
+        phase: state.game.phase,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onDealCards: (drawPile, player) => dispatch(actions.dealCards(drawPile, player))
+        onDealCards: (drawPile, player) => dispatch(actions.dealCards(drawPile, player)),
+        onSwapCards: (discard, player) => dispatch(actions.swapCards(discard, player))
     }
 }
 

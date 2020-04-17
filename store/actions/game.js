@@ -32,11 +32,27 @@ export const initPlayer = username => {
     }
 }
 
+export const updatePhase = phase => {
+    return {
+        type: actions.UPDATE_PHASE,
+        phase
+    }
+}
+
 export const addCard = (card, id) => {
     return {
         type: actions.ADD_CARD,
         card,
         id
+    }
+}
+
+export const swapCards = (deck, player) => {
+    return {
+        type: actions.SWAP_CARDS,
+        pile: storeVariables.DISCARD_PILE,
+        player,
+        deck,
     }
 }
 

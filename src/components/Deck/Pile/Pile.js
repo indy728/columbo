@@ -28,8 +28,7 @@ const Pile = props => {
                 key={value + suit}
                 onPress={props.pressed}
                 source={cardSource}
-                >
-            </Card>
+                />
         )
     })
 

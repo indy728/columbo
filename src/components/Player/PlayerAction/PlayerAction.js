@@ -6,6 +6,7 @@ import * as storeVariables from '@store/storeVariables'
 import styled from 'styled-components'
 import Card from '../../Deck/Card/Card'
 import cardImg from '@assets/cardImg'
+import { DefaultButton } from '@UI'
 
 
 const Wrapper = styled.View`
@@ -21,14 +22,14 @@ const CurrentCardWrapper = styled.View`
     border: 2px dashed black;
 `
 
-const PlayButton = styled.TouchableOpacity`
-    width: 40%;
-    height: 16.6%;
-    background-color: steelblue;
-`
-
 const DeckCounter = styled.Text`
 
+`
+
+const ActionButtonsWrapper = styled.View`
+    width: 100%;
+    flex-flow: row;
+    justify-content: space-around;
 `
 
 class PlayerAction extends Component {
@@ -53,14 +54,22 @@ class PlayerAction extends Component {
                 <DeckCounter>Draw Pile: {drawPile.length}</DeckCounter>
                 <DeckCounter>Discard Pile: {discardPile.length}</DeckCounter>
                 {currentCardRender}
-                <PlayButton
-                    onPress={() => {
-                        return this.props.phase === storeVariables.PHASE_PLAY ?
-                            this.props.onPlay(currentCard) : null
-                    }}
-                    >
-                    <Text>PLAY</Text>
-                </PlayButton>
+                <ActionButtonsWrapper>
+                    <DefaultButton
+                        disabled={this.props.phase !== storeVariables.PHASE_PLAY}
+                        onPress={() => this.props.onPlay(currentCard)}
+                        width={175}
+                        >
+                        PLAY
+                    </DefaultButton>
+                    <DefaultButton
+                        disabled={this.props.phase !== storeVariables.PHASE_PLAY}
+                        onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_SWAP)}
+                        width={175}
+                        >
+                        SWAP
+                    </DefaultButton>
+                </ActionButtonsWrapper>
             </Wrapper>
         )
     }
