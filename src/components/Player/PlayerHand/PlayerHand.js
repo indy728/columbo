@@ -3,6 +3,8 @@ import { View, Text } from 'react-native'
 import Card from '../../Deck/Card/Card'
 import styled from 'styled-components'
 import cardImg from '@assets/cardImg'
+import { matchArrayInArray } from '@shared/utilityFunctions'
+import * as storeVariables from '@store/storeVariables'
 
 const PlayerHandWrapper = styled.View`
     width: 100%;
@@ -12,7 +14,6 @@ const PlayerHandWrapper = styled.View`
     flex-wrap: wrap;
     align-content: space-around;
     justify-content: center;
-
 `
 
 const PlayerCardWrapper = styled.View`
@@ -20,7 +21,6 @@ const PlayerCardWrapper = styled.View`
     margin: 0 10%;
     height: 88px;
     border: 2px dashed black;
-
 `
 
 const HandColumnWrapper = styled.View`
@@ -34,31 +34,69 @@ const HandColumnWrapper = styled.View`
     
 `
 
+const swapPhaseCard = pressed => {
+    return (
+        <Card
+            source={cardImg.back}
+            onPress={pressed}
+            />
+    )
+}
+
+const peekPhaseCard = (pressed, selected, cardCoordinates) => {
+    console.log('[PlayerHand] matchArrayInArray(selected, cardCoordinates): ', matchArrayInArray(selected, cardCoordinates))
+    const isSelected = matchArrayInArray(selected, cardCoordinates) !== -1
+
+    return (
+        <Card
+            selected={isSelected}
+            // source={cardImg.back}
+            source={null}
+            onPress={pressed}
+            />
+    )
+}
+
+
 const playerHand = props => {
-    console.log(props.pressed)
-    const { hand, pressed } = props
-    if (pressed === 'undefined') pressed = null
+    const { hand, pressed, cardAction, selected } = props
     let columns = []
     for (let column in hand) {
         let cards = []
         for (let card in hand[column]) {
             let cardObj = hand[column][card]
             let key = "column" + column + "card" + card
-            let source = cardImg.back
-
+            let cardDisplay = null
+            
             if (cardObj) {
                 const { value, suit } = cardObj
+                
                 key = value + suit
-                source = cardImg[suit][value]
-            } 
+                // source = cardImg[suit][value]
+                switch(cardAction) {
+                    // source = cardImg[suit][value]
+                    case storeVariables.CARD_ACTION_SWAP:
+                        cardDisplay = swapPhaseCard(() => pressed([column, card]))
+                        break
+                    case storeVariables.CARD_ACTION_PEEK:
+                        console.log('[PlayerHand] selected: ', selected)
+
+                        cardDisplay = peekPhaseCard(() => pressed([column, card]), selected, [column, card])
+                        break
+                    default:
+                        cardDisplay = <Card source={cardImg.back} />
+                        break
+                }
+            }
             cards.push(
                 <PlayerCardWrapper
                     key={key}
                     >
-                    <Card 
+                    {cardDisplay}
+                    {/* <Card 
                         source={source}
-                        onPress={() => props.pressed([column, card])}
-                        />
+                        onPress={}
+                        /> */}
                 </PlayerCardWrapper>
             )
         }

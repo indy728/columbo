@@ -7,7 +7,7 @@ import Player from '../components/Player/Player'
 import PlayerHand from '../components/Player/PlayerHand/PlayerHand'
 import Modal from '../hoc/Modal'
 import { DefaultButton } from "../components/UI";
-import { updateObject } from '../../shared/objectUtility'
+import { updateObject, matchArrayInArray } from '@shared/utilityFunctions'
 import * as actions from '@store/actions'
 import * as storeVariables from '@store/storeVariables'
 
@@ -18,7 +18,9 @@ const Wrapper = styled.View`
 class CardDemo extends Component {
 
     state = {
-
+        peek: {
+            selected: [],
+        }
     }
 
     componentDidMount() {
@@ -73,6 +75,22 @@ class CardDemo extends Component {
         this.props.onSwapCards(discardPile, updateObject(player, { hand }))
     }
 
+    peekCardsHandler = (handCoordinates) => {
+        const { peek } = this.state
+        const { selected } = peek
+        const index = matchArrayInArray(selected, handCoordinates)
+
+        if (index === -1) {
+            if (selected.length === 2) return
+
+            selected.unshift(handCoordinates)
+        } else {
+            selected.splice(index, 1)
+        }
+
+        this.setState({ peek: updateObject(peek, { selected }) })
+    }
+
     render() {
         let modalContent = null
 
@@ -84,11 +102,22 @@ class CardDemo extends Component {
                     deal
                 </DefaultButton>
             )
+        } else if (this.props.phase === storeVariables.PHASE_PEEK) {
+            console.log('[CardDemo] this.state.peek.selected: ', this.state.peek.selected)
+            modalContent = (
+                <PlayerHand 
+                    hand={this.props.player.hand}
+                    selected={this.state.peek.selected}
+                    pressed={this.peekCardsHandler}
+                    cardAction={storeVariables.CARD_ACTION_PEEK}
+                    />
+            )
         } else if (this.props.phase === storeVariables.PHASE_SWAP) {
             modalContent = (
                 <PlayerHand 
                     hand={this.props.player.hand}
                     pressed={this.swapCardsHandler}
+                    cardAction={storeVariables.CARD_ACTION_SWAP}
                     />
             )
         }

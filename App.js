@@ -62,7 +62,6 @@ class App extends Component {
     }
 
     render() {
-        // if (this.state.pubnub) console.log('[App] pubnub: ', this.state.pubnub)
         return (
             <Provider store={store}>
                 <ThemeProvider theme={theme}>

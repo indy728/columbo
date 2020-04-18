@@ -48,11 +48,20 @@ class Player extends Component {
     }
 
     render() {
+        let playerHand = null
+        if (this.props.isDealt) {
+            playerHand = (
+                <PlayerHand
+                    hand={this.props.player.hand} 
+                    pressed={null}
+                    />
+            )
+        }
 
         return (
             <Wrapper>
                 <ShowPoints><Text>Total Points: {this.props.player.totalPoints}</Text></ShowPoints>
-                <PlayerHand hand={this.props.player.hand} />
+                {playerHand}
             </Wrapper>
         )
     }

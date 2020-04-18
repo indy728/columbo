@@ -42,7 +42,6 @@ export const qtyStringToFloat = str => {
         splitStr = str.split(' ')
         splitStr[1] = decimals[fractions.indexOf(splitStr[1])]
         str = splitStr.join('.')
-        console.log('[stringUtility] splitStr: ', splitStr)
     } else if (str.match(/\//g)) {
         str = '.' + decimals[fractions.indexOf(str)]
     }

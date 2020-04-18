@@ -10,6 +10,7 @@ const Wrapper = styled.TouchableOpacity`
     position: absolute;
     top: 0;
     left: 0;
+    border: ${({ selected }) => selected ? '4px solid red' : 'none'};
 `
 
 const CardImage = styled.Image`

@@ -1,5 +1,5 @@
 import React from 'react'
-import { updateObject } from '../../../../shared/objectUtility'
+import { updateObject } from '@shared/utilityFunctions'
 import Card from '../Card/Card'
 
 const suits = [

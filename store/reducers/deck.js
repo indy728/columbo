@@ -1,6 +1,6 @@
 import * as actions from '../actions/actionTypes'
 import * as storeVariables from '../storeVariables'
-import { updateObject } from '../../shared/objectUtility'
+import { updateObject } from '@shared/utilityFunctions'
 
 const initialState = {
     drawPile: [],

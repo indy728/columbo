@@ -25,7 +25,6 @@ class HomeScreen extends Component {
 
     onCreateShortID = () => {
         let roomID = shortid.generate();
-        // console.log('[App] roomID: ', roomID)
         this.setState({ currentRoomID : roomID })
     }
 

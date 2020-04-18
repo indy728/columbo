@@ -1,11 +1,11 @@
 import * as actions from '../actions/actionTypes'
 import * as storeVariables from '../storeVariables'
-import { updateObject } from '../../shared/objectUtility'
+import { updateObject } from '@shared/utilityFunctions'
 
 const initialState = {
     lobbyID: '',
     launched: false,
-    phase: storeVariables.PHASE_DRAW,
+    phase: storeVariables.PHASE_PEEK,
     playerCount: 0,
     players: {},
     player: {
