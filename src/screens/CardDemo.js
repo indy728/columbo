@@ -15,10 +15,18 @@ const Wrapper = styled.View`
     flex: 1;
 `
 
+const PeekButton = styled(DefaultButton)`
+    position: absolute;
+    background-color: red;
+    top: 40px;
+`
+
 class CardDemo extends Component {
 
     state = {
         peek: {
+            peeking: false,
+            peeked: false,
             selected: [],
         }
     }
@@ -75,6 +83,18 @@ class CardDemo extends Component {
         this.props.onSwapCards(discardPile, updateObject(player, { hand }))
     }
 
+    changePeekStateHandler = stage => {
+        const { peek } = this.state
+
+        this.setState(prevState => {
+            return {
+                peek: updateObject(peek, {
+                    [stage]: !prevState.peek[stage]
+                })
+            }
+        })
+    }
+
     peekCardsHandler = (handCoordinates) => {
         const { peek } = this.state
         const { selected } = peek
@@ -91,6 +111,41 @@ class CardDemo extends Component {
         this.setState({ peek: updateObject(peek, { selected }) })
     }
 
+    peekPhaseHandler = () => {
+        const { peek } = this.state
+        const cardPressed = this.peekCardsHandler
+        let buttonPressed = () => this.changePeekStateHandler('peeking')
+        let peekButtonText = 'reveal'
+        let action = storeVariables.CARD_ACTION_PEEK_SELECT
+
+        if (peek.peeking) {
+            // cardPressed = null
+            buttonPressed = () => {
+                this.changePeekStateHandler('peeked')
+                this.props.onUpdatePhase(storeVariables.PHASE_DRAW)
+            }
+            peekButtonText = 'ready'
+            action = storeVariables.CARD_ACTION_PEEKING
+        }
+
+        return (
+            <React.Fragment>
+                <PlayerHand 
+                    hand={this.props.player.hand}
+                    selected={peek.selected}
+                    pressed={cardPressed}
+                    cardAction={action}
+                    />
+                <PeekButton
+                    className='peekButton'
+                    onPress={buttonPressed}
+                    disabled={this.state.peek.selected.length !== 2}>
+                    {peekButtonText}
+                </PeekButton>
+            </React.Fragment>
+        )
+    }
+
     render() {
         let modalContent = null
 
@@ -103,15 +158,7 @@ class CardDemo extends Component {
                 </DefaultButton>
             )
         } else if (this.props.phase === storeVariables.PHASE_PEEK) {
-            console.log('[CardDemo] this.state.peek.selected: ', this.state.peek.selected)
-            modalContent = (
-                <PlayerHand 
-                    hand={this.props.player.hand}
-                    selected={this.state.peek.selected}
-                    pressed={this.peekCardsHandler}
-                    cardAction={storeVariables.CARD_ACTION_PEEK}
-                    />
-            )
+            modalContent = this.peekPhaseHandler()
         } else if (this.props.phase === storeVariables.PHASE_SWAP) {
             modalContent = (
                 <PlayerHand 
@@ -151,7 +198,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onDealCards: (drawPile, player) => dispatch(actions.dealCards(drawPile, player)),
-        onSwapCards: (discard, player) => dispatch(actions.swapCards(discard, player))
+        onSwapCards: (discard, player) => dispatch(actions.swapCards(discard, player)),
+        onUpdatePhase: phase => dispatch(actions.updatePhase(phase))
     }
 }
 

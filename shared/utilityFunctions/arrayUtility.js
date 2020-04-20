@@ -27,7 +27,6 @@ export const matchArrayInArray = (bigArray, littleArray) => {
         //     }
         // }
         if (doArraysMatch(bigArray[i], littleArray)) {
-            console.log('[arrayUtility] i: ', i)
             return i
         }
         i++

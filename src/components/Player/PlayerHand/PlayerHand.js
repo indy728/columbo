@@ -43,15 +43,21 @@ const swapPhaseCard = pressed => {
     )
 }
 
-const peekPhaseCard = (pressed, selected, cardCoordinates) => {
-    console.log('[PlayerHand] matchArrayInArray(selected, cardCoordinates): ', matchArrayInArray(selected, cardCoordinates))
-    const isSelected = matchArrayInArray(selected, cardCoordinates) !== -1
+const peekPhaseCard = (pressed, selected, cardCoordinates, imgSource) => {
+    let isSelected = matchArrayInArray(selected, cardCoordinates) !== -1
+    let source = cardImg.back
 
+    if (!pressed) {
+        if (isSelected) {
+            source = imgSource
+        }
+        isSelected = false
+    }
+    
     return (
         <Card
             selected={isSelected}
-            // source={cardImg.back}
-            source={null}
+            source={source}
             onPress={pressed}
             />
     )
@@ -72,16 +78,17 @@ const playerHand = props => {
                 const { value, suit } = cardObj
                 
                 key = value + suit
-                // source = cardImg[suit][value]
+                const source = cardImg[suit][value]
                 switch(cardAction) {
                     // source = cardImg[suit][value]
                     case storeVariables.CARD_ACTION_SWAP:
                         cardDisplay = swapPhaseCard(() => pressed([column, card]))
                         break
-                    case storeVariables.CARD_ACTION_PEEK:
-                        console.log('[PlayerHand] selected: ', selected)
-
+                    case storeVariables.CARD_ACTION_PEEK_SELECT:
                         cardDisplay = peekPhaseCard(() => pressed([column, card]), selected, [column, card])
+                        break
+                    case storeVariables.CARD_ACTION_PEEKING:
+                        cardDisplay = peekPhaseCard(null, selected, [column, card], source)
                         break
                     default:
                         cardDisplay = <Card source={cardImg.back} />

@@ -69,11 +69,8 @@ class Player extends Component {
 
 const mapStateToProps = state => {
     return {
-        drawPile: state.deck.drawPile,
-        deckBuilt: state.deck.deckBuilt,
-        players: state.game.players,
         player: state.game.player,
-        lobbyID: state.game.lobbyID
+        isDealt: state.game.isDealt
     }
 }
 
