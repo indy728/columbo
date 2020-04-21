@@ -2,6 +2,9 @@ export {
     default as DefaultButton
 } from './Buttons/DefaultButton'
 export {
+    default as ActionButton
+} from './Buttons/ActionButton'
+export {
     default as DefaultForm
 } from './Forms/DefaultForm'
 export {

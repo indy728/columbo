@@ -8,7 +8,10 @@ import cardImg from '@assets/cardImg'
 const Wrapper = styled.View`
     width: 93px;
     height: 132px;
-    border: 1px solid black;
+    background-color: ${({ theme }) => theme.palette.emptyCardSlot};
+    /* shadow-color: #000; */
+    shadow-opacity: ${({length}) => (0.8 * (length / 36))};
+    /* shadow-radius: 2px; */
     position: relative;
     transform: rotate(270deg);
 `
@@ -33,7 +36,8 @@ const Pile = props => {
     })
 
     return (
-        <Wrapper>
+        <Wrapper
+            length={props.pile.length}>
             {renderPile}
         </Wrapper>
     )

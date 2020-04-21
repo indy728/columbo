@@ -5,7 +5,7 @@ import styled from 'styled-components'
 const Wrapper = styled.View`
     height: 100%;
     width: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     position: absolute;
     top: 0;
     left: 0;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View } from 'react-native'
+import { View, Text } from 'react-native'
 import { initDeck, shuffleCards } from './util/cardUtil'
 import styled from 'styled-components'
 import * as actions from '../../../store/actions'
@@ -9,10 +9,19 @@ import Pile from './Pile/Pile'
 
 const Wrapper = styled.View`
     flex: 1.5;
-    background-color: salmon;
     flex-flow: row;
     align-items: center;
     justify-content: space-around;
+`
+
+
+const DeckCounters = styled.View`
+    width: 100%;
+    flex-flow: row;
+    justify-content: space-between;
+    position: absolute;
+    top: 0;
+    left: 0;
 `
 
 class Deck extends Component {
@@ -30,6 +39,10 @@ class Deck extends Component {
 
         return (
             <Wrapper>
+                <DeckCounters>
+                    <Text>Draw Pile: {drawPile.length}</Text>
+                    <Text>Discard Pile: {discardPile.length}</Text>
+                </DeckCounters>
                 <Pile
                     face={false}
                     pile={drawPile}

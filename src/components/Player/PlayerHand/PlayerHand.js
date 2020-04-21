@@ -7,9 +7,8 @@ import { matchArrayInArray } from '@shared/utilityFunctions'
 import * as storeVariables from '@store/storeVariables'
 
 const PlayerHandWrapper = styled.View`
-    width: 100%;
-    height: 90%;
-    background-color: grey;
+    /* height: 90%; */
+    border: 1px dashed grey;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: space-around;

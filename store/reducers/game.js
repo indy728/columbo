@@ -6,6 +6,7 @@ const initialState = {
     lobbyID: '',
     launched: false,
     phase: storeVariables.PHASE_PEEK,
+    slappable: false,
     playerCount: 0,
     players: {},
     player: {
@@ -47,11 +48,15 @@ const dealCards = (state, action) => {
 
 const updatePlayer = (state, action) => {
     const { player } = action
+    let updatedState = { ...state }
     const updatedPlayer = updateObject(player, {
         totalPoints: updateTotalPoints(player.hand)
     })
 
-    return updateObject(state, { phase: storeVariables.PHASE_DRAW, player: updatedPlayer })
+    action.phase = storeVariables.PHASE_DRAW
+    updatedState = updatePhase(state, action)
+    updatedState = updateObject(updatedState, { player: updatedPlayer })
+    return updateObject(state, updatedState)
 }
 
 const launchGame = state => {
@@ -59,7 +64,13 @@ const launchGame = state => {
 }
 
 const updatePhase = (state, action) => {
-    return updateObject(state, { phase: action.phase })
+    let updatedState = { ...state }
+
+    updatedState = updateObject(updatedState, {
+        slappable: action.phase === storeVariables.PHASE_DRAW,
+        phase: action.phase 
+    })
+    return updateObject(state, updatedState)
 }
 
 const initPlayers = (state, action) => {
@@ -86,8 +97,6 @@ const updateHand = (state, action) => {
         })
     })
 }
-
-// const updatePlayer = (state, action) => updateObject(state, action.player)
 
 const addCard = (state, action) => {
     const { players } = state

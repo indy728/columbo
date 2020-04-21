@@ -10,27 +10,9 @@ import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 4;
-    background-color: honeydew;
     align-items: center;
     justify-content: center;
     position: relative;
-`
-
-const PlayerHandWrapper = styled.View`
-    width: 66%;
-    height: 90%;
-    background-color: grey;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: space-around;
-    justify-content: center;
-`
-
-const PlayerCardWrapper = styled.View`
-    width: 62px;
-    height: 88px;
-    border: 2px dashed black;
-
 `
 
 const ShowPoints = styled.View`
@@ -60,7 +42,7 @@ class Player extends Component {
 
         return (
             <Wrapper>
-                <ShowPoints><Text>Total Points: {this.props.player.totalPoints}</Text></ShowPoints>
+                {/* <ShowPoints><Text>Total Points: {this.props.player.totalPoints}</Text></ShowPoints> */}
                 {playerHand}
             </Wrapper>
         )

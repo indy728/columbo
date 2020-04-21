@@ -6,12 +6,11 @@ import * as storeVariables from '@store/storeVariables'
 import styled from 'styled-components'
 import Card from '../../Deck/Card/Card'
 import cardImg from '@assets/cardImg'
-import { DefaultButton } from '@UI'
+import { DefaultButton, ActionButton } from '@UI'
 
 
 const Wrapper = styled.View`
     flex: 3;
-    background-color: orangered;
     align-items: center;
     justify-content: space-around;
 `
@@ -19,12 +18,10 @@ const Wrapper = styled.View`
 const CurrentCardWrapper = styled.View`
     width: 124px;
     height: 176px;
-    border: 2px dashed black;
+    border: ${({ theme }) => '1px dashed ' + theme.palette.grayscale[4]};
+    background-color: ${({ theme }) => theme.palette.grayscale[4]};
 `
 
-const DeckCounter = styled.Text`
-
-`
 
 const ActionButtonsWrapper = styled.View`
     width: 100%;
@@ -32,11 +29,21 @@ const ActionButtonsWrapper = styled.View`
     justify-content: space-around;
 `
 
+
 class PlayerAction extends Component {
     
     render() {
         const { currentCard, drawPile, discardPile } = this.props
         let currentCardRender = <CurrentCardWrapper />
+        let actionButton = (
+            <ActionButton
+                disabled={this.props.phase !== storeVariables.PHASE_PLAY}
+                onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_SWAP)}
+                width={175}
+                >
+                SWAP
+            </ActionButton>
+        )
         
         if (currentCard) {
             const { value, suit } = currentCard
@@ -51,8 +58,6 @@ class PlayerAction extends Component {
 
         return (
             <Wrapper>
-                <DeckCounter>Draw Pile: {drawPile.length}</DeckCounter>
-                <DeckCounter>Discard Pile: {discardPile.length}</DeckCounter>
                 {currentCardRender}
                 <ActionButtonsWrapper>
                     <DefaultButton
@@ -62,13 +67,7 @@ class PlayerAction extends Component {
                         >
                         PLAY
                     </DefaultButton>
-                    <DefaultButton
-                        disabled={this.props.phase !== storeVariables.PHASE_PLAY}
-                        onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_SWAP)}
-                        width={175}
-                        >
-                        SWAP
-                    </DefaultButton>
+                    {actionButton}
                 </ActionButtonsWrapper>
             </Wrapper>
         )

@@ -13,12 +13,7 @@ import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 1;
-`
-
-const PeekButton = styled(DefaultButton)`
-    position: absolute;
-    background-color: red;
-    top: 40px;
+    background-color: ${({ theme }) => theme.palette.grayscale[5]};
 `
 
 class CardDemo extends Component {
@@ -102,7 +97,6 @@ class CardDemo extends Component {
 
         if (index === -1) {
             if (selected.length === 2) return
-
             selected.unshift(handCoordinates)
         } else {
             selected.splice(index, 1)
@@ -119,7 +113,6 @@ class CardDemo extends Component {
         let action = storeVariables.CARD_ACTION_PEEK_SELECT
 
         if (peek.peeking) {
-            // cardPressed = null
             buttonPressed = () => {
                 this.changePeekStateHandler('peeked')
                 this.props.onUpdatePhase(storeVariables.PHASE_DRAW)
@@ -136,12 +129,11 @@ class CardDemo extends Component {
                     pressed={cardPressed}
                     cardAction={action}
                     />
-                <PeekButton
-                    className='peekButton'
+                <DefaultButton
                     onPress={buttonPressed}
                     disabled={this.state.peek.selected.length !== 2}>
                     {peekButtonText}
-                </PeekButton>
+                </DefaultButton>
             </React.Fragment>
         )
     }
@@ -161,11 +153,16 @@ class CardDemo extends Component {
             modalContent = this.peekPhaseHandler()
         } else if (this.props.phase === storeVariables.PHASE_SWAP) {
             modalContent = (
-                <PlayerHand 
-                    hand={this.props.player.hand}
-                    pressed={this.swapCardsHandler}
-                    cardAction={storeVariables.CARD_ACTION_SWAP}
-                    />
+                <React.Fragment>
+                    <PlayerHand 
+                        hand={this.props.player.hand}
+                        pressed={this.swapCardsHandler}
+                        cardAction={storeVariables.CARD_ACTION_SWAP}
+                        />
+                    <DefaultButton
+                        onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_PLAY)}
+                        >Cancel</DefaultButton>
+                </React.Fragment>
             )
         }
 
