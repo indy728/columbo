@@ -6,31 +6,38 @@ import cardImg from '@assets/cardImg'
 import { matchArrayInArray } from '@shared/utilityFunctions'
 import * as storeVariables from '@store/storeVariables'
 
-const PlayerHandWrapper = styled.View`
+const Wrapper = styled.View`
     /* height: 90%; */
-    border: 1px dashed grey;
+    /* border: 1px dashed grey; */
     flex-direction: row;
     flex-wrap: wrap;
     align-content: space-around;
     justify-content: center;
 `
 
+const cardDimensionByRowCount = (rows, length) => {
+    let dimension = length
+
+    if (rows > 3) dimension *= Math.pow(.85, (rows - 3))
+    return dimension + "px"
+}
+
+const cardMarginsByRowCount = (rows, index, length) => {
+    let margin = length
+
+    if (index == 0) return 0
+    if (rows > 3) margin *= Math.pow(.85, (rows - 3))
+    return margin + "px"
+}
+
 const PlayerCardWrapper = styled.View`
-    width: 62px;
-    margin: 0 10%;
-    height: 88px;
-    border: 2px dashed black;
+    width: ${({ rows }) => cardDimensionByRowCount(rows, storeVariables.CARD_PIXEL_WIDTH * storeVariables.CARD_SIZE_HAND_MULTIPLIER)};
+    height: ${({ rows }) => cardDimensionByRowCount(rows, storeVariables.CARD_PIXEL_HEIGHT * storeVariables.CARD_SIZE_HAND_MULTIPLIER)};
+    margin-top: ${({ rows, index }) => cardMarginsByRowCount(rows, index, 35)};
 `
 
 const HandColumnWrapper = styled.View`
-    width: 80px;
-    height: 300px;
-    border: 2px dashed red;
-    margin-left: ${props => props.index > 0 ? '40px' : 0};
-    display: flex;
-    flex-flow: column;
-    justify-content: space-around;
-    
+    margin-left: ${({ rows, index }) => cardMarginsByRowCount(rows, index, 20)};
 `
 
 const swapPhaseCard = pressed => {
@@ -97,12 +104,10 @@ const playerHand = props => {
             cards.push(
                 <PlayerCardWrapper
                     key={key}
+                    index={card}
+                    rows={hand.length}
                     >
                     {cardDisplay}
-                    {/* <Card 
-                        source={source}
-                        onPress={}
-                        /> */}
                 </PlayerCardWrapper>
             )
         }
@@ -110,15 +115,16 @@ const playerHand = props => {
             <HandColumnWrapper
                 key={"column" + column}
                 index={column}
+                rows={hand.length}
                 >
                 {cards}
             </HandColumnWrapper>)
     }
 
     return (
-        <PlayerHandWrapper>
+        <Wrapper>
             {columns}
-        </PlayerHandWrapper>
+        </Wrapper>
     )
 }
 

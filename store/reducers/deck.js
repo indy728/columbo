@@ -41,7 +41,6 @@ const swapCards = (state, action) => {
 }
 
 const slapCard = (state, action) => {
-    console.log('[deck] action: ', action)
     return updateObject(state, updateDeck(state, action))
 }
 

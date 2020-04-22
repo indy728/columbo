@@ -81,6 +81,24 @@ class CardDemo extends Component {
         this.props.onSwapCards(discardPile, updateObject(player, { hand }))
     }
 
+    columnIsEmpty = column => {
+        return column[0] === null && column[1] === null
+    }
+
+    cleanUpHand = (hand, isFront) => {
+        if (isFront) {
+            let column = hand[0]
+            while (hand.length > 1 && this.columnIsEmpty(column)) {
+                hand.shift()
+                column = hand[0]
+            }
+        } else {
+            while (hand.length > 1 && this.columnIsEmpty(hand[hand.length - 1])) {
+                hand.pop()
+            }
+        }
+    }
+
     slapCardHandler = (cardLocationArray) => {
         const { player, discardPile, drawPile } = this.props
         const { hand } = player
@@ -88,10 +106,11 @@ class CardDemo extends Component {
         const row = cardLocationArray[1]
         const topCard = discardPile[0]
 
-
         if (hand[col][row] && hand[col][row].value === topCard.value) {
             discardPile.unshift(hand[col][row])
             hand[col][row] = null
+            if (col == 0) this.cleanUpHand(hand, true)
+            if (col == hand.length - 1) this.cleanUpHand(hand, false)
             this.props.onSlapCards(discardPile, updateObject(player, { hand }))
         } else {
             for (let i = 0; i < 2; i++) {
@@ -104,7 +123,7 @@ class CardDemo extends Component {
                     hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card
                 }
             }
-    
+            
             const updatedPlayer = updateObject(player, { hand })
     
             this.props.onSwapCards(drawPile, updatedPlayer)
