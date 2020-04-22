@@ -56,6 +56,16 @@ export const swapCards = (deck, player) => {
     }
 }
 
+export const slapCard = (deck, player) => {
+    return {
+        type: actions.SLAP_CARDS,
+        pile: storeVariables.DISCARD_PILE,
+        player,
+        deck,
+        slappable: false
+    }
+}
+
 export const dealCards = (deck, player) => {
     return {
         type: actions.DEAL_CARD,

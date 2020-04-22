@@ -1,9 +1,6 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import React from 'react'
 import { View, Text } from 'react-native'
-import { initDeck, shuffleCards } from './util/cardUtil'
 import styled from 'styled-components'
-import * as actions from '../../../store/actions'
 import * as storeVariables from '@store/storeVariables'
 import Pile from './Pile/Pile'
 
@@ -14,7 +11,6 @@ const Wrapper = styled.View`
     justify-content: space-around;
 `
 
-
 const DeckCounters = styled.View`
     width: 100%;
     flex-flow: row;
@@ -24,56 +20,26 @@ const DeckCounters = styled.View`
     left: 0;
 `
 
-class Deck extends Component {
+const deck = props => {
 
-    componentDidMount() {
-    }
-
-    pileClickedHandler = pile => {
-        return this.props.phase === storeVariables.PHASE_DRAW ?
-            this.props.onDrawCard(pile) : null
-    }
-    
-    render() {
-        const { drawPile, discardPile } = this.props
-
-        return (
-            <Wrapper>
-                <DeckCounters>
-                    <Text>Draw Pile: {drawPile.length}</Text>
-                    <Text>Discard Pile: {discardPile.length}</Text>
-                </DeckCounters>
-                <Pile
-                    face={false}
-                    pile={drawPile}
-                    pressed={() => this.pileClickedHandler(storeVariables.DRAW_PILE)}
-                    />
-                <Pile
-                    face={true}
-                    pile={discardPile}
-                    pressed={() => this.pileClickedHandler(storeVariables.DISCARD_PILE)}
-                    />
-            </Wrapper>
-        )
-    }
+    return (
+        <Wrapper>
+            <DeckCounters>
+                <Text>Draw Pile: {props.drawPile.length}</Text>
+                <Text>Discard Pile: {props.discardPile.length}</Text>
+            </DeckCounters>
+            <Pile
+                face={false}
+                pile={props.drawPile}
+                pressed={() => props.pileClickedHandler(storeVariables.DRAW_PILE)}
+                />
+            <Pile
+                face={true}
+                pile={props.discardPile}
+                pressed={() => props.pileClickedHandler(storeVariables.DISCARD_PILE)}
+                />
+        </Wrapper>
+    )
 }
 
-
-const mapStateToProps = state => {
-    return {
-        drawPile: state.deck.drawPile,
-        discardPile: state.deck.discardPile,
-        deckBuilt: state.deck.deckBuilt,
-        phase: state.game.phase
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onInitDeck: deck => dispatch(actions.initDeck(deck)),
-        onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
-        onDrawCard: card => dispatch(actions.drawCard(card)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Deck)
+export default deck

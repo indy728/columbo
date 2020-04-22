@@ -12,5 +12,6 @@ export {
     initPlayer,
     initGame,
     updatePhase,
-    swapCards
+    swapCards,
+    slapCard
 } from './game'

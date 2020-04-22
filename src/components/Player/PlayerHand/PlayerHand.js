@@ -62,7 +62,6 @@ const peekPhaseCard = (pressed, selected, cardCoordinates, imgSource) => {
     )
 }
 
-
 const playerHand = props => {
     const { hand, pressed, cardAction, selected } = props
     let columns = []
@@ -81,6 +80,7 @@ const playerHand = props => {
                 switch(cardAction) {
                     // source = cardImg[suit][value]
                     case storeVariables.CARD_ACTION_SWAP:
+                    case storeVariables.CARD_ACTION_SLAP:
                         cardDisplay = swapPhaseCard(() => pressed([column, card]))
                         break
                     case storeVariables.CARD_ACTION_PEEK_SELECT:

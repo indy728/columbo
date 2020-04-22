@@ -15,11 +15,11 @@ const Wrapper = styled.View`
     position: relative;
 `
 
-const ShowPoints = styled.View`
-    position: absolute;
-    top: 0;
-    left: 0;
-`
+// const ShowPoints = styled.View`
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+// `
 
 class Player extends Component {
     state = {

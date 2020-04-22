@@ -6,7 +6,7 @@ import PlayerAction from '../components/Player/PlayerAction/PlayerAction'
 import Player from '../components/Player/Player'
 import PlayerHand from '../components/Player/PlayerHand/PlayerHand'
 import Modal from '../hoc/Modal'
-import { DefaultButton } from "../components/UI";
+import { DefaultButton, ActionButton } from "../components/UI";
 import { updateObject, matchArrayInArray } from '@shared/utilityFunctions'
 import * as actions from '@store/actions'
 import * as storeVariables from '@store/storeVariables'
@@ -23,6 +23,9 @@ class CardDemo extends Component {
             peeking: false,
             peeked: false,
             selected: [],
+        },
+        slap: {
+            slapping: false
         }
     }
 
@@ -78,6 +81,37 @@ class CardDemo extends Component {
         this.props.onSwapCards(discardPile, updateObject(player, { hand }))
     }
 
+    slapCardHandler = (cardLocationArray) => {
+        const { player, discardPile, drawPile } = this.props
+        const { hand } = player
+        const col = cardLocationArray[0]
+        const row = cardLocationArray[1]
+        const topCard = discardPile[0]
+
+
+        if (hand[col][row] && hand[col][row].value === topCard.value) {
+            discardPile.unshift(hand[col][row])
+            hand[col][row] = null
+            this.props.onSlapCards(discardPile, updateObject(player, { hand }))
+        } else {
+            for (let i = 0; i < 2; i++) {
+                let firstEmptyCardSlot = this.findFirstEmptyCardSlot(hand)
+                let card = drawPile.shift()
+    
+                if (!firstEmptyCardSlot) {
+                    hand.push([card, null])
+                } else {
+                    hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card
+                }
+            }
+    
+            const updatedPlayer = updateObject(player, { hand })
+    
+            this.props.onSwapCards(drawPile, updatedPlayer)
+        }
+        this.changeSlapStageHandler()
+    }
+
     changePeekStateHandler = stage => {
         const { peek } = this.state
 
@@ -85,6 +119,18 @@ class CardDemo extends Component {
             return {
                 peek: updateObject(peek, {
                     [stage]: !prevState.peek[stage]
+                })
+            }
+        })
+    }
+
+    changeSlapStageHandler = () => {
+        const { slap } = this.state
+
+        this.setState(prevState => {
+            return {
+                slap: updateObject(slap, {
+                    slapping: !prevState.slap.slapping
                 })
             }
         })
@@ -138,8 +184,14 @@ class CardDemo extends Component {
         )
     }
 
+    pileClickedHandler = pile => {
+        return this.props.phase === storeVariables.PHASE_DRAW ?
+            this.props.onDrawCard(pile) : null
+    }
+
     render() {
         let modalContent = null
+        const { discardPile, drawPile } = this.props
 
         if (!this.props.isDealt) {
             modalContent = (
@@ -159,9 +211,26 @@ class CardDemo extends Component {
                         pressed={this.swapCardsHandler}
                         cardAction={storeVariables.CARD_ACTION_SWAP}
                         />
-                    <DefaultButton
+                    <ActionButton
                         onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_PLAY)}
-                        >Cancel</DefaultButton>
+                        >
+                        Cancel
+                    </ActionButton>
+                </React.Fragment>
+            )
+        } else if (this.state.slap.slapping) {
+            modalContent = (
+                <React.Fragment>
+                    <PlayerHand 
+                        hand={this.props.player.hand}
+                        pressed={this.slapCardHandler}
+                        cardAction={storeVariables.CARD_ACTION_SLAP}
+                        />
+                    <ActionButton
+                        onPress={this.changeSlapStageHandler}
+                        >
+                        Cancel
+                    </ActionButton>
                 </React.Fragment>
             )
         }
@@ -173,8 +242,15 @@ class CardDemo extends Component {
                 <Modal visible={modalVisible}>
                     {modalContent}
                 </Modal>
-                <Deck />
-                <PlayerAction />
+                <Deck
+                    discardPile={discardPile}
+                    drawPile={drawPile}
+                    pileClickedHandler={this.pileClickedHandler}
+                    slapping={this.state.slapping}
+                    />
+                <PlayerAction
+                    slapHandler={this.changeSlapStageHandler}
+                    />
                 <Player />
             </Wrapper>
         )
@@ -194,8 +270,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onDrawCard: card => dispatch(actions.drawCard(card)),
         onDealCards: (drawPile, player) => dispatch(actions.dealCards(drawPile, player)),
         onSwapCards: (discard, player) => dispatch(actions.swapCards(discard, player)),
+        onSlapCards: (discard, player) => dispatch(actions.slapCard(discard, player)),
         onUpdatePhase: phase => dispatch(actions.updatePhase(phase))
     }
 }

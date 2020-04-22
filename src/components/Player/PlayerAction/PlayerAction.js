@@ -33,17 +33,26 @@ const ActionButtonsWrapper = styled.View`
 class PlayerAction extends Component {
     
     render() {
-        const { currentCard, drawPile, discardPile } = this.props
+        const { currentCard, slappable } = this.props
         let currentCardRender = <CurrentCardWrapper />
         let actionButton = (
             <ActionButton
                 disabled={this.props.phase !== storeVariables.PHASE_PLAY}
                 onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_SWAP)}
-                width={175}
                 >
                 SWAP
             </ActionButton>
         )
+
+        if (slappable) {
+            actionButton = (
+                <ActionButton
+                    onPress={() => this.props.slapHandler()}
+                    >
+                    SLAP
+                </ActionButton>
+            )
+        }
         
         if (currentCard) {
             const { value, suit } = currentCard
@@ -78,8 +87,7 @@ const mapStateToProps = state => {
     return {
         phase: state.game.phase,
         currentCard: state.deck.currentCard,
-        drawPile: state.deck.drawPile,
-        discardPile: state.deck.discardPile
+        slappable: state.game.slappable
     }
 }
 

@@ -59,15 +59,26 @@ const updatePlayer = (state, action) => {
     return updateObject(state, updatedState)
 }
 
+const slapCard = (state, action) => {
+    let updatedState = updatePlayer(state, action)
+
+    updatedState = updateSlappable(updatedState, action)
+    return updateObject(state, updatedState)
+}
+
 const launchGame = state => {
     return updateObject(state, { launched: true })
+}
+
+const updateSlappable = (state, action) => {
+    return updateObject(state, { slappable: action.slappable })
 }
 
 const updatePhase = (state, action) => {
     let updatedState = { ...state }
 
     updatedState = updateObject(updatedState, {
-        slappable: action.phase === storeVariables.PHASE_DRAW,
+        slappable: action.phase === storeVariables.PHASE_DRAW && updatedState.phase !== storeVariables.PHASE_PEEK,
         phase: action.phase 
     })
     return updateObject(state, updatedState)
@@ -143,6 +154,7 @@ const gameReducer = (state = initialState, action) => {
         case action.LAUNCH_GAME: return launchGame(state, action)
         case actions.DEAL_CARD: return dealCards(state, action)
         case actions.SWAP_CARDS: return updatePlayer(state, action)
+        case actions.SLAP_CARDS: return slapCard(state, action)
 
         default: return state
     }
