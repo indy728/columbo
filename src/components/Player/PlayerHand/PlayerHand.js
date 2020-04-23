@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text } from 'react-native'
-import Card from '../../Deck/Card/Card'
+import Card from '../../Cards/Card/Card'
 import styled from 'styled-components'
 import cardImg from '@assets/cardImg'
 import { matchArrayInArray } from '@shared/utilityFunctions'
@@ -34,6 +34,8 @@ const PlayerCardWrapper = styled.View`
     width: ${({ rows }) => cardDimensionByRowCount(rows, storeVariables.CARD_PIXEL_WIDTH * storeVariables.CARD_SIZE_HAND_MULTIPLIER)};
     height: ${({ rows }) => cardDimensionByRowCount(rows, storeVariables.CARD_PIXEL_HEIGHT * storeVariables.CARD_SIZE_HAND_MULTIPLIER)};
     margin-top: ${({ rows, index }) => cardMarginsByRowCount(rows, index, 35)};
+    background-color: ${({ theme }) => theme.palette.grayscale[4]};
+    shadow-opacity: ${({ children }) => children ? storeVariables.SINGLE_CARD_SHADOW_OPACITY : 0};
 `
 
 const HandColumnWrapper = styled.View`

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import styled from 'styled-components'
 import Pile from './Pile/Pile'
 import * as storeVariables from '@store/storeVariables'
@@ -11,23 +11,9 @@ const Wrapper = styled.View`
     justify-content: space-around;
 `
 
-const DeckCounters = styled.View`
-    width: 100%;
-    flex-flow: row;
-    justify-content: space-between;
-    position: absolute;
-    top: 0;
-    left: 0;
-`
-
 const deck = props => {
-
     return (
         <Wrapper>
-            <DeckCounters>
-                <Text>Draw Pile: {props.drawPile.length}</Text>
-                <Text>Discard Pile: {props.discardPile.length}</Text>
-            </DeckCounters>
             <Pile
                 face={false}
                 pile={props.drawPile}

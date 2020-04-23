@@ -1,7 +1,7 @@
 import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components'
-import Card from '../Card/Card'
+import Card from '../../Cards/Card'
 import cardImg from '@assets/cardImg'
 import * as storeVariables from '@store/storeVariables'
 
