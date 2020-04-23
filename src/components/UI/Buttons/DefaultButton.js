@@ -13,14 +13,13 @@ const ButtonWrapper = styled.TouchableOpacity`
             props.theme.palette.button.default.disabled
         )}
     };
-    display: ${props => props.hidden ? "none" : "flex"};
+    display: ${({ hidden }) => hidden ? "none" : "flex"};
     align-items: center;
     justify-content: center;
 `
 
 const TextWrapper = styled.Text`
     font-size: 20px;
-    /* font-weight: 500; */
     text-transform: uppercase;
     color: ${props => {
         return ( props.disabled ?

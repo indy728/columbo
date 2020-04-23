@@ -8,6 +8,7 @@ export const UPDATE_PHASE = "UPDATE_PHASE"
 export const DRAW_CARD = "DRAW_CARD"
 export const PLAY_CARD = "PLAY_CARD"
 export const UPDATE_DECK = "UPDATE_DECK"
+export const REBUILD_DECK = "REBUILD_DECK"
 
 export const INIT_PLAYERS = "INIT_PLAYERS"
 export const INIT_PLAYER = "INIT_PLAYER"

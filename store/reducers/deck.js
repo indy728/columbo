@@ -59,6 +59,13 @@ const updateDeck = (state, action) => {
     })
 }
 
+const rebuildDrawPileFromDiscardPile = (state, action) => {
+    return updateObject(state, {
+        drawPile: action.drawPile,
+        discardPile: initialState.discardPile
+    })
+}
+
 const playCard = (state, action) => {
     const { discardPile } = state
     
@@ -78,6 +85,7 @@ const deckReducer = (state = initialState, action) => {
         case actions.DEAL_CARD: return updateDeck(state, action)
         case actions.SWAP_CARDS: return swapCards(state, action)
         case actions.SLAP_CARDS: return slapCard(state, action)
+        case actions.REBUILD_DECK: return rebuildDrawPileFromDiscardPile(state, action)
         default: return state
     }
 }

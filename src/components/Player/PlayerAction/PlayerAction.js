@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
-import * as actions from '@store/actions'
-import * as storeVariables from '@store/storeVariables'
 import styled from 'styled-components'
 import Card from '../../Deck/Card/Card'
 import cardImg from '@assets/cardImg'
 import { DefaultButton, ActionButton } from '@UI'
+import * as actions from '@store/actions'
+import * as storeVariables from '@store/storeVariables'
 
 
 const Wrapper = styled.View`
@@ -16,10 +16,11 @@ const Wrapper = styled.View`
 `
 
 const CurrentCardWrapper = styled.View`
-    width: 124px;
-    height: 176px;
+    width: ${() => (2 * storeVariables.CARD_PIXEL_WIDTH) + "px"};
+    height: ${() => (2 * storeVariables.CARD_PIXEL_HEIGHT) + "px"};
     border: ${({ theme }) => '1px dashed ' + theme.palette.grayscale[4]};
     background-color: ${({ theme }) => theme.palette.grayscale[4]};
+    shadow-opacity: ${({ children }) => children ? storeVariables.SINGLE_CARD_SHADOW_OPACITY : 0};
 `
 
 
@@ -57,7 +58,8 @@ class PlayerAction extends Component {
         if (currentCard) {
             const { value, suit } = currentCard
             currentCardRender = (
-                <CurrentCardWrapper>
+                <CurrentCardWrapper
+                    >
                     <Card 
                         source={cardImg[suit][value]}
                     />

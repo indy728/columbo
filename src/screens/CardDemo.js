@@ -212,6 +212,8 @@ class CardDemo extends Component {
         let modalContent = null
         const { discardPile, drawPile } = this.props
 
+        if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
+
         if (!this.props.isDealt) {
             modalContent = (
                 <DefaultButton
@@ -293,7 +295,8 @@ const mapDispatchToProps = dispatch => {
         onDealCards: (drawPile, player) => dispatch(actions.dealCards(drawPile, player)),
         onSwapCards: (discard, player) => dispatch(actions.swapCards(discard, player)),
         onSlapCards: (discard, player) => dispatch(actions.slapCard(discard, player)),
-        onUpdatePhase: phase => dispatch(actions.updatePhase(phase))
+        onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
+        onEmptyDrawPile: discardPile => dispatch(actions.rebuildDrawPileFromDiscardPile(discardPile))
     }
 }
 

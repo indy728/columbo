@@ -46,6 +46,13 @@ export const updateDeck = drawPile => {
     }
 }
 
+export const rebuildDrawPileFromDiscardPile = discardPile => {
+    return {
+        type: actions.REBUILD_DECK,
+        drawPile: shuffleCards(discardPile)
+    }
+}
+
 const suits = [
     'spades',
     'hearts',

@@ -3,6 +3,7 @@ export {
     drawCard,
     playCard,
     updateDeck,
+    rebuildDrawPileFromDiscardPile
 } from './deck'
 export {
     initPlayers,

@@ -1,8 +1,8 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 import styled from 'styled-components'
-import * as storeVariables from '@store/storeVariables'
 import Pile from './Pile/Pile'
+import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 1.5;

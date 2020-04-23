@@ -18,7 +18,7 @@ const Wrapper = styled.View`
 const cardDimensionByRowCount = (rows, length) => {
     let dimension = length
 
-    if (rows > 3) dimension *= Math.pow(.85, (rows - 3))
+    if (rows > 3) dimension *= Math.pow(.87, (rows - 3))
     return dimension + "px"
 }
 
@@ -26,7 +26,7 @@ const cardMarginsByRowCount = (rows, index, length) => {
     let margin = length
 
     if (index == 0) return 0
-    if (rows > 3) margin *= Math.pow(.85, (rows - 3))
+    if (rows > 3) margin *= Math.pow(.87, (rows - 3))
     return margin + "px"
 }
 

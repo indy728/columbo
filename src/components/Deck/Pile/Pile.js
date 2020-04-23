@@ -3,15 +3,14 @@ import { View } from 'react-native'
 import styled from 'styled-components'
 import Card from '../Card/Card'
 import cardImg from '@assets/cardImg'
+import * as storeVariables from '@store/storeVariables'
 
 
 const Wrapper = styled.View`
-    width: 93px;
-    height: 132px;
+    width: ${() => (1.5 * storeVariables.CARD_PIXEL_WIDTH) + "px"};
+    height: ${() => (1.5 * storeVariables.CARD_PIXEL_HEIGHT) + "px"};
     background-color: ${({ theme }) => theme.palette.emptyCardSlot};
-    /* shadow-color: #000; */
     shadow-opacity: ${({length}) => (0.8 * (length / 36))};
-    /* shadow-radius: 2px; */
     position: relative;
     transform: rotate(270deg);
 `
