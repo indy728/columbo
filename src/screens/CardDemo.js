@@ -16,6 +16,20 @@ const Wrapper = styled.View`
     background-color: ${({ theme }) => theme.palette.grayscale[5]};
 `
 
+const FinalScore = styled.View`
+    width: 80%;
+    padding: 30px 0;
+    margin-bottom: 50px;
+    background-color: ${({ theme }) => theme.palette.grayscale[1]};
+    align-items: center;
+`
+
+const ScoreText = styled.Text`
+    font-size: 20px;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.palette.white[0]};
+`
+
 class CardDemo extends Component {
 
     state = {
@@ -26,11 +40,11 @@ class CardDemo extends Component {
         },
         slap: {
             slapping: false
+        },
+        tap: {
+            tapping: false,
+            tapped: false
         }
-    }
-
-    componentDidMount() {
-
     }
 
     findFirstEmptyCardSlot = hand => {
@@ -155,6 +169,26 @@ class CardDemo extends Component {
         })
     }
 
+    tappingHandler = () => {
+        const { tap } = this.state
+
+        this.setState(prevState => {
+            return {
+                tap: updateObject(tap, {
+                    tapping: !prevState.tap.tapping
+                })
+            }
+        })
+    }
+
+    tappedHandler = () => {
+        const { tap } = this.state
+
+        this.setState({ tap: updateObject(tap, {
+            tapped: true
+        })})
+    }
+
     peekCardsHandler = (handCoordinates) => {
         const { peek } = this.state
         const { selected } = peek
@@ -208,9 +242,12 @@ class CardDemo extends Component {
             this.props.onDrawCard(pile) : null
     }
 
+
     render() {
         let modalContent = null
-        const { discardPile, drawPile } = this.props
+        const { discardPile, drawPile, player } = this.props
+
+        console.log('[CardDemo] this.state.tap: ', this.state.tap)
 
         if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
 
@@ -254,7 +291,36 @@ class CardDemo extends Component {
                     </ActionButton>
                 </React.Fragment>
             )
-        }
+        } else if (this.state.tap.tapped) {
+            modalContent = (
+                <React.Fragment>
+                    <FinalScore>
+                        <ScoreText>
+                            final score: {player.totalPoints}
+                        </ScoreText>
+                    </FinalScore>
+                    <PlayerHand 
+                        hand={this.props.player.hand}
+                        cardAction={storeVariables.CARD_ACTION_TAPPED}
+                        />
+                </React.Fragment>
+            )
+        } else if (this.state.tap.tapping) {
+            modalContent = (
+                <React.Fragment>
+                    <ActionButton
+                        onPress={this.tappedHandler}
+                        >
+                        tap now
+                    </ActionButton>
+                    <ActionButton
+                        onPress={this.tappingHandler}
+                        >
+                        Cancel
+                    </ActionButton>
+                </React.Fragment>
+            )
+        } 
 
         const modalVisible = modalContent !== null
 
@@ -272,7 +338,9 @@ class CardDemo extends Component {
                 <PlayerAction
                     slapHandler={this.changeSlapStageHandler}
                     />
-                <Player />
+                <Player
+                    tappingHandler={this.tappingHandler}
+                    />
             </Wrapper>
         )
     }

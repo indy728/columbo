@@ -98,6 +98,9 @@ const playerHand = props => {
                     case storeVariables.CARD_ACTION_PEEKING:
                         cardDisplay = peekPhaseCard(null, selected, [column, card], source)
                         break
+                    case storeVariables.CARD_ACTION_TAPPED:
+                        cardDisplay = <Card source={source} />
+                        break
                     default:
                         cardDisplay = <Card source={cardImg.back} />
                         break

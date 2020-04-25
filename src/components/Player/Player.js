@@ -2,24 +2,22 @@ import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
-import cardImg from '@assets/cardImg'
-import Card from '../../components/Cards/Card/Card'
 import PlayerHand from './PlayerHand/PlayerHand'
+import { ActionButton } from '@UI'
 import * as actions from '@store/actions'
-import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 4;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     position: relative;
 `
 
-// const ShowPoints = styled.View`
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-// `
+const TapButtonWrapper = styled.View`
+    /* position: absolute;
+    bottom: 0px;
+    left: 10px; */
+`
 
 class Player extends Component {
     state = {
@@ -42,8 +40,14 @@ class Player extends Component {
 
         return (
             <Wrapper>
-                {/* <ShowPoints><Text>Total Points: {this.props.player.totalPoints}</Text></ShowPoints> */}
                 {playerHand}
+                <TapButtonWrapper>
+                    <ActionButton
+                        onPress={this.props.tappingHandler}
+                        >
+                        tap
+                        </ActionButton>
+                </TapButtonWrapper>
             </Wrapper>
         )
     }
