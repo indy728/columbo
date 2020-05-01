@@ -11,10 +11,6 @@ export const initPlayers = playerCount => {
     const players = []
 
     for (let i = 0; i < playerCount; i++) {
-        let newPlayer = { 
-            [i]: { ...player }
-        }
-
         players.push({ ...player })
     }
 
@@ -87,5 +83,12 @@ export const initGame = lobbyID => {
     return {
         type: actions.SET_LOBBY_ID,
         lobbyID
+    }
+}
+
+export const launchGame = startTime => {
+    return {
+        type: actions.LAUNCH_GAME,
+        startTime,
     }
 }

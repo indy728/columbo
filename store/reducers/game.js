@@ -16,7 +16,11 @@ const initialState = {
         hand: [[null, null]],
         totalPoints: 0
     },
-    isDealt: false
+    turns: 0,
+    startTime: null,
+    endTime: null,
+    isDealt: false,
+    gameStatus: storeVariables.GAME_STATUS_PRE_DEAL
 }
 
 const updateTotalPoints = hand => {
@@ -66,8 +70,19 @@ const slapCard = (state, action) => {
     return updateObject(state, updatedState)
 }
 
-const launchGame = state => {
-    return updateObject(state, { launched: true })
+const updateGameStatus = (state, action) => {
+    return updateObject(state, {
+        gameStatus: action.gameStatus
+    })
+}
+
+const launchGame = (state, action) => {
+    action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
+    action.phase = storeVariables.PHASE_DRAW
+    let updatedState = updateGameStatus(state, action)
+    updatedState = updatePhase(updatedState, action)
+
+    return updateObject(updatedState, { startTime: action.startTime })
 }
 
 const updateSlappable = (state, action) => {
@@ -76,10 +91,12 @@ const updateSlappable = (state, action) => {
 
 const updatePhase = (state, action) => {
     let updatedState = { ...state }
+    
+    if (action.phase === storeVariables.PHASE_DRAW) updatedState.turns += 1
 
     updatedState = updateObject(updatedState, {
         slappable: action.phase === storeVariables.PHASE_DRAW && updatedState.phase !== storeVariables.PHASE_PEEK,
-        phase: action.phase 
+        phase: action.phase, 
     })
     return updateObject(state, updatedState)
 }
@@ -150,8 +167,8 @@ const gameReducer = (state = initialState, action) => {
         case actions.ADD_CARD: return addCard(state, action)
         case actions.INIT_PLAYERS: return initPlayers(state, action)
         case actions.INIT_PLAYER: return initPlayer(state, action)
-        case action.UPDATE_HAND: return updateHand(state, action)
-        case action.LAUNCH_GAME: return launchGame(state, action)
+        case actions.UPDATE_HAND: return updateHand(state, action)
+        case actions.LAUNCH_GAME: return launchGame(state, action)
         case actions.DEAL_CARD: return dealCards(state, action)
         case actions.SWAP_CARDS: return updatePlayer(state, action)
         case actions.SLAP_CARDS: return slapCard(state, action)

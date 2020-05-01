@@ -13,7 +13,6 @@ const Wrapper = styled.TouchableOpacity`
 `
 
 const SelectedCardOverlay = styled.View`
-    /* flex: 1; */
     height: 100%;
     width: 100%;
     position: absolute;
@@ -21,6 +20,7 @@ const SelectedCardOverlay = styled.View`
     left: 1px;
     background-color: rgba(216, 7, 88, 0.3);
     display:  ${({ selected }) => selected ? 'flex' : 'none'};
+    z-index: 499;
 `
 
 const CardImage = styled.Image`
@@ -32,12 +32,13 @@ const CardImage = styled.Image`
 const Card = props => {
     return (
         <Wrapper {...props}>
+            <SelectedCardOverlay 
+                selected={props.selected}
+                />
+
             <CardImage
                 source={props.source} 
                 resizeMode="cover"
-                />
-            <SelectedCardOverlay 
-                selected={props.selected}
                 />
         </Wrapper>
     )

@@ -213,8 +213,10 @@ class CardDemo extends Component {
 
         if (peek.peeking) {
             buttonPressed = () => {
+                const startTime = new Date().getTime()
+                console.log('[CardDemo] startTime: ', startTime)
                 this.changePeekStateHandler('peeked')
-                this.props.onUpdatePhase(storeVariables.PHASE_DRAW)
+                this.props.onLaunchGame(startTime)
             }
             peekButtonText = 'ready'
             action = storeVariables.CARD_ACTION_PEEKING
@@ -247,7 +249,7 @@ class CardDemo extends Component {
         let modalContent = null
         const { discardPile, drawPile, player } = this.props
 
-        console.log('[CardDemo] this.state.tap: ', this.state.tap)
+        console.log('[CardDemo] this.props.game: ', this.props.game)
 
         if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
 
@@ -354,6 +356,9 @@ const mapStateToProps = state => {
         player: state.game.player,
         isDealt: state.game.isDealt,
         phase: state.game.phase,
+        gameStatus: state.game.gameStatus,
+        startTime: state.game.startTime,
+        game: state.game
     }
 }
 
@@ -364,7 +369,8 @@ const mapDispatchToProps = dispatch => {
         onSwapCards: (discard, player) => dispatch(actions.swapCards(discard, player)),
         onSlapCards: (discard, player) => dispatch(actions.slapCard(discard, player)),
         onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
-        onEmptyDrawPile: discardPile => dispatch(actions.rebuildDrawPileFromDiscardPile(discardPile))
+        onEmptyDrawPile: discardPile => dispatch(actions.rebuildDrawPileFromDiscardPile(discardPile)),
+        onLaunchGame: startTime => dispatch(actions.launchGame(startTime))
     }
 }
 

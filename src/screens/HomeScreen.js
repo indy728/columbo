@@ -1,16 +1,18 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
-import { Text, StyleSheet, View, TextInput } from "react-native";
-import { DefaultButton, DefaultForm, FormInput } from '../components/UI'
+// import { Text, StyleSheet, View, TextInput } from "react-native";
+import { Image } from 'react-native'
+import { DefaultButton } from '@UI'
 import styled from 'styled-components/native'
 import shortid from 'shortid'
 import Modal from '../hoc/Modal'
+import CreateGame from '../components/CreateGame/CreateGame'
 import * as actions from '@store/actions'
 
 const Wrapper = styled.View`
-    /* width: 100%; */
     display: flex;
     align-items: center;
+    justify-content: center;
     flex: 1;
 `
 
@@ -48,59 +50,34 @@ class HomeScreen extends Component {
     }
 
     render() {
+        let goToGameText = 'go to game'
+        let goToGameAction = () => this.props.navigation.navigate('CardDemo')
 
-    const displayroomID = <Text>{this.state.currentRoomID}</Text>
-    const gameText = this.props.lobbyID === '' ? 'Create Game' : 'Go To Game'
+        if (this.props.lobbyID === '') {
+            goToGameText = 'create game'
+            goToGameAction = this.toggleModal
+        }
 
         return (
             <Wrapper>
-                <DefaultButton
-                    onPress={() => this.props.navigation.navigate('CardDemo')}
-                    >
-                    Go To Cards
-                </DefaultButton>
-                <DefaultButton
-                    disabled={this.props.lobbyID !== ''}
-                    onPress={this.toggleModal}
-                >
-                    {gameText}
-                </DefaultButton>
-                <DefaultButton disabled>
-                    disabled
-                </DefaultButton>
-                <DefaultButton hidden>
-                    hidden
-                </DefaultButton>
                 <Modal
                     visible={this.state.isModalVisible}
                     >
-                    <DefaultForm>
-                        {/* <TextInput 
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            value={this.state.playerID}
-                            onChangeText={text => this.changeTextInputHandler('playerID', text)}
-                        /> */}
-                        <FormInput 
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            value={this.state.username}
-                            onChangeText={text => this.changeTextInputHandler('username', text)}
+                    <CreateGame 
+                        createGameHandler={this.createGameHandler}
+                        toggleModal={this.toggleModal}
                         />
-                        <DefaultButton
-                            onPress={this.createGameHandler}
-                            >
-                            create game
-                        </DefaultButton>
-                        <DefaultButton
-                            onPress={this.toggleModal}
-                            >
-                            cancel
-                        </DefaultButton>
-                    </DefaultForm>
-                        
                 </Modal>
-                    
+
+                <Image
+                    source={require('@assets/cardImg/jokers/red_joker.png')} 
+                    />
+
+                <DefaultButton
+                    onPress={goToGameAction}
+                >
+                    {goToGameText}
+                </DefaultButton>
             </Wrapper>
         )
     }

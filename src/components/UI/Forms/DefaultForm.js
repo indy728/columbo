@@ -4,10 +4,10 @@ import styled from 'styled-components'
 
 const Wrapper = styled.View`
     width: 90%;
-    height: 90%;
-    margin: 10%;
-    border: 2px solid black;
-    background-color: red;
+    margin: 20px;
+    padding: 20px 10px;
+    border: 2px solid ${({ theme }) => theme.palette.grayscale[1]};
+    background-color: ${({ theme }) => theme.palette.grayscale[4]};
     align-items: center;
 `
 
