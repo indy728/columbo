@@ -76,13 +76,22 @@ const updateGameStatus = (state, action) => {
     })
 }
 
-const launchGame = (state, action) => {
+const launchRound = (state, action) => {
+    action.gameStatus = storeVariables.GAME_STATUS_TAPPED
+    action.phase = storeVariables.PHASE_TAPPED
+    let updatedState = updateGameStatus(state, action)
+    updatedState = updatePhase(updatedState, action)
+
+    return updateObject(updatedState, { startTime: action.startTime })
+}
+
+const endRound = (state, action) => {
     action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
     action.phase = storeVariables.PHASE_DRAW
     let updatedState = updateGameStatus(state, action)
     updatedState = updatePhase(updatedState, action)
 
-    return updateObject(updatedState, { startTime: action.startTime })
+    return updateObject(updatedState, { endTime: action.endTime })
 }
 
 const updateSlappable = (state, action) => {
@@ -168,7 +177,8 @@ const gameReducer = (state = initialState, action) => {
         case actions.INIT_PLAYERS: return initPlayers(state, action)
         case actions.INIT_PLAYER: return initPlayer(state, action)
         case actions.UPDATE_HAND: return updateHand(state, action)
-        case actions.LAUNCH_GAME: return launchGame(state, action)
+        case actions.ROUND_LAUNCH: return launchRound(state, action)
+        case actions.ROUND_END: return endRound(state, action)
         case actions.DEAL_CARD: return dealCards(state, action)
         case actions.SWAP_CARDS: return updatePlayer(state, action)
         case actions.SLAP_CARDS: return slapCard(state, action)

@@ -19,4 +19,5 @@ export const SWAP_CARDS = "SWAP_CARDS"
 export const SLAP_CARDS = "SLAP_CARDS"
 export const UPDATE_HAND = "UPDATE_HAND"
 
-export const LAUNCH_GAME = "LAUNCH_GAME"
+export const ROUND_LAUNCH = "ROUND_LAUNCH"
+export const ROUND_END = "ROUND_END"

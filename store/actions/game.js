@@ -86,9 +86,16 @@ export const initGame = lobbyID => {
     }
 }
 
-export const launchGame = startTime => {
+export const launchRound = startTime => {
     return {
-        type: actions.LAUNCH_GAME,
+        type: actions.ROUND_LAUNCH,
         startTime,
+    }
+}
+
+export const endRound = endTime => {
+    return {
+        type: actions.ROUND_END,
+        endTime,
     }
 }

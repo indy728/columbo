@@ -44,7 +44,8 @@ class CardDemo extends Component {
         tap: {
             tapping: false,
             tapped: false
-        }
+        },
+        endTime: null
     }
 
     findFirstEmptyCardSlot = hand => {
@@ -184,11 +185,16 @@ class CardDemo extends Component {
     tappedHandler = () => {
         const { tap } = this.state
 
-        this.setState({ tap: updateObject(tap, {
-            tapped: true
-        })})
-    }
+        const endTime = new Date().getTime()
 
+        this.setState({ 
+            tap: updateObject(tap, {
+            tapped: true,
+        })})
+        
+        this.props.onEndRound(endTime)
+    }
+    
     peekCardsHandler = (handCoordinates) => {
         const { peek } = this.state
         const { selected } = peek
@@ -214,9 +220,8 @@ class CardDemo extends Component {
         if (peek.peeking) {
             buttonPressed = () => {
                 const startTime = new Date().getTime()
-                console.log('[CardDemo] startTime: ', startTime)
                 this.changePeekStateHandler('peeked')
-                this.props.onLaunchGame(startTime)
+                this.props.onLaunchRound(startTime)
             }
             peekButtonText = 'ready'
             action = storeVariables.CARD_ACTION_PEEKING
@@ -249,7 +254,8 @@ class CardDemo extends Component {
         let modalContent = null
         const { discardPile, drawPile, player } = this.props
 
-        console.log('[CardDemo] this.props.game: ', this.props.game)
+        // console.log('[CardDemo] this.props.startTime: ', this.props.startTime)
+        // console.log('[CardDemo] this.state.endTime: ', this.state.endTime)
 
         if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
 
@@ -299,6 +305,12 @@ class CardDemo extends Component {
                     <FinalScore>
                         <ScoreText>
                             final score: {player.totalPoints}
+                        </ScoreText>
+                        <ScoreText>
+                            turns taken: {this.props.turns}
+                        </ScoreText>
+                        <ScoreText>
+                            time: {(+(this.props.endTime) - +(this.props.startTime)) / 1000} seconds
                         </ScoreText>
                     </FinalScore>
                     <PlayerHand 
@@ -358,7 +370,8 @@ const mapStateToProps = state => {
         phase: state.game.phase,
         gameStatus: state.game.gameStatus,
         startTime: state.game.startTime,
-        game: state.game
+        endTime: state.game.endTime,
+        turns: state.game.turns
     }
 }
 
@@ -370,7 +383,8 @@ const mapDispatchToProps = dispatch => {
         onSlapCards: (discard, player) => dispatch(actions.slapCard(discard, player)),
         onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
         onEmptyDrawPile: discardPile => dispatch(actions.rebuildDrawPileFromDiscardPile(discardPile)),
-        onLaunchGame: startTime => dispatch(actions.launchGame(startTime))
+        onLaunchRound: startTime => dispatch(actions.launchRound(startTime)),
+        onEndRound: endTime => dispatch(actions.endRound(endTime))
     }
 }
 
