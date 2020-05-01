@@ -16,5 +16,6 @@ export {
     swapCards,
     slapCard,
     launchRound,
-    endRound
+    endRound,
+    tapRound
 } from './game'

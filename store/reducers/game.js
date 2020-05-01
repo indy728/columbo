@@ -14,16 +14,20 @@ const initialState = {
         username: '',
         position: -1,
         hand: [[null, null]],
-        totalPoints: 0
+        // totalPoints: 0,
+        rounds: []
     },
-    turns: 0,
-    startTime: null,
-    endTime: null,
+    round: {
+        turns: 0,
+        startTime: null,
+        endTime: null,
+        points: 0
+    },
     isDealt: false,
     gameStatus: storeVariables.GAME_STATUS_PRE_DEAL
 }
 
-const updateTotalPoints = hand => {
+const getPointTotal = hand => {
     let points = 0
 
     for (let column in hand) {
@@ -44,7 +48,7 @@ const setLobbyID = (state, action) => {
 const dealCards = (state, action) => {
     const { player } = action
     const updatedPlayer = updateObject(player, {
-        totalPoints: updateTotalPoints(player.hand)
+        totalPoints: getPointTotal(player.hand)
     })
 
     return updateObject(state, { isDealt: true, player: updatedPlayer })
@@ -54,7 +58,7 @@ const updatePlayer = (state, action) => {
     const { player } = action
     let updatedState = { ...state }
     const updatedPlayer = updateObject(player, {
-        totalPoints: updateTotalPoints(player.hand)
+        totalPoints: getPointTotal(player.hand)
     })
 
     action.phase = storeVariables.PHASE_DRAW
@@ -77,21 +81,52 @@ const updateGameStatus = (state, action) => {
 }
 
 const launchRound = (state, action) => {
-    action.gameStatus = storeVariables.GAME_STATUS_TAPPED
+    action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
     action.phase = storeVariables.PHASE_TAPPED
     let updatedState = updateGameStatus(state, action)
     updatedState = updatePhase(updatedState, action)
+    const updatedRound = updateObject(updatedState.round, {
+        startTime: action.startTime
+    })
 
-    return updateObject(updatedState, { startTime: action.startTime })
+    return updateObject(updatedState, {
+        round: updatedRound
+    })
 }
 
-const endRound = (state, action) => {
-    action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
+const updatePlayerRounds = (player, round) => {
+    const { rounds } = player
+
+    return updateObject(initialState.player, {
+        rounds: rounds.push(round)
+    })
+}
+
+const tapRound = (state, action) => {
+    action.gameStatus = storeVariables.GAME_STATUS_TAPPED
     action.phase = storeVariables.PHASE_DRAW
+
     let updatedState = updateGameStatus(state, action)
+
     updatedState = updatePhase(updatedState, action)
 
-    return updateObject(updatedState, { endTime: action.endTime })
+    const updatedRound = updateObject(updatedState.round, {
+        endTime: action.endTime,
+        points: getPointTotal(updatedState.player.hand)
+    })
+
+    return updateObject(updatedState, { round: updatedRound })
+}
+
+const endRound = state => {
+    const { round, player } = state
+
+    player.rounds.push(round)
+
+    return updateObject(state, { 
+        player,
+        round: initialState.round
+    })
 }
 
 const updateSlappable = (state, action) => {
@@ -101,7 +136,7 @@ const updateSlappable = (state, action) => {
 const updatePhase = (state, action) => {
     let updatedState = { ...state }
     
-    if (action.phase === storeVariables.PHASE_DRAW) updatedState.turns += 1
+    if (action.phase === storeVariables.PHASE_DRAW) updatedState.round.turns += 1
 
     updatedState = updateObject(updatedState, {
         slappable: action.phase === storeVariables.PHASE_DRAW && updatedState.phase !== storeVariables.PHASE_PEEK,
@@ -178,7 +213,8 @@ const gameReducer = (state = initialState, action) => {
         case actions.INIT_PLAYER: return initPlayer(state, action)
         case actions.UPDATE_HAND: return updateHand(state, action)
         case actions.ROUND_LAUNCH: return launchRound(state, action)
-        case actions.ROUND_END: return endRound(state, action)
+        case actions.ROUND_TAP: return tapRound(state, action)
+        case actions.ROUND_END: return endRound(state)
         case actions.DEAL_CARD: return dealCards(state, action)
         case actions.SWAP_CARDS: return updatePlayer(state, action)
         case actions.SLAP_CARDS: return slapCard(state, action)

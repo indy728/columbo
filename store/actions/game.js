@@ -93,9 +93,13 @@ export const launchRound = startTime => {
     }
 }
 
-export const endRound = endTime => {
+export const tapRound = endTime => {
     return {
-        type: actions.ROUND_END,
+        type: actions.ROUND_TAP,
         endTime,
     }
+}
+
+export const endRound = () => {
+    return { type: actions.ROUND_END }
 }

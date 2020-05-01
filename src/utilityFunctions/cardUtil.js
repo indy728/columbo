@@ -1,57 +1,6 @@
-import * as actions from './actionTypes'
-import * as storeVariables from '../storeVariables'
-
-export const setLobbyID = lobbyID => {
-    return {
-        type: actions.SET_LOBBY_ID,
-        lobbyID
-    }
-}
-
-export const initDeck = () => {
-    let drawPile = []
-
-    suits.forEach(suit => {
-        drawPile = drawPile.concat(initCards(suit))
-    })
-
-    const deck = shuffleCards(drawPile)
-
-    return {
-        type: actions.INIT_DECK,
-        deck
-    }
-}
-
-export const drawCard = pile => {
-    return {
-        type: actions.DRAW_CARD,
-        pile,
-        phase: storeVariables.PHASE_PLAY
-    }
-}
-
-export const playCard = card => {
-    return {
-        type: actions.PLAY_CARD,
-        card,
-        phase: storeVariables.PHASE_DRAW
-    }
-}
-
-export const updateDeck = drawPile => {
-    return { 
-        type: actions.UPDATE_DECK,
-        drawPile
-    }
-}
-
-export const rebuildDrawPileFromDiscardPile = discardPile => {
-    return {
-        type: actions.REBUILD_DECK,
-        drawPile: shuffleCards(discardPile)
-    }
-}
+import React from 'react'
+import { updateObject } from '@shared/utilityFunctions'
+import Card from '../../components/Deck/Card/Card'
 
 const suits = [
     'spades',
@@ -70,8 +19,8 @@ const initCards = suit => {
     const makeCardObj = (value, points, suit, action) => {
         return { value, points, suit, action }
     }
-
     const cards = []
+    
     for (let i in cardValues) {
         const thisCard = {}
         switch (cardValues[i]) {
@@ -101,7 +50,17 @@ const initCards = suit => {
     return cards
 }
 
-const shuffleCards = deck => {
+export const initDeck = suit => {
+    let drawPile = []
+
+    suits.forEach(suit => {
+        drawPile = drawPile.concat(initCards(suit))
+    })
+    
+    return drawPile
+}
+
+export const shuffleCards = deck => {
     const dup = [...deck]
 
     for (let i = dup.length - 1; i > 0; i--) {

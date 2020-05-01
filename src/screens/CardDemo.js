@@ -45,7 +45,7 @@ class CardDemo extends Component {
             tapping: false,
             tapped: false
         },
-        endTime: null
+        
     }
 
     findFirstEmptyCardSlot = hand => {
@@ -192,7 +192,7 @@ class CardDemo extends Component {
             tapped: true,
         })})
         
-        this.props.onEndRound(endTime)
+        this.props.onTapRound(endTime)
     }
     
     peekCardsHandler = (handCoordinates) => {
@@ -249,13 +249,12 @@ class CardDemo extends Component {
             this.props.onDrawCard(pile) : null
     }
 
-
     render() {
         let modalContent = null
-        const { discardPile, drawPile, player } = this.props
-
-        // console.log('[CardDemo] this.props.startTime: ', this.props.startTime)
-        // console.log('[CardDemo] this.state.endTime: ', this.state.endTime)
+        const { discardPile, drawPile, player, round } = this.props
+        const { turns, startTime, endTime, points } = round
+        console.log('[CardDemo] player.rounds: ', player.rounds)
+        console.log('[CardDemo] round: ', round)
 
         if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
 
@@ -300,23 +299,38 @@ class CardDemo extends Component {
                 </React.Fragment>
             )
         } else if (this.state.tap.tapped) {
+            // const lastRound = player.rounds[player.rounds.length() - 1]
+            // const roundPoints = lastRound.points
+            // const roundTurns = lastRound.turns
+            // const roundDuration = (+(lastRound.endTime) - +(lastRound.startTime)) / 1000
+
             modalContent = (
                 <React.Fragment>
                     <FinalScore>
                         <ScoreText>
-                            final score: {player.totalPoints}
+                            {/* final score: {roundPoints} */}
                         </ScoreText>
                         <ScoreText>
-                            turns taken: {this.props.turns}
+                            {/* turns taken: {roundTurns} */}
                         </ScoreText>
                         <ScoreText>
-                            time: {(+(this.props.endTime) - +(this.props.startTime)) / 1000} seconds
+                            {/* time: {roundDuration} seconds */}
                         </ScoreText>
                     </FinalScore>
                     <PlayerHand 
                         hand={this.props.player.hand}
                         cardAction={storeVariables.CARD_ACTION_TAPPED}
                         />
+                    <ActionButton
+                        onPress={this.props.onEndRound}
+                        >
+                        next round
+                    </ActionButton>
+                    <ActionButton
+                        onPress={this.tappedHandler}
+                        >
+                        tap now
+                    </ActionButton>
                 </React.Fragment>
             )
         } else if (this.state.tap.tapping) {
@@ -369,9 +383,7 @@ const mapStateToProps = state => {
         isDealt: state.game.isDealt,
         phase: state.game.phase,
         gameStatus: state.game.gameStatus,
-        startTime: state.game.startTime,
-        endTime: state.game.endTime,
-        turns: state.game.turns
+        round: state.game.round
     }
 }
 
@@ -384,7 +396,8 @@ const mapDispatchToProps = dispatch => {
         onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
         onEmptyDrawPile: discardPile => dispatch(actions.rebuildDrawPileFromDiscardPile(discardPile)),
         onLaunchRound: startTime => dispatch(actions.launchRound(startTime)),
-        onEndRound: endTime => dispatch(actions.endRound(endTime))
+        onEndRound: () => dispatch(actions.endRound()),
+        onTapRound: endTime => dispatch(actions.tapRound(endTime)),
     }
 }
 

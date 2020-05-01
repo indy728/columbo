@@ -20,4 +20,5 @@ export const SLAP_CARDS = "SLAP_CARDS"
 export const UPDATE_HAND = "UPDATE_HAND"
 
 export const ROUND_LAUNCH = "ROUND_LAUNCH"
+export const ROUND_TAP = "ROUND_TAP"
 export const ROUND_END = "ROUND_END"
