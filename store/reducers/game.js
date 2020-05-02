@@ -2,29 +2,31 @@ import * as actions from '../actions/actionTypes'
 import * as storeVariables from '../storeVariables'
 import { updateObject } from '@shared/utilityFunctions'
 
-const initialState = {
-    lobbyID: '',
-    launched: false,
-    phase: storeVariables.PHASE_PEEK,
-    slappable: false,
-    playerCount: 0,
-    players: {},
-    player: {
-        id: '',
-        username: '',
-        position: -1,
-        hand: [[null, null]],
-        // totalPoints: 0,
-        rounds: []
-    },
-    round: {
-        turns: 0,
-        startTime: null,
-        endTime: null,
-        points: 0
-    },
-    isDealt: false,
-    gameStatus: storeVariables.GAME_STATUS_PRE_DEAL
+const getInitialState = () => {
+    return {
+        lobbyID: '',
+        launched: false,
+        phase: storeVariables.PHASE_PEEK,
+        slappable: false,
+        playerCount: 0,
+        players: {},
+        player: {
+            id: '',
+            username: '',
+            position: -1,
+            hand: [[null, null]],
+            // totalPoints: 0,
+            rounds: []
+        },
+        round: {
+            turns: 0,
+            startTime: null,
+            endTime: null,
+            points: 0
+        },
+        isDealt: false,
+        gameStatus: storeVariables.GAME_STATUS_PRE_DEAL
+    }
 }
 
 const getPointTotal = hand => {
@@ -82,7 +84,7 @@ const updateGameStatus = (state, action) => {
 
 const launchRound = (state, action) => {
     action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
-    action.phase = storeVariables.PHASE_TAPPED
+    action.phase = storeVariables.PHASE_DRAW
     let updatedState = updateGameStatus(state, action)
     updatedState = updatePhase(updatedState, action)
     const updatedRound = updateObject(updatedState.round, {
@@ -94,17 +96,9 @@ const launchRound = (state, action) => {
     })
 }
 
-const updatePlayerRounds = (player, round) => {
-    const { rounds } = player
-
-    return updateObject(initialState.player, {
-        rounds: rounds.push(round)
-    })
-}
-
 const tapRound = (state, action) => {
     action.gameStatus = storeVariables.GAME_STATUS_TAPPED
-    action.phase = storeVariables.PHASE_DRAW
+    action.phase = storeVariables.PHASE_TAPPED
 
     let updatedState = updateGameStatus(state, action)
 
@@ -119,13 +113,19 @@ const tapRound = (state, action) => {
 }
 
 const endRound = state => {
-    const { round, player } = state
+    const { round, player, lobbyID } = state
+    let newState = getInitialState()
 
     player.rounds.push(round)
 
-    return updateObject(state, { 
-        player,
-        round: initialState.round
+    return updateObject(newState, {
+        lobbyID,
+        player: updateObject(newState.player, {
+            id: player.id,
+            username: player.username,
+            position: player.position,
+            rounds: player.rounds
+        })
     })
 }
 
@@ -134,15 +134,16 @@ const updateSlappable = (state, action) => {
 }
 
 const updatePhase = (state, action) => {
-    let updatedState = { ...state }
+    // let updatedState = { ...state }
     
-    if (action.phase === storeVariables.PHASE_DRAW) updatedState.round.turns += 1
+    // if (action.phase === storeVariables.PHASE_DRAW) updatedState.round.turns += 1
+    if (action.phase === storeVariables.PHASE_DRAW) state.round.turns += 1
 
-    updatedState = updateObject(updatedState, {
-        slappable: action.phase === storeVariables.PHASE_DRAW && updatedState.phase !== storeVariables.PHASE_PEEK,
-        phase: action.phase, 
+    // return updateObject(updatedState, {
+    return updateObject(state, {
+        slappable: action.phase === storeVariables.PHASE_DRAW && state.phase !== storeVariables.PHASE_PEEK,
+        phase: action.phase,
     })
-    return updateObject(state, updatedState)
 }
 
 const initPlayers = (state, action) => {
@@ -202,7 +203,7 @@ const addCard = (state, action) => {
     })
 }
 
-const gameReducer = (state = initialState, action) => {
+const gameReducer = (state = getInitialState(), action) => {
     switch(action.type) {
         case actions.SET_LOBBY_ID: return setLobbyID(state, action)
         case actions.DRAW_CARD: 

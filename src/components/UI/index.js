@@ -10,3 +10,6 @@ export {
 export {
     default as FormInput
 } from './Forms/FormInput'
+export {
+    default as DefaultModal
+} from './Modals/DefaultModal'

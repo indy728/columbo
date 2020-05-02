@@ -33,18 +33,9 @@ const ScoreText = styled.Text`
 class CardDemo extends Component {
 
     state = {
-        peek: {
-            peeking: false,
-            peeked: false,
-            selected: [],
-        },
-        slap: {
-            slapping: false
-        },
-        tap: {
-            tapping: false,
-            tapped: false
-        },
+        selected: [],
+        slapping: false,
+        tapping: false,
         
     }
 
@@ -146,38 +137,22 @@ class CardDemo extends Component {
         this.changeSlapStageHandler()
     }
 
-    changePeekStateHandler = stage => {
-        const { peek } = this.state
-
-        this.setState(prevState => {
-            return {
-                peek: updateObject(peek, {
-                    [stage]: !prevState.peek[stage]
-                })
-            }
-        })
-    }
-
     changeSlapStageHandler = () => {
         const { slap } = this.state
 
         this.setState(prevState => {
             return {
                 slap: updateObject(slap, {
-                    slapping: !prevState.slap.slapping
+                    slapping: !prevState.slapping
                 })
             }
         })
     }
 
     tappingHandler = () => {
-        const { tap } = this.state
-
         this.setState(prevState => {
             return {
-                tap: updateObject(tap, {
-                    tapping: !prevState.tap.tapping
-                })
+                tapping: !prevState.tapping
             }
         })
     }
@@ -187,17 +162,14 @@ class CardDemo extends Component {
 
         const endTime = new Date().getTime()
 
-        this.setState({ 
-            tap: updateObject(tap, {
-            tapped: true,
-        })})
+        this.setState({ tapping: false })
         
+        this.props.onInitDeck()
         this.props.onTapRound(endTime)
     }
     
     peekCardsHandler = (handCoordinates) => {
-        const { peek } = this.state
-        const { selected } = peek
+        const { selected } = this.state
         const index = matchArrayInArray(selected, handCoordinates)
 
         if (index === -1) {
@@ -207,20 +179,21 @@ class CardDemo extends Component {
             selected.splice(index, 1)
         }
 
-        this.setState({ peek: updateObject(peek, { selected }) })
+        this.setState({ selected })
     }
 
     peekPhaseHandler = () => {
-        const { peek } = this.state
+        const { selected } = this.state
+        const { phase } = this.props
         const cardPressed = this.peekCardsHandler
-        let buttonPressed = () => this.changePeekStateHandler('peeking')
+        let buttonPressed = () => this.props.onUpdatePhase(storeVariables.PHASE_PEEKING)
         let peekButtonText = 'reveal'
         let action = storeVariables.CARD_ACTION_PEEK_SELECT
 
-        if (peek.peeking) {
+        if (phase === storeVariables.PHASE_PEEKING) {
             buttonPressed = () => {
                 const startTime = new Date().getTime()
-                this.changePeekStateHandler('peeked')
+                this.setState({ selected: [] })
                 this.props.onLaunchRound(startTime)
             }
             peekButtonText = 'ready'
@@ -231,13 +204,13 @@ class CardDemo extends Component {
             <React.Fragment>
                 <PlayerHand 
                     hand={this.props.player.hand}
-                    selected={peek.selected}
+                    selected={selected}
                     pressed={cardPressed}
                     cardAction={action}
                     />
                 <DefaultButton
                     onPress={buttonPressed}
-                    disabled={this.state.peek.selected.length !== 2}>
+                    disabled={selected.length !== 2}>
                     {peekButtonText}
                 </DefaultButton>
             </React.Fragment>
@@ -251,10 +224,7 @@ class CardDemo extends Component {
 
     render() {
         let modalContent = null
-        const { discardPile, drawPile, player, round } = this.props
-        const { turns, startTime, endTime, points } = round
-        console.log('[CardDemo] player.rounds: ', player.rounds)
-        console.log('[CardDemo] round: ', round)
+        const { discardPile, drawPile, player, round, phase } = this.props
 
         if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
 
@@ -266,7 +236,7 @@ class CardDemo extends Component {
                     deal
                 </DefaultButton>
             )
-        } else if (this.props.phase === storeVariables.PHASE_PEEK) {
+        } else if (this.props.phase === storeVariables.PHASE_PEEK || this.props.phase === storeVariables.PHASE_PEEKING) {
             modalContent = this.peekPhaseHandler()
         } else if (this.props.phase === storeVariables.PHASE_SWAP) {
             modalContent = (
@@ -283,7 +253,7 @@ class CardDemo extends Component {
                     </ActionButton>
                 </React.Fragment>
             )
-        } else if (this.state.slap.slapping) {
+        } else if (this.state.slapping) {
             modalContent = (
                 <React.Fragment>
                     <PlayerHand 
@@ -298,23 +268,23 @@ class CardDemo extends Component {
                     </ActionButton>
                 </React.Fragment>
             )
-        } else if (this.state.tap.tapped) {
+        } else if (phase === storeVariables.PHASE_TAPPED) {
             // const lastRound = player.rounds[player.rounds.length() - 1]
             // const roundPoints = lastRound.points
             // const roundTurns = lastRound.turns
-            // const roundDuration = (+(lastRound.endTime) - +(lastRound.startTime)) / 1000
+            const roundDuration = (+(round.endTime) - +(round.startTime)) / 1000
 
             modalContent = (
                 <React.Fragment>
                     <FinalScore>
                         <ScoreText>
-                            {/* final score: {roundPoints} */}
+                            final score: {round.points}
                         </ScoreText>
                         <ScoreText>
-                            {/* turns taken: {roundTurns} */}
+                            turns taken: {round.turns}
                         </ScoreText>
                         <ScoreText>
-                            {/* time: {roundDuration} seconds */}
+                            time: {roundDuration} seconds
                         </ScoreText>
                     </FinalScore>
                     <PlayerHand 
@@ -333,7 +303,7 @@ class CardDemo extends Component {
                     </ActionButton>
                 </React.Fragment>
             )
-        } else if (this.state.tap.tapping) {
+        } else if (this.state.tapping) {
             modalContent = (
                 <React.Fragment>
                     <ActionButton
@@ -398,6 +368,7 @@ const mapDispatchToProps = dispatch => {
         onLaunchRound: startTime => dispatch(actions.launchRound(startTime)),
         onEndRound: () => dispatch(actions.endRound()),
         onTapRound: endTime => dispatch(actions.tapRound(endTime)),
+        onInitDeck: () => dispatch(actions.initDeck())
     }
 }
 
