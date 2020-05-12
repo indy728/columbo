@@ -7,12 +7,13 @@ import Player from '../components/Player/Player'
 import PlayerHand from '../components/Player/PlayerHand/PlayerHand'
 import Modal from '../hoc/Modal'
 import { DefaultButton, ActionButton } from "../components/UI";
-import { updateObject, matchArrayInArray } from '@shared/utilityFunctions'
+import { updateObject, matchArrayInArray, toggleBooleanStateHandler } from '@shared/utilityFunctions'
 import * as actions from '@store/actions'
 import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 1;
+    padding-top: 50px;
     background-color: ${({ theme }) => theme.palette.grayscale[5]};
 `
 
@@ -36,7 +37,7 @@ class CardDemo extends Component {
         selected: [],
         slapping: false,
         tapping: false,
-        
+        endGameDetails: false
     }
 
     findFirstEmptyCardSlot = hand => {
@@ -105,6 +106,8 @@ class CardDemo extends Component {
         }
     }
 
+
+
     slapCardHandler = (cardLocationArray) => {
         const { player, discardPile, drawPile } = this.props
         const { hand } = player
@@ -129,41 +132,15 @@ class CardDemo extends Component {
                     hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card
                 }
             }
-            
-            const updatedPlayer = updateObject(player, { hand })
-    
-            this.props.onSwapCards(drawPile, updatedPlayer)
+            this.props.onSwapCards(drawPile, updateObject(player, { hand }))
         }
-        this.changeSlapStageHandler()
-    }
-
-    changeSlapStageHandler = () => {
-        const { slap } = this.state
-
-        this.setState(prevState => {
-            return {
-                slap: updateObject(slap, {
-                    slapping: !prevState.slapping
-                })
-            }
-        })
-    }
-
-    tappingHandler = () => {
-        this.setState(prevState => {
-            return {
-                tapping: !prevState.tapping
-            }
-        })
+        this.setState({ slapping: false })
     }
 
     tappedHandler = () => {
-        const { tap } = this.state
-
         const endTime = new Date().getTime()
 
         this.setState({ tapping: false })
-        
         this.props.onInitDeck()
         this.props.onTapRound(endTime)
     }
@@ -222,38 +199,134 @@ class CardDemo extends Component {
             this.props.onDrawCard(pile) : null
     }
 
+    modalContentByPhase = phase => {
+        const { PHASE_PEEK, PHASE_PEEKING, PHASE_SWAP, PHASE_TAPPED, PHASE_PLAY, CARD_ACTION_SWAP, CARD_ACTION_TAPPED} = storeVariables
+
+        switch(phase) {
+            case PHASE_PEEK:
+            case PHASE_PEEKING:
+                return this.peekPhaseHandler()
+            case PHASE_SWAP:
+                return (
+                    <React.Fragment>
+                        <PlayerHand 
+                            hand={this.props.player.hand}
+                            pressed={this.swapCardsHandler}
+                            cardAction={storeVariables.CARD_ACTION_SWAP}
+                            />
+                        <ActionButton
+                            onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_PLAY)}
+                            >
+                            Cancel
+                        </ActionButton>
+                    </React.Fragment>
+                )
+            case PHASE_TAPPED:
+                const { round } = this.props
+
+                return (
+                    <React.Fragment>
+                        <FinalScore>
+                            <ScoreText>
+                                final score: {round.points}
+                            </ScoreText>
+                            <ScoreText>
+                                turns taken: {round.turns}
+                            </ScoreText>
+                            <ScoreText>
+                                time: {this.getRoundDuration(round)} seconds
+                            </ScoreText>
+                        </FinalScore>
+                        <PlayerHand 
+                            hand={this.props.player.hand}
+                            cardAction={storeVariables.CARD_ACTION_TAPPED}
+                            />
+                        <ActionButton
+                            onPress={this.props.onEndRound}
+                            >
+                            next round
+                        </ActionButton>
+                        <ActionButton
+                            onPress={this.tappedHandler}
+                            >
+                            tap now
+                        </ActionButton>
+                    </React.Fragment>
+                )
+            default:
+                return null
+        }
+    }
+
+    getRoundDuration = round => {
+        return (+(round.endTime) - +(round.startTime)) / 1000
+    }
+
+    setEndGameContent = () => {
+        let points = 0
+        let turns = 0
+        let duration = 0
+        const { rounds } = this.props.player
+
+        for (let i in rounds) {
+            points += rounds[i].points
+            turns += rounds[i].turns
+            duration += this.getRoundDuration(rounds[i])
+        }
+
+        let endGameContent = (
+            <React.Fragment>
+                <FinalScore>
+                    <ScoreText>
+                        final score: {points}
+                    </ScoreText>
+                    <ScoreText>
+                        turns taken: {turns}
+                    </ScoreText>
+                    <ScoreText>
+                        time taken: {duration} seconds
+                    </ScoreText>
+                    <ActionButton onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>show round details</ActionButton>
+                </FinalScore>
+                <DefaultButton>
+                    play again
+                </DefaultButton>
+                <DefaultButton>
+                    home screen
+                </DefaultButton>
+            </React.Fragment>
+        )
+
+        if (this.state.endGameDetails) {
+            endGameContent = rounds.map((round, i) => {
+                return (
+                    <FinalScore key={'round' + i}>
+                        <ScoreText>
+                            final score: {round.points}
+                        </ScoreText>
+                        <ScoreText>
+                            turns taken: {round.turns}
+                        </ScoreText>
+                        <ScoreText>
+                            duration: {this.getRoundDuration(round)}
+                        </ScoreText>
+                    </FinalScore>
+                )
+            })
+        }
+
+        return endGameContent
+    }
+
     render() {
         let modalContent = null
-        const { discardPile, drawPile, player, round, phase } = this.props
+        const { discardPile, drawPile, player, round, phase, gameStatus } = this.props
 
         if (drawPile.length === 0) this.props.onEmptyDrawPile(discardPile)
 
-        if (!this.props.isDealt) {
-            modalContent = (
-                <DefaultButton
-                    onPress={this.dealCardsHandler}
-                    >
-                    deal
-                </DefaultButton>
-            )
-        } else if (this.props.phase === storeVariables.PHASE_PEEK || this.props.phase === storeVariables.PHASE_PEEKING) {
-            modalContent = this.peekPhaseHandler()
-        } else if (this.props.phase === storeVariables.PHASE_SWAP) {
-            modalContent = (
-                <React.Fragment>
-                    <PlayerHand 
-                        hand={this.props.player.hand}
-                        pressed={this.swapCardsHandler}
-                        cardAction={storeVariables.CARD_ACTION_SWAP}
-                        />
-                    <ActionButton
-                        onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_PLAY)}
-                        >
-                        Cancel
-                    </ActionButton>
-                </React.Fragment>
-            )
-        } else if (this.state.slapping) {
+        if (!this.props.isDealt) modalContent = <DefaultButton onPress={this.dealCardsHandler}>deal</DefaultButton>
+        else if (gameStatus === storeVariables.GAME_STATUS_POST_GAME) modalContent = this.setEndGameContent()
+        else if (this.state.slapping) {
             modalContent = (
                 <React.Fragment>
                     <PlayerHand 
@@ -262,44 +335,9 @@ class CardDemo extends Component {
                         cardAction={storeVariables.CARD_ACTION_SLAP}
                         />
                     <ActionButton
-                        onPress={this.changeSlapStageHandler}
+                        onPress={() => toggleBooleanStateHandler(this, 'slapping')}
                         >
                         Cancel
-                    </ActionButton>
-                </React.Fragment>
-            )
-        } else if (phase === storeVariables.PHASE_TAPPED) {
-            // const lastRound = player.rounds[player.rounds.length() - 1]
-            // const roundPoints = lastRound.points
-            // const roundTurns = lastRound.turns
-            const roundDuration = (+(round.endTime) - +(round.startTime)) / 1000
-
-            modalContent = (
-                <React.Fragment>
-                    <FinalScore>
-                        <ScoreText>
-                            final score: {round.points}
-                        </ScoreText>
-                        <ScoreText>
-                            turns taken: {round.turns}
-                        </ScoreText>
-                        <ScoreText>
-                            time: {roundDuration} seconds
-                        </ScoreText>
-                    </FinalScore>
-                    <PlayerHand 
-                        hand={this.props.player.hand}
-                        cardAction={storeVariables.CARD_ACTION_TAPPED}
-                        />
-                    <ActionButton
-                        onPress={this.props.onEndRound}
-                        >
-                        next round
-                    </ActionButton>
-                    <ActionButton
-                        onPress={this.tappedHandler}
-                        >
-                        tap now
                     </ActionButton>
                 </React.Fragment>
             )
@@ -312,13 +350,21 @@ class CardDemo extends Component {
                         tap now
                     </ActionButton>
                     <ActionButton
-                        onPress={this.tappingHandler}
+                        onPress={() => toggleBooleanStateHandler(this, 'tapping')}
                         >
                         Cancel
                     </ActionButton>
                 </React.Fragment>
             )
         } 
+        else modalContent = this.modalContentByPhase(phase)
+        // else if (phase === storeVariables.PHASE_PEEK || phase === storeVariables.PHASE_PEEKING) modalContent = this.peekPhaseHandler()
+        // else if (phase === storeVariables.
+        // }
+       
+        // else if (phase === storeVariables.
+        // }
+        
 
         const modalVisible = modalContent !== null
 
@@ -334,10 +380,10 @@ class CardDemo extends Component {
                     slapping={this.state.slapping}
                     />
                 <PlayerAction
-                    slapHandler={this.changeSlapStageHandler}
+                    slapHandler={() => toggleBooleanStateHandler(this, 'slapping')}
                     />
                 <Player
-                    tappingHandler={this.tappingHandler}
+                    tappingHandler={() => toggleBooleanStateHandler(this, 'tapping')}
                     />
             </Wrapper>
         )
@@ -353,7 +399,7 @@ const mapStateToProps = state => {
         isDealt: state.game.isDealt,
         phase: state.game.phase,
         gameStatus: state.game.gameStatus,
-        round: state.game.round
+        round: state.game.round,
     }
 }
 

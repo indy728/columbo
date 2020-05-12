@@ -16,3 +16,6 @@ export {
 } from './stringUtility'
 export {
 } from './formUtility'
+export {
+    toggleBooleanStateHandler
+} from './stateUtility'

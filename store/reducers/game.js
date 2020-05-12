@@ -63,8 +63,8 @@ const updatePlayer = (state, action) => {
         totalPoints: getPointTotal(player.hand)
     })
 
-    action.phase = storeVariables.PHASE_DRAW
-    updatedState = updatePhase(state, action)
+    // action.phase = storeVariables.PHASE_DRAW
+    updatedState = updatePhase(state, storeVariables.PHASE_DRAW)
     updatedState = updateObject(updatedState, { player: updatedPlayer })
     return updateObject(state, updatedState)
 }
@@ -76,17 +76,15 @@ const slapCard = (state, action) => {
     return updateObject(state, updatedState)
 }
 
-const updateGameStatus = (state, action) => {
-    return updateObject(state, {
-        gameStatus: action.gameStatus
-    })
+const updateGameStatus = (state, gameStatus) => {
+    return updateObject(state, { gameStatus })
 }
 
 const launchRound = (state, action) => {
-    action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
-    action.phase = storeVariables.PHASE_DRAW
-    let updatedState = updateGameStatus(state, action)
-    updatedState = updatePhase(updatedState, action)
+    // action.gameStatus = storeVariables.GAME_STATUS_LAUNCHED
+    // action.phase = storeVariables.PHASE_DRAW
+    let updatedState = updateGameStatus(state, storeVariables.GAME_STATUS_LAUNCHED)
+    updatedState = updatePhase(updatedState, storeVariables.PHASE_DRAW)
     const updatedRound = updateObject(updatedState.round, {
         startTime: action.startTime
     })
@@ -97,12 +95,12 @@ const launchRound = (state, action) => {
 }
 
 const tapRound = (state, action) => {
-    action.gameStatus = storeVariables.GAME_STATUS_TAPPED
-    action.phase = storeVariables.PHASE_TAPPED
+    // action.gameStatus = storeVariables.GAME_STATUS_TAPPED
+    // action.phase = storeVariables.PHASE_TAPPED
 
-    let updatedState = updateGameStatus(state, action)
+    let updatedState = updateGameStatus(state, storeVariables.GAME_STATUS_TAPPED)
 
-    updatedState = updatePhase(updatedState, action)
+    updatedState = updatePhase(updatedState, storeVariables.PHASE_TAPPED)
 
     const updatedRound = updateObject(updatedState.round, {
         endTime: action.endTime,
@@ -117,6 +115,10 @@ const endRound = state => {
     let newState = getInitialState()
 
     player.rounds.push(round)
+
+    if (player.rounds.length === 2) {
+        return updateGameStatus(state, storeVariables.GAME_STATUS_POST_GAME)
+    }
 
     return updateObject(newState, {
         lobbyID,
@@ -133,16 +135,12 @@ const updateSlappable = (state, action) => {
     return updateObject(state, { slappable: action.slappable })
 }
 
-const updatePhase = (state, action) => {
-    // let updatedState = { ...state }
-    
-    // if (action.phase === storeVariables.PHASE_DRAW) updatedState.round.turns += 1
-    if (action.phase === storeVariables.PHASE_DRAW) state.round.turns += 1
+const updatePhase = (state, phase) => {
+    if (phase === storeVariables.PHASE_DRAW) state.round.turns += 1
 
-    // return updateObject(updatedState, {
     return updateObject(state, {
-        slappable: action.phase === storeVariables.PHASE_DRAW && state.phase !== storeVariables.PHASE_PEEK,
-        phase: action.phase,
+        slappable: phase === storeVariables.PHASE_DRAW && state.phase !== storeVariables.PHASE_PEEKING,
+        phase
     })
 }
 
@@ -207,8 +205,8 @@ const gameReducer = (state = getInitialState(), action) => {
     switch(action.type) {
         case actions.SET_LOBBY_ID: return setLobbyID(state, action)
         case actions.DRAW_CARD: 
-        case actions.PLAY_CARD: return updatePhase(state, action)
-        case actions.UPDATE_PHASE: return updatePhase(state, action)
+        case actions.PLAY_CARD:
+        case actions.UPDATE_PHASE: return updatePhase(state, action.phase)
         case actions.ADD_CARD: return addCard(state, action)
         case actions.INIT_PLAYERS: return initPlayers(state, action)
         case actions.INIT_PLAYER: return initPlayer(state, action)

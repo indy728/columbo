@@ -74,7 +74,13 @@ class App extends Component {
                                 headerShown: false
                             }}
                             />
-                        <Stack.Screen name="CardDemo" component={CardDemo} />
+                        <Stack.Screen
+                            name="CardDemo"
+                            component={CardDemo}
+                            options={{
+                                headerShown: false
+                            }}
+                            />
                         </Stack.Navigator>
                     </NavigationContainer>
                 </ThemeProvider>

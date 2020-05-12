@@ -2,11 +2,13 @@ import * as actions from '../actions/actionTypes'
 import * as storeVariables from '../storeVariables'
 import { updateObject } from '@shared/utilityFunctions'
 
-const initialState = {
-    drawPile: [],
-    discardPile: [],
-    deckBuilt: false,
-    currentCard: null,
+const getInitialState = () => {
+    return {
+        drawPile: [],
+        discardPile: [],
+        deckBuilt: false,
+        currentCard: null,
+    }
 }
 
 const initDeck = (state, action) => {
@@ -62,7 +64,7 @@ const updateDeck = (state, action) => {
 const rebuildDrawPileFromDiscardPile = (state, action) => {
     return updateObject(state, {
         drawPile: action.drawPile,
-        discardPile: initialState.discardPile
+        discardPile: getInitialState().discardPile
     })
 }
 
@@ -76,7 +78,7 @@ const playCard = (state, action) => {
     })
 }
 
-const deckReducer = (state = initialState, action) => {
+const deckReducer = (state = getInitialState(), action) => {
     switch(action.type) {
         case actions.INIT_DECK: return initDeck(state, action)
         case actions.DRAW_CARD: return drawCard(state, action)
