@@ -7,6 +7,10 @@ const player = {
     totalPoints: 0,
 }
 
+export const endGame = () => {
+    return { type: actions.END_GAME }
+}
+
 export const initPlayers = playerCount => {
     const players = []
 

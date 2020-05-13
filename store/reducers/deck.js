@@ -88,6 +88,7 @@ const deckReducer = (state = getInitialState(), action) => {
         case actions.SWAP_CARDS: return swapCards(state, action)
         case actions.SLAP_CARDS: return slapCard(state, action)
         case actions.REBUILD_DECK: return rebuildDrawPileFromDiscardPile(state, action)
+        case actions.END_GAME: return getInitialState()
         default: return state
     }
 }

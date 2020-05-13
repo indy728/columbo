@@ -12,6 +12,9 @@ const Wrapper = styled.View`
 `
 
 const deck = props => {
+    const discardPileClickedHandler = props.singlePlayer ?
+        null : () => props.pileClickedHandler(storeVariables.DISCARD_PILE)
+
     return (
         <Wrapper>
             <Pile
@@ -22,7 +25,7 @@ const deck = props => {
             <Pile
                 face={true}
                 pile={props.discardPile}
-                pressed={() => props.pileClickedHandler(storeVariables.DISCARD_PILE)}
+                pressed={discardPileClickedHandler}
                 />
         </Wrapper>
     )

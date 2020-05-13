@@ -5,6 +5,7 @@ import { updateObject } from '@shared/utilityFunctions'
 const getInitialState = () => {
     return {
         lobbyID: '',
+        singlePlayer: true,
         launched: false,
         phase: storeVariables.PHASE_PEEK,
         slappable: false,
@@ -217,6 +218,7 @@ const gameReducer = (state = getInitialState(), action) => {
         case actions.DEAL_CARD: return dealCards(state, action)
         case actions.SWAP_CARDS: return updatePlayer(state, action)
         case actions.SLAP_CARDS: return slapCard(state, action)
+        case actions.END_GAME: return getInitialState()
 
         default: return state
     }

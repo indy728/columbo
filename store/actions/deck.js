@@ -67,14 +67,22 @@ const cardValues = [
 
 const initCards = suit => {
 
-    const makeCardObj = (value, points, suit, action) => {
-        return { value, points, suit, action }
+    const makeCardObj = (value, points, suit, action, actionSP = null) => {
+        return { value, points, suit, action, actionSP }
     }
 
     const cards = []
     for (let i in cardValues) {
         const thisCard = {}
         switch (cardValues[i]) {
+            case '3':
+            case '4':
+                thisCard = makeCardObj(cardValues[i], +i + 1, suit, null, storeVariables.PEEK_HAND)
+                break
+            case '5':
+            case '6':
+                thisCard = makeCardObj(cardValues[i], +i + 1, suit, null, storeVariables.PEEK_POINTS)
+                break
             case '7':
             case '8':
                 thisCard = makeCardObj(cardValues[i], +i + 1, suit, 'look at somone\'s')
@@ -90,10 +98,10 @@ const initCards = suit => {
                 thisCard = makeCardObj(cardValues[i], 12, suit, 'look and swap')
                 break
             case 'king':
-                thisCard = makeCardObj(cardValues[i], suit === 'hearts' ? -1 : 13, suit, 'none')
+                thisCard = makeCardObj(cardValues[i], suit === 'hearts' ? -1 : 13, suit, null)
                 break
             default:
-                thisCard = makeCardObj(cardValues[i], +i + 1, suit, 'none')
+                thisCard = makeCardObj(cardValues[i], +i + 1, suit, null)
                 break
         }
         cards.push(thisCard)
