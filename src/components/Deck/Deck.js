@@ -1,62 +1,34 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, TouchableOpacity, Text } from 'react-native'
-import { initDeck, shuffleCards } from './util/cardUtil'
+import React from 'react'
+import { View } from 'react-native'
 import styled from 'styled-components'
-import * as actions from '../../../store/actions'
 import Pile from './Pile/Pile'
-import { CardBack, CardFace } from '../UI'
+import * as storeVariables from '@store/storeVariables'
 
 const Wrapper = styled.View`
     flex: 1.5;
-    background-color: salmon;
     flex-flow: row;
     align-items: center;
     justify-content: space-around;
 `
 
-class Deck extends Component {
+const deck = props => {
+    const discardPileClickedHandler = props.singlePlayer ?
+        null : () => props.pileClickedHandler(storeVariables.DISCARD_PILE)
 
-    componentDidMount() {
-        if (!this.props.game.deckBuilt) {
-            this.props.onInitDeck(shuffleCards(initDeck()))
-        }
-    }
-    
-    render() {
-        let deck = null
-        const { drawPile, discardPile } = this.props.game
-
-        return (
-            <Wrapper>
-                <Pile
-                    face={false}
-                    pile={drawPile}
-                    pressed={() => this.props.onDrawCard("draw-pile")}
-                    />
-                <Pile
-                    face={true}
-                    pile={discardPile}
-                    pressed={() => this.props.onDrawCard("discard-pile")}
-                    />
-            </Wrapper>
-        )
-    }
+    return (
+        <Wrapper>
+            <Pile
+                face={false}
+                pile={props.drawPile}
+                pressed={() => props.pileClickedHandler(storeVariables.DRAW_PILE)}
+                />
+            <Pile
+                face={true}
+                pile={props.discardPile}
+                pressed={discardPileClickedHandler}
+                />
+        </Wrapper>
+    )
 }
 
-
-const mapStateToProps = state => {
-    return {
-        game: state.game
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onInitDeck: deck => dispatch(actions.initDeck(deck)),
-        onUpdatePhase: phase => dispatch(actions.updatePhase(phase)),
-        onDrawCard: card => dispatch(actions.drawCard(card)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Deck)
+export default deck

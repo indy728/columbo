@@ -1,57 +1,86 @@
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
-import * as actions from '../../../../store/actions'
 import styled from 'styled-components'
-import Card from '../../Deck/Card/Card'
+import Card from '../../Cards/Card/Card'
 import cardImg from '@assets/cardImg'
+import { DefaultButton, ActionButton } from '@UI'
+import * as actions from '@store/actions'
+import * as storeVariables from '@store/storeVariables'
 
 
 const Wrapper = styled.View`
     flex: 3;
-    background-color: orangered;
     align-items: center;
     justify-content: space-around;
 `
 
 const CurrentCardWrapper = styled.View`
-    width: 124px;
-    height: 176px;
-    border: 2px dashed black;
+    width: ${() => (2 * storeVariables.CARD_PIXEL_WIDTH) + "px"};
+    height: ${() => (2 * storeVariables.CARD_PIXEL_HEIGHT) + "px"};
+    background-color: ${({ theme }) => theme.palette.grayscale[4]};
+    shadow-opacity: ${({ children }) => children ? storeVariables.SINGLE_CARD_SHADOW_OPACITY : 0};
+    align-items: center;
+    justify-content: center;
 `
 
-const PlayButton = styled.TouchableOpacity`
-    width: 40%;
-    height: 16.6%;
-    background-color: steelblue;
+
+const ActionButtonsWrapper = styled.View`
+    width: 100%;
+    flex-flow: row;
+    justify-content: space-around;
 `
+
 
 class PlayerAction extends Component {
     
     render() {
-        const { currentCard } = this.props
+        const { currentCard, slappable } = this.props
         let currentCardRender = <CurrentCardWrapper />
+        let actionButton = (
+            <ActionButton
+                disabled={this.props.phase !== storeVariables.PHASE_PLAY}
+                onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_SWAP)}
+                >
+                SWAP
+            </ActionButton>
+        )
+
+        if (slappable) {
+            actionButton = (
+                <ActionButton
+                    onPress={() => this.props.slapHandler()}
+                    >
+                    SLAP
+                </ActionButton>
+            )
+        }
         
         if (currentCard) {
             const { value, suit } = currentCard
             currentCardRender = (
-                <CurrentCardWrapper>
+                <CurrentCardWrapper
+                    >
                     <Card 
                         source={cardImg[suit][value]}
                     />
                 </CurrentCardWrapper>
             )
-
         }
 
         return (
             <Wrapper>
                 {currentCardRender}
-                <PlayButton
-                    onPress={() => this.props.onPlay(currentCard)}
-                    >
-                    <Text>PLAY</Text>
-                </PlayButton>
+                <ActionButtonsWrapper>
+                    <DefaultButton
+                        disabled={this.props.phase !== storeVariables.PHASE_PLAY}
+                        onPress={() => this.props.onPlay(currentCard)}
+                        width={175}
+                        >
+                        PLAY
+                    </DefaultButton>
+                    {actionButton}
+                </ActionButtonsWrapper>
             </Wrapper>
         )
     }
@@ -59,7 +88,9 @@ class PlayerAction extends Component {
 
 const mapStateToProps = state => {
     return {
-        currentCard: state.game.currentCard
+        phase: state.game.phase,
+        currentCard: state.deck.currentCard,
+        slappable: state.game.slappable
     }
 }
 

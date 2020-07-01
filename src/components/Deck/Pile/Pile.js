@@ -1,14 +1,16 @@
 import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components'
-import Card from '../Card/Card'
+import Card from '../../Cards/Card/Card'
 import cardImg from '@assets/cardImg'
+import * as storeVariables from '@store/storeVariables'
 
 
 const Wrapper = styled.View`
-    width: 93px;
-    height: 132px;
-    border: 1px solid black;
+    width: ${() => (1.5 * storeVariables.CARD_PIXEL_WIDTH) + "px"};
+    height: ${() => (1.5 * storeVariables.CARD_PIXEL_HEIGHT) + "px"};
+    background-color: ${({ theme }) => theme.palette.emptyCardSlot};
+    shadow-opacity: ${({length}) => (0.8 * (length / 36))};
     position: relative;
     transform: rotate(270deg);
 `
@@ -28,13 +30,13 @@ const Pile = props => {
                 key={value + suit}
                 onPress={props.pressed}
                 source={cardSource}
-                >
-            </Card>
+                />
         )
     })
 
     return (
-        <Wrapper>
+        <Wrapper
+            length={props.pile.length}>
             {renderPile}
         </Wrapper>
     )

@@ -1,83 +1,101 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, View, Button, TouchableOpacity, Image, ImageStore } from "react-native";
+import { connect } from 'react-redux'
+// import { Text, StyleSheet, View, TextInput } from "react-native";
+import { Image } from 'react-native'
+import { DefaultButton } from '@UI'
 import styled from 'styled-components/native'
 import shortid from 'shortid'
-import CardImages from '@assets/cardImg'
+import Modal from '../hoc/Modal'
+import CreateGame from '../components/CreateGame/CreateGame'
+import * as actions from '@store/actions'
 
 const Wrapper = styled.View`
-    /* width: 100%; */
     display: flex;
     align-items: center;
-
-`
-
-const HomeText = styled.Text`
-    font-size: 30px;
-    color: red;
-    margin: 5px 0;
-`
-
-const BlueButton = styled.TouchableOpacity`
-    background-color: blue;
-    width: 80%;
-`
-
-const BlueButtonText = styled.Text`
-    color: white;
-    font-size: 20px;
-    text-align: center;
-`
-
-const CardImage = styled.Image`
-    width: 200px;
-    height: 400px;
+    justify-content: center;
+    flex: 1;
 `
 
 class HomeScreen extends Component {
 
     state = {
-        currentRoomID: ''
+        currentRoomID: '',
+        isModalVisible: false,
+        playerID: '',
+        username: '',
     }
 
     onCreateShortID = () => {
         let roomID = shortid.generate();
-        // console.log('[App] roomID: ', roomID)
         this.setState({ currentRoomID : roomID })
     }
 
-    render() {
-    // console.log('[CardDemo] this.props: ', this.props)
-    // console.log('[HomeScreen] CardImages.clubs: ', CardImages.spades)
+    toggleModal = () => {
+        this.setState({ isModalVisible: !this.state.isModalVisible })
+    }
 
-    const displayroomID = <Text>{this.state.currentRoomID}</Text>
+    changeTextInputHandler = (field, text) => {
+        this.setState({
+            [field]: text
+        })
+    }
+
+    createGameHandler = () => {
+        // this.props.onInitPlayers(1)
+        this.props.onInitPlayer(this.state.username)
+        this.props.onInitGame(shortid.generate())
+        this.props.onInitDeck()
+        this.toggleModal();
+        this.props.navigation.navigate('CardDemo')
+    }
+
+    render() {
+        let goToGameText = 'go to game'
+        let goToGameAction = () => this.props.navigation.navigate('CardDemo')
+
+        if (this.props.lobbyID === '') {
+            goToGameText = 'create game'
+            goToGameAction = this.toggleModal
+        }
 
         return (
             <Wrapper>
-                <HomeText>HomeScreen</HomeText>
-                <BlueButton
-                    onPress={() => this.props.navigation.navigate('CardDemo')}
-                >
-                    <BlueButtonText>Go To Cards</BlueButtonText>
-                </BlueButton>
-                <BlueButton
-                    onPress={this.onCreateShortID}
+                <Modal
+                    visible={this.state.isModalVisible}
                     >
-                    <BlueButtonText>Touch Me</BlueButtonText>
-                </BlueButton>
-                {
-                    this.state.currentRoomID !== '' &&
-                    displayroomID
-                }
-                <CardImage source={CardImages.clubs.A} />
-                <CardImage source={require('../../assets/cardImg/clubs/ace.png')} />
-                <BlueButton>
-                    <BlueButtonText>
-                        GAY
-                    </BlueButtonText>
-                </BlueButton>
+                    <CreateGame 
+                        createGameHandler={this.createGameHandler}
+                        toggleModal={this.toggleModal}
+                        />
+                </Modal>
+
+                <Image
+                    source={require('@assets/cardImg/jokers/red_joker.png')} 
+                    />
+
+                <DefaultButton
+                    onPress={goToGameAction}
+                >
+                    {goToGameText}
+                </DefaultButton>
             </Wrapper>
         )
     }
 }
 
-export default HomeScreen;
+const mapStateToProps = state => {
+    return {
+        lobbyID: state.game.lobbyID
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        // onInitPlayers: playerCount => dispatch(actions.initPlayers(playerCount)),
+        onInitPlayer: username => dispatch(actions.initPlayer(username)),
+        onInitGame: lobbyID => dispatch(actions.initGame(lobbyID)),
+        onInitDeck: () => dispatch(actions.initDeck())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)

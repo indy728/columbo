@@ -1,6 +1,6 @@
 import React from 'react'
-import { updateObject } from '../../../../shared/objectUtility'
-import Card from '../Card/Card'
+import { updateObject } from '@shared/utilityFunctions'
+import Card from '../../components/Deck/Card/Card'
 
 const suits = [
     'spades',
@@ -17,13 +17,10 @@ const cardValues = [
 const initCards = suit => {
 
     const makeCardObj = (value, points, suit, action) => {
-        return (
-            {value, points, suit, action}
-            // <Card cardDetails={{value, points, suit, action}} />
-            )
+        return { value, points, suit, action }
     }
-
     const cards = []
+    
     for (let i in cardValues) {
         const thisCard = {}
         switch (cardValues[i]) {
@@ -59,7 +56,7 @@ export const initDeck = suit => {
     suits.forEach(suit => {
         drawPile = drawPile.concat(initCards(suit))
     })
-        
+    
     return drawPile
 }
 
