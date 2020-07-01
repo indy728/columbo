@@ -3,6 +3,8 @@ import * as storeVariables from '../storeVariables'
 import { updateObject } from '@shared/utilityFunctions'
 
 const getInitialState = () => {
+    console.log('[game]: initial state been got')
+
     return {
         lobbyID: '',
         singlePlayer: true,

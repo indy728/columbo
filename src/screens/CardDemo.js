@@ -24,7 +24,6 @@ const FinalScore = styled.View`
     margin-bottom: 50px;
     background-color: ${({ theme }) => theme.palette.grayscale[1]};
     align-items: center;
-    flex-flow: row;
 `
 
 const ScoreDetails = styled.View`
@@ -39,7 +38,20 @@ const ScoreText = styled.Text`
     font-size: 16px;
     text-transform: uppercase;
     color: ${({ theme }) => theme.palette.white[0]};
+    text-align: center;
 `
+
+const ScoreRow = styled.View`
+    width: 100%;
+    margin: 10px 0;
+    padding: 0 15px;
+    
+    flex-flow: row;
+    justify-content: space-between;
+`
+
+const RawScoreValues = ScoreText;
+const PointScore = ScoreText;
 
 class CardDemo extends Component {
 
@@ -224,6 +236,7 @@ class CardDemo extends Component {
                             pressed={this.swapCardsHandler}
                             cardAction={storeVariables.CARD_ACTION_SWAP}
                             />
+
                         <ActionButton
                             onPress={() => this.props.onUpdatePhase(storeVariables.PHASE_PLAY)}
                             >
@@ -232,35 +245,21 @@ class CardDemo extends Component {
                     </React.Fragment>
                 )
             case PHASE_TAPPED:
-                const { round } = this.props
 
                 return (
                     <React.Fragment>
-                        <FinalScore>
-                            <ScoreDetails>
-                                <ScoreText>
-                                    final score: {round.points}
-                                </ScoreText>
-                                <ScoreText>
-                                    turns taken: {round.turns}
-                                </ScoreText>
-                                <ScoreText>
-                                    time: {this.getRoundDuration(round)} seconds
-                                </ScoreText>
-                            </ScoreDetails>
-                            <Points>
-
-                            </Points>
-                        </FinalScore>
+                        {this.getRoundScoreDetails(this.props.round)}
                         <PlayerHand 
                             hand={this.props.player.hand}
                             cardAction={storeVariables.CARD_ACTION_TAPPED}
                             />
+
                         <ActionButton
                             onPress={this.props.onEndRound}
                             >
                             next round
                         </ActionButton>
+
                         <ActionButton
                             onPress={this.tappedHandler}
                             >
@@ -275,6 +274,62 @@ class CardDemo extends Component {
 
     getRoundDuration = round => {
         return (+(round.endTime) - +(round.startTime)) / 1000
+    }
+
+    getRoundScoreDetails = (round, index = 0) => {
+        const { points, turns } = round
+        const {
+            MAX_CARD_POINTS,
+            MAX_TURNS_POINTS,
+            MAX_TIME_POINTS,
+            CARD_POINTS_MULTIPLIER,
+            TURNS_POINTS_MULTIPLIER,
+            TIME_POINTS_MULTIPLIER
+        } = storeVariables
+        const roundDuration = this.getRoundDuration(round)
+        const cardPoints = Math.max(0, (MAX_CARD_POINTS - (points > 4 ? points + (points - 4) * 5 : points)) * CARD_POINTS_MULTIPLIER)
+        const turnsPoints = MAX_TURNS_POINTS - turns * TURNS_POINTS_MULTIPLIER
+        const timePoints = MAX_TIME_POINTS - roundDuration * TIME_POINTS_MULTIPLIER
+
+        return (
+            <FinalScore key={index}>
+                <ScoreRow>
+                    <RawScoreValues>
+                        hand value: {points}
+                    </RawScoreValues>
+
+                    <PointScore>
+                        {cardPoints}
+                    </PointScore>
+                </ScoreRow>
+
+                <ScoreRow>
+                    <RawScoreValues>
+                        turns taken: {turns}
+                    </RawScoreValues>
+
+                    <PointScore>
+                        {turnsPoints}
+                    </PointScore>
+                </ScoreRow>
+
+                <ScoreRow>
+                    <RawScoreValues>
+                        time: {Math.floor(roundDuration)} seconds
+                    </RawScoreValues>
+
+                    <PointScore>
+                        {timePoints}
+                    </PointScore>
+                </ScoreRow>
+
+                <ScoreRow>
+                    <ScoreText>
+                        Total Points: {cardPoints + turnsPoints + timePoints}
+                    </ScoreText>
+                </ScoreRow>
+            </FinalScore>
+        )
     }
 
     setEndGameContent = () => {
@@ -304,7 +359,7 @@ class CardDemo extends Component {
                     <ActionButton onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>show round details</ActionButton>
                 </FinalScore>
                 <DefaultButton
-                    onPress={this.props.onEndGame}
+                    onPress={() => this.props.onEndGame()}
                     >
                     play again
                 </DefaultButton>
@@ -321,21 +376,7 @@ class CardDemo extends Component {
         if (this.state.endGameDetails) {
             endGameContent = 
                 <React.Fragment>
-                    {rounds.map((round, i) => {
-                        return (
-                            <FinalScore key={'round' + i}>
-                                <ScoreText>
-                                    final score: {round.points}
-                                </ScoreText>
-                                <ScoreText>
-                                    turns taken: {round.turns}
-                                </ScoreText>
-                                <ScoreText>
-                                    duration: {this.getRoundDuration(round)}
-                                </ScoreText>
-                            </FinalScore>
-                        )
-                    })}
+                    {rounds.map((round, i) => this.getRoundScoreDetails(round, i))})}
                     <ActionButton
                         onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}
                         >
@@ -408,6 +449,7 @@ class CardDemo extends Component {
                         tappingHandler={() => toggleBooleanStateHandler(this, 'tapping')}
                         />
                 </Wrapper>
+                <ActionButton onPress={this.props.onEndGame} />
             </React.Fragment>
         )
     }

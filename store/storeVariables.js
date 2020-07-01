@@ -30,3 +30,12 @@ export const CARD_PIXEL_WIDTH = 63
 export const CARD_PIXEL_HEIGHT = 90
 export const CARD_SIZE_HAND_MULTIPLIER = 1.2
 export const SINGLE_CARD_SHADOW_OPACITY = .2
+
+export const MAX_CARD_POINTS = 349
+// export const MAX_CARD_POINTS = 100
+export const MAX_TURNS_POINTS = 100000
+export const MAX_TIME_POINTS = 100000
+
+export const CARD_POINTS_MULTIPLIER = 5000
+export const TURNS_POINTS_MULTIPLIER = 1000
+export const TIME_POINTS_MULTIPLIER = 1000
