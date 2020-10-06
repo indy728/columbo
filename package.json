@@ -14,7 +14,7 @@
     "@react-navigation/stack": "^5.2.9",
     "@types/pubnub": "^4.27.2",
     "expo": "~36.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "pubnub": "^4.27.4",
     "pubnub-react": "^2.0.0",
     "pubnub-redux": "0.0.7-beta",
