@@ -12,8 +12,12 @@
     "@react-native-community/picker": "^1.3.0",
     "@react-navigation/native": "^5.1.4",
     "@react-navigation/stack": "^5.2.9",
+    "@reduxjs/toolkit": "^1.4.0",
     "@types/pubnub": "^4.27.2",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-webpack": "^0.13.0",
     "expo": "~36.0.0",
+    "install-peerdeps": "^2.0.3",
     "lodash": "^4.17.19",
     "pubnub": "^4.27.4",
     "pubnub-react": "^2.0.0",
@@ -38,8 +42,14 @@
     "styled-theme": "^0.3.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
     "babel-preset-expo": "~8.0.0",
-    "@babel/core": "^7.0.0"
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.3",
+    "eslint-plugin-react-hooks": "^4.1.2"
   },
   "private": true
 }
