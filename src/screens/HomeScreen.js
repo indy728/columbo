@@ -7,79 +7,92 @@ import shortid from 'shortid';
 import Modal from 'hoc/Modal';
 import CreateGame from 'components/CreateGame/CreateGame';
 import * as actions from 'store/actions';
+import PropTypes from 'prop-types';
+
+const redJoker = require('assets/cardImg/jokers/red_joker.png');
 
 const Wrapper = styled.View`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 `;
 
 class HomeScreen extends Component {
-    state = {
-      currentRoomID: '',
-      isModalVisible: false,
-      playerID: '',
-      username: '',
+  state = {
+    currentRoomID: '',
+    isModalVisible: false,
+    playerID: '',
+    username: '',
+  }
+
+  onCreateShortID = () => {
+    const roomID = shortid.generate();
+    this.setState({ currentRoomID: roomID });
+  }
+
+  toggleModal = () => {
+    this.setState({ isModalVisible: !this.state.isModalVisible });
+  }
+
+  changeTextInputHandler = (field, text) => {
+    this.setState({
+      [field]: text,
+    });
+  }
+
+  createGameHandler = () => {
+    const {
+      onInitPlayer, onInitGame, onInitDeck, navigation: { navigate },
+    } = this.props;
+
+    onInitPlayer(this.state.username);
+    onInitGame(shortid.generate());
+    onInitDeck();
+    this.toggleModal();
+    navigate('CardDemo');
+  }
+
+  render() {
+    const { navigation: { navigate }, lobbyID } = this.props;
+    let goToGameText = 'go to game';
+    let goToGameAction = () => navigate('CardDemo');
+
+    if (lobbyID === '') {
+      goToGameText = 'create game';
+      goToGameAction = this.toggleModal;
     }
 
-    onCreateShortID = () => {
-      const roomID = shortid.generate();
-      this.setState({ currentRoomID: roomID });
-    }
-
-    toggleModal = () => {
-      this.setState({ isModalVisible: !this.state.isModalVisible });
-    }
-
-    changeTextInputHandler = (field, text) => {
-      this.setState({
-        [field]: text,
-      });
-    }
-
-    createGameHandler = () => {
-      // this.props.onInitPlayers(1)
-      this.props.onInitPlayer(this.state.username);
-      this.props.onInitGame(shortid.generate());
-      this.props.onInitDeck();
-      this.toggleModal();
-      this.props.navigation.navigate('CardDemo');
-    }
-
-    render() {
-      let goToGameText = 'go to game';
-      let goToGameAction = () => this.props.navigation.navigate('CardDemo');
-
-      if (this.props.lobbyID === '') {
-        goToGameText = 'create game';
-        goToGameAction = this.toggleModal;
-      }
-
-      return (
-        <Wrapper>
-          <Modal
-            visible={this.state.isModalVisible}
-          >
-            <CreateGame
-              createGameHandler={this.createGameHandler}
-              toggleModal={this.toggleModal}
-            />
-          </Modal>
-
-          <Image
-            source={require('../.expo/assets/cardImg/jokers/red_joker.png')}
+    return (
+      <Wrapper>
+        <Modal visible={this.state.isModalVisible}>
+          <CreateGame
+            createGameHandler={this.createGameHandler}
+            toggleModal={this.toggleModal}
           />
-
-          <DefaultButton
-            onPress={goToGameAction}
-          >
-            {goToGameText}
-          </DefaultButton>
-        </Wrapper>
-      );
-    }
+        </Modal>
+        <Image source={redJoker}/>
+        <DefaultButton onPress={goToGameAction}>
+          {goToGameText}
+        </DefaultButton>
+      </Wrapper>
+    );
+  }
 }
+
+HomeScreen.propTypes = {
+  onInitPlayer: PropTypes.func.isRequired,
+  onInitGame: PropTypes.func.isRequired,
+  onInitDeck: PropTypes.func.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  lobbyID: PropTypes.string,
+};
+
+HomeScreen.defaultProps = {
+  lobbyID: '',
+};
 
 const mapStateToProps = (state) => ({
   lobbyID: state.game.lobbyID,
