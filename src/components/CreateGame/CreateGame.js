@@ -1,34 +1,20 @@
-import React from 'react'
-import styled from 'styled-components'
-import { DefaultButton, DefaultForm, FormInput } from '@UI'
-import { Picker } from 'react-native'
+import React from 'react';
+import { DefaultButton, DefaultForm } from 'components/UI';
 
-const createGame = props => {
-    return (
-        <DefaultForm>
-            {/* <Picker>
-                <Picker.Item label="1" value="1" />
-                <Picker.Item label="2" value="2" />
-            </Picker>
-            <FormInput 
-                autoCapitalize="none"
-                autoCorrect={false}
-                // value={this.state.username}
-                // onChangeText={text => this.changeTextInputHandler('username', text)}
-            /> */}
-            <DefaultButton
-                onPress={props.createGameHandler}
-                disabled={props.disabled}
-                >
-                launch game
-            </DefaultButton>
-            <DefaultButton
-                onPress={props.toggleModal}
-                >
-                cancel
-            </DefaultButton>
-        </DefaultForm>
-    )
-}
+const CreateGame = ({ createGameHandler, disabled, toggleModal }) => (
+  <DefaultForm>
+    <DefaultButton
+      onPress={createGameHandler}
+      disabled={disabled}
+    >
+      launch game
+    </DefaultButton>
+    <DefaultButton
+      onPress={toggleModal}
+    >
+      cancel
+    </DefaultButton>
+  </DefaultForm>
+);
 
-export default createGame
+export default CreateGame;

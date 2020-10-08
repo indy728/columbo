@@ -1,47 +1,4 @@
-import * as actions from './actionTypes';
-import * as storeVariables from '../storeVariables';
-
-export const setLobbyID = (lobbyID) => ({
-  type: actions.SET_LOBBY_ID,
-  lobbyID,
-});
-
-export const initDeck = () => {
-  let drawPile = [];
-
-  suits.forEach((suit) => {
-    drawPile = drawPile.concat(initCards(suit));
-  });
-
-  const deck = shuffleCards(drawPile);
-
-  return {
-    type: actions.INIT_DECK,
-    deck,
-  };
-};
-
-export const drawCard = (pile) => ({
-  type: actions.DRAW_CARD,
-  pile,
-  phase: storeVariables.PHASE_PLAY,
-});
-
-export const playCard = (card) => ({
-  type: actions.PLAY_CARD,
-  card,
-  phase: storeVariables.PHASE_DRAW,
-});
-
-export const updateDeck = (drawPile) => ({
-  type: actions.UPDATE_DECK,
-  drawPile,
-});
-
-export const rebuildDrawPileFromDiscardPile = (discardPile) => ({
-  type: actions.REBUILD_DECK,
-  drawPile: shuffleCards(discardPile),
-});
+import * as storeVariables from 'constants';
 
 const suits = [
   'spades',
@@ -55,53 +12,54 @@ const cardValues = [
   '10', 'jack', 'queen', 'king',
 ];
 
-const initCards = (suit) => {
+const initCards = (s) => {
   const makeCardObj = (value, points, suit, action, actionSP = null) => ({
     value, points, suit, action, actionSP,
   });
 
   const cards = [];
-  for (const i in cardValues) {
-    const thisCard = {};
-    switch (cardValues[i]) {
+  cardValues.forEach((cardValue, i) => {
+    let thisCard = {};
+
+    switch (cardValue) {
       case '3':
       case '4':
-        thisCard = makeCardObj(cardValues[i], +i + 1, suit, null, storeVariables.PEEK_HAND);
+        thisCard = makeCardObj(cardValue, +i + 1, s, null, storeVariables.PEEK_HAND);
         break;
       case '5':
       case '6':
-        thisCard = makeCardObj(cardValues[i], +i + 1, suit, null, storeVariables.PEEK_POINTS);
+        thisCard = makeCardObj(cardValue, +i + 1, s, null, storeVariables.PEEK_POINTS);
         break;
       case '7':
       case '8':
-        thisCard = makeCardObj(cardValues[i], +i + 1, suit, 'look at somone\'s');
+        thisCard = makeCardObj(cardValue, +i + 1, s, 'look at somone\'s');
         break;
       case '9':
       case '10':
-        thisCard = makeCardObj(cardValues[i], +i + 1, suit, 'look at your own');
+        thisCard = makeCardObj(cardValue, +i + 1, s, 'look at your own');
         break;
       case 'jack':
-        thisCard = makeCardObj(cardValues[i], 11, suit, 'blind swap');
+        thisCard = makeCardObj(cardValue, 11, s, 'blind swap');
         break;
       case 'queen':
-        thisCard = makeCardObj(cardValues[i], 12, suit, 'look and swap');
+        thisCard = makeCardObj(cardValue, 12, s, 'look and swap');
         break;
       case 'king':
-        thisCard = makeCardObj(cardValues[i], suit === 'hearts' ? -1 : 13, suit, null);
+        thisCard = makeCardObj(cardValue, s === 'hearts' ? -1 : 13, s, null);
         break;
       default:
-        thisCard = makeCardObj(cardValues[i], +i + 1, suit, null);
+        thisCard = makeCardObj(cardValue, +i + 1, s, null);
         break;
     }
     cards.push(thisCard);
-  }
+  });
   return cards;
 };
 
-const shuffleCards = (deck) => {
+export const shuffleCards = (deck) => {
   const dup = [...deck];
 
-  for (let i = dup.length - 1; i > 0; i--) {
+  for (let i = dup.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * i);
     const temp = dup[i];
     dup[i] = dup[j];
@@ -109,4 +67,13 @@ const shuffleCards = (deck) => {
   }
 
   return dup;
+};
+
+export const initDeck = () => {
+  let drawPile = [];
+
+  suits.forEach((suit) => {
+    drawPile = drawPile.concat(initCards(suit));
+  });
+  return shuffleCards(drawPile);
 };

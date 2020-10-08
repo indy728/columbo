@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import HomeScreen from 'screens/HomeScreen';
 import CardDemo from 'screens/CardDemo';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,6 +10,7 @@ import createAppStore from 'store/configureStore';
 import theme from 'themes/default';
 
 import { ThemeProvider } from 'styled-components';
+import HomeScreen from './src/screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
