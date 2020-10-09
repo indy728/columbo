@@ -1,20 +1,30 @@
 import * as storeVariables from 'constants';
 
-const suits = [
-  'spades',
-  'hearts',
-  'diamonds',
-  'clubs',
-];
+const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
 
 const cardValues = [
-  'ace', '2', '3', '4', '5', '6', '7', '8', '9',
-  '10', 'jack', 'queen', 'king',
+  'ace',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '10',
+  'jack',
+  'queen',
+  'king',
 ];
 
 const initCards = (s) => {
   const makeCardObj = (value, points, suit, action, actionSP = null) => ({
-    value, points, suit, action, actionSP,
+    value,
+    points,
+    suit,
+    action,
+    actionSP,
   });
 
   const cards = [];
@@ -24,15 +34,27 @@ const initCards = (s) => {
     switch (cardValue) {
       case '3':
       case '4':
-        thisCard = makeCardObj(cardValue, +i + 1, s, null, storeVariables.PEEK_HAND);
+        thisCard = makeCardObj(
+          cardValue,
+          +i + 1,
+          s,
+          null,
+          storeVariables.PEEK_HAND,
+        );
         break;
       case '5':
       case '6':
-        thisCard = makeCardObj(cardValue, +i + 1, s, null, storeVariables.PEEK_POINTS);
+        thisCard = makeCardObj(
+          cardValue,
+          +i + 1,
+          s,
+          null,
+          storeVariables.PEEK_POINTS,
+        );
         break;
       case '7':
       case '8':
-        thisCard = makeCardObj(cardValue, +i + 1, s, 'look at somone\'s');
+        thisCard = makeCardObj(cardValue, +i + 1, s, "look at somone's");
         break;
       case '9':
       case '10':
