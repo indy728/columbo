@@ -32,7 +32,7 @@ const {actions, reducer} = createSlice({
         state.currentCard = null;
       }
     },
-    slapCard: (state, {payload: {pile, deck}}) => {
+    updateDeck: (state, {payload: {pile, deck}}) => {
       if (state[DISCARD_PILE].length > 0 || pile === DRAW_PILE) {
         state[pile] = deck;
       }
@@ -52,7 +52,7 @@ export const {
   initDeck,
   drawCard,
   swapCards,
-  slapCard,
+  updateDeck,
   playCard,
   rebuildDeck,
 } = actions;
