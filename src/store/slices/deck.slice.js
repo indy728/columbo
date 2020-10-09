@@ -1,6 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {updateObject} from 'shared/utilityFunctions';
-import {initDeck, shuffleCards} from 'util';
 import {DRAW_PILE, DISCARD_PILE} from 'constants';
 
 const initialState = {
@@ -14,9 +12,9 @@ const {actions, reducer} = createSlice({
   name: 'deck',
   initialState,
   reducers: {
-    initDeck: (state) => {
+    initDeck: (state, {payload: {initialDeck}}) => {
       Object.assign(state, {
-        [DRAW_PILE]: initDeck(),
+        [DRAW_PILE]: initialDeck,
         discardPile: [],
         deckBuilt: true,
       });
@@ -50,6 +48,13 @@ const {actions, reducer} = createSlice({
   },
 });
 
-export {};
+export const {
+  initDeck,
+  drawCard,
+  swapCards,
+  slapCard,
+  playCard,
+  rebuildDeck,
+} = actions;
 
 export default reducer;
