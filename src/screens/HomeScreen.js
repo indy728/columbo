@@ -1,15 +1,18 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Image } from 'react-native';
-import { DefaultButton } from 'components/UI';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Image} from 'react-native';
+import {DefaultButton} from 'components/UI';
 import styled from 'styled-components/native';
 import shortid from 'shortid';
 import Modal from 'hoc/Modal';
 import CreateGame from 'components/CreateGame/CreateGame';
-import * as actions from 'store/actions';
-import PropTypes from 'prop-types';
+import {actions} from 'store/slices';
+import {createDeck} from 'util';
 
-const redJoker = require('assets/cardImg/jokers/red_joker.png');
+const redJoker = require('../assets/cardImg/jokers/red_joker.png');
+
+const TEXT_GO_TO_GAME = 'go to game';
+const TEXT_CREATE_GAME = 'create game';
 
 const Wrapper = styled.View`
   display: flex;
@@ -20,48 +23,35 @@ const Wrapper = styled.View`
 
 class HomeScreen extends Component {
   state = {
-    currentRoomID: '',
     isModalVisible: false,
-    playerID: '',
-    username: '',
-  }
+  };
 
   onCreateShortID = () => {
     const roomID = shortid.generate();
-    this.setState({ currentRoomID: roomID });
-  }
+    this.setState({currentRoomID: roomID});
+  };
 
   toggleModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible });
-  }
-
-  changeTextInputHandler = (field, text) => {
-    this.setState({
-      [field]: text,
-    });
-  }
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
 
   createGameHandler = () => {
     const {
-      onInitPlayer, onInitGame, onInitDeck, navigation: { navigate },
+      initDeck,
+      navigation: {navigate},
     } = this.props;
 
-    onInitPlayer(this.state.username);
-    onInitGame(shortid.generate());
-    onInitDeck();
+    initDeck();
     this.toggleModal();
     navigate('CardDemo');
-  }
+  };
 
   render() {
-    const { navigation: { navigate }, lobbyID } = this.props;
-    let goToGameText = 'go to game';
-    let goToGameAction = () => navigate('CardDemo');
+    const {
+      navigation: {navigate},
+    } = this.props;
 
-    if (lobbyID === '') {
-      goToGameText = 'create game';
-      goToGameAction = this.toggleModal;
-    }
+    console.log('[HomeScreen] state: ', this.props.state);
 
     return (
       <Wrapper>
@@ -71,38 +61,21 @@ class HomeScreen extends Component {
             toggleModal={this.toggleModal}
           />
         </Modal>
-        <Image source={redJoker}/>
-        <DefaultButton onPress={goToGameAction}>
-          {goToGameText}
+        <Image source={redJoker} />
+        <DefaultButton onPress={this.toggleModal}>
+          {TEXT_GO_TO_GAME}
         </DefaultButton>
       </Wrapper>
     );
   }
 }
 
-HomeScreen.propTypes = {
-  onInitPlayer: PropTypes.func.isRequired,
-  onInitGame: PropTypes.func.isRequired,
-  onInitDeck: PropTypes.func.isRequired,
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-  lobbyID: PropTypes.string,
-};
-
-HomeScreen.defaultProps = {
-  lobbyID: '',
-};
-
 const mapStateToProps = (state) => ({
-  lobbyID: state.game.lobbyID,
+  state,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  // onInitPlayers: playerCount => dispatch(actions.initPlayers(playerCount)),
-  onInitPlayer: (username) => dispatch(actions.initPlayer(username)),
-  onInitGame: (lobbyID) => dispatch(actions.initGame(lobbyID)),
-  onInitDeck: () => dispatch(actions.initDeck()),
+  initDeck: () => dispatch(actions.initDeck({initialDeck: createDeck()})),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

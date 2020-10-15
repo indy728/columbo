@@ -1,19 +1,10 @@
 import React from 'react';
-import { DefaultButton, DefaultForm } from 'components/UI';
+import {DefaultButton, DefaultForm} from 'components/UI';
 
-const CreateGame = ({ createGameHandler, disabled, toggleModal }) => (
+const CreateGame = ({createGameHandler, toggleModal}) => (
   <DefaultForm>
-    <DefaultButton
-      onPress={createGameHandler}
-      disabled={disabled}
-    >
-      launch game
-    </DefaultButton>
-    <DefaultButton
-      onPress={toggleModal}
-    >
-      cancel
-    </DefaultButton>
+    <DefaultButton onPress={createGameHandler}>launch game</DefaultButton>
+    <DefaultButton onPress={toggleModal}>cancel</DefaultButton>
   </DefaultForm>
 );
 

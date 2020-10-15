@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import CardDemo from 'screens/CardDemo';
-import { Provider } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {Provider} from 'react-redux';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 // import PubNubReact from 'pubnub-react'
 // import PubNub from 'pubnub';
 // import { PubNubProvider, usePubNub } from 'pubnub-react';
 import createAppStore from 'store/configureStore';
 import theme from 'themes/default';
 
-import { ThemeProvider } from 'styled-components';
+import {ThemeProvider} from 'styled-components';
 import HomeScreen from './src/screens/HomeScreen';
 
 const Stack = createStackNavigator();

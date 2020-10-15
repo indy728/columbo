@@ -1,1 +1,1 @@
-export {shuffleCards, initDeck} from './deck.util';
+export {shuffleCards, initDeck as createDeck} from './deck.util';
