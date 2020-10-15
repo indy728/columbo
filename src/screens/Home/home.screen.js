@@ -8,8 +8,9 @@ import Modal from 'hoc/Modal';
 import CreateGame from 'components/CreateGame/CreateGame';
 import {actions} from 'store/slices';
 import {createDeck} from 'util';
+import {GAME_SCREEN} from 'constants';
 
-const redJoker = require('../assets/cardImg/jokers/red_joker.png');
+const redJoker = require('../../assets/cardImg/jokers/red_joker.png');
 
 const TEXT_GO_TO_GAME = 'go to game';
 const TEXT_CREATE_GAME = 'create game';
@@ -43,16 +44,10 @@ class HomeScreen extends Component {
 
     initDeck();
     this.toggleModal();
-    navigate('CardDemo');
+    navigate(GAME_SCREEN);
   };
 
   render() {
-    const {
-      navigation: {navigate},
-    } = this.props;
-
-    console.log('[HomeScreen] state: ', this.props.state);
-
     return (
       <Wrapper>
         <Modal visible={this.state.isModalVisible}>

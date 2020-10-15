@@ -39,3 +39,5 @@ export const MAX_TIME_POINTS = 100000;
 export const CARD_POINTS_MULTIPLIER = 5000;
 export const TURNS_POINTS_MULTIPLIER = 1000;
 export const TIME_POINTS_MULTIPLIER = 1000;
+
+export * from './screens';

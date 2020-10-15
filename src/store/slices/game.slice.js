@@ -33,8 +33,8 @@ const {actions, reducer} = createSlice({
     updatePlayerHand: (state, {payload: {hand}}) => {
       Object.assign(state.player, {hand});
     },
-    updateGame: (state, {payload: {attribute, value}}) => {
-      state[attribute] = value;
+    updateGame: (state, {payload: {updatedAttributes}}) => {
+      Object.assign(state, updatedAttributes);
     },
     updatePhase: (state, {payload: {phase, turns}}) => {
       !!turns && Object.assign(state.round, {turns});
@@ -56,8 +56,8 @@ const {actions, reducer} = createSlice({
       });
     },
     endRound: (state, {payload: {rounds}}) => {
+      !!rounds && Object.assign(state, rounds);
       state = {...initialState};
-      state.rounds = rounds;
     },
   },
 });
