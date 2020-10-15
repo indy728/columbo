@@ -130,7 +130,7 @@ class CardDemo extends Component {
       }
     }
 
-    dealCards(drawCopy, Object.assign(player, {hand}));
+    dealCards(drawCopy, hand);
   };
 
   swapCardsHandler = (cardLocationArray) => {
@@ -142,7 +142,7 @@ class CardDemo extends Component {
     discardPile.unshift(hand[col][row]);
     hand[col][row] = currentCard;
 
-    swapCards(discardPile, Object.assign(player, {hand}));
+    swapCards(discardPile, hand);
   };
 
   columnIsEmpty = (column) => {
@@ -179,7 +179,7 @@ class CardDemo extends Component {
       if (col === hand.length - 1) {
         this.cleanUpHand(hand, false);
       }
-      slapCards(discardPile, Object.assign(player, {hand}));
+      slapCards(discardPile, hand);
     } else {
       for (let i = 0; i < 2; i++) {
         let firstEmptyCardSlot = this.findFirstEmptyCardSlot(hand);
@@ -191,7 +191,7 @@ class CardDemo extends Component {
           hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card;
         }
       }
-      swapCards(drawPile, Object.assign(player, {hand}));
+      swapCards(drawPile, hand);
     }
     this.setState({slapping: false});
   };
@@ -221,7 +221,7 @@ class CardDemo extends Component {
 
   peekPhaseHandler = () => {
     const {selected} = this.state;
-    const {phase, updatePhase, launchRound} = this.props;
+    const {phase, updatePhase, launchRound, player} = this.props;
     const cardPressed = this.peekCardsHandler;
     let buttonPressed = () => updatePhase(PHASE_PEEKING);
     let peekButtonText = 'reveal';
@@ -239,7 +239,7 @@ class CardDemo extends Component {
     return (
       <>
         <PlayerHand
-          hand={this.props.player.hand}
+          hand={player.hand}
           selected={selected}
           pressed={cardPressed}
           cardAction={action}
@@ -477,6 +477,7 @@ const mapDispatchToProps = (dispatch) => ({
   dealCards: (deck, hand) => {
     dispatch(actions.updatePlayerHand({hand}));
     dispatch(actions.updateDeck({pile: DRAW_PILE, deck}));
+    dispatch(actions.updateGame({updatedAttributes: {isDealt: true}}));
   },
   swapCards: (deck, hand) => {
     dispatch(actions.updatePlayerHand({hand}));

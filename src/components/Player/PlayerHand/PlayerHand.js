@@ -1,10 +1,19 @@
 import React from 'react';
-import {View, Text} from 'react-native';
 import Card from '../../Cards/Card/Card';
 import styled from 'styled-components';
 import cardImg from 'assets/cardImg';
-import {matchArrayInArray} from '@shared/utilityFunctions';
-import * as storeVariables from '@store/storeVariables';
+import {matchArrayInArray} from 'shared/utilityFunctions';
+import {
+  CARD_ACTION_TAPPED,
+  CARD_ACTION_SLAP,
+  CARD_ACTION_SWAP,
+  CARD_ACTION_PEEKING,
+  CARD_ACTION_PEEK_SELECT,
+  CARD_PIXEL_HEIGHT,
+  CARD_PIXEL_WIDTH,
+  CARD_SIZE_HAND_MULTIPLIER,
+  SINGLE_CARD_SHADOW_OPACITY,
+} from 'constants';
 
 const Wrapper = styled.View`
   /* height: 90%; */
@@ -27,7 +36,7 @@ const cardDimensionByRowCount = (rows, length) => {
 const cardMarginsByRowCount = (rows, index, length) => {
   let margin = length;
 
-  if (index == 0) {
+  if (index === 0) {
     return 0;
   }
   if (rows > 3) {
@@ -40,19 +49,17 @@ const PlayerCardWrapper = styled.View`
   width: ${({rows}) =>
     cardDimensionByRowCount(
       rows,
-      storeVariables.CARD_PIXEL_WIDTH *
-        storeVariables.CARD_SIZE_HAND_MULTIPLIER,
+      CARD_PIXEL_WIDTH * CARD_SIZE_HAND_MULTIPLIER,
     )};
   height: ${({rows}) =>
     cardDimensionByRowCount(
       rows,
-      storeVariables.CARD_PIXEL_HEIGHT *
-        storeVariables.CARD_SIZE_HAND_MULTIPLIER,
+      CARD_PIXEL_HEIGHT * CARD_SIZE_HAND_MULTIPLIER,
     )};
   margin-top: ${({rows, index}) => cardMarginsByRowCount(rows, index, 35)};
   background-color: ${({theme}) => theme.palette.grayscale[4]};
   shadow-opacity: ${({children}) =>
-    children ? storeVariables.SINGLE_CARD_SHADOW_OPACITY : 0};
+    children ? SINGLE_CARD_SHADOW_OPACITY : 0};
 `;
 
 const HandColumnWrapper = styled.View`
@@ -79,58 +86,53 @@ const peekPhaseCard = (pressed, selected, cardCoordinates, imgSource) => {
 
 const playerHand = (props) => {
   const {hand, pressed, cardAction, selected} = props;
-  let columns = [];
-  for (let column in hand) {
-    let cards = [];
-    for (let card in hand[column]) {
-      let cardObj = hand[column][card];
-      let key = 'column' + column + 'card' + card;
-      let cardDisplay = null;
+  console.log('[PlayerHand] hand: ', hand);
 
-      if (cardObj) {
-        const {value, suit} = cardObj;
+  const columns = hand.map((column, i) => {
+    return (
+      <HandColumnWrapper key={'column' + i} index={i} rows={hand.length}>
+        {column.map((card, j) => {
+          let key = 'column' + column + 'card' + card;
+          let cardDisplay = null;
 
-        key = value + suit;
-        const source = cardImg[suit][value];
-        switch (cardAction) {
-          // source = cardImg[suit][value]
-          case storeVariables.CARD_ACTION_SWAP:
-          case storeVariables.CARD_ACTION_SLAP:
-            cardDisplay = swapPhaseCard(() => pressed([column, card]));
-            break;
-          case storeVariables.CARD_ACTION_PEEK_SELECT:
-            cardDisplay = peekPhaseCard(
-              () => pressed([column, card]),
-              selected,
-              [column, card],
-            );
-            break;
-          case storeVariables.CARD_ACTION_PEEKING:
-            cardDisplay = peekPhaseCard(null, selected, [column, card], source);
-            break;
-          case storeVariables.CARD_ACTION_TAPPED:
-            cardDisplay = <Card source={source} />;
-            break;
-          default:
-            cardDisplay = <Card source={cardImg.back} />;
-            break;
-        }
-      }
-      cards.push(
-        <PlayerCardWrapper key={key} index={card} rows={hand.length}>
-          {cardDisplay}
-        </PlayerCardWrapper>,
-      );
-    }
-    columns.push(
-      <HandColumnWrapper
-        key={'column' + column}
-        index={column}
-        rows={hand.length}>
-        {cards}
-      </HandColumnWrapper>,
+          if (card) {
+            const {value, suit} = card;
+
+            key = value + suit;
+            const source = cardImg[suit][value];
+            // const source = cardImg.back;
+            switch (cardAction) {
+              // source = cardImg[suit][value]
+              case CARD_ACTION_SWAP:
+              case CARD_ACTION_SLAP:
+                cardDisplay = swapPhaseCard(() => pressed([i, j]));
+                break;
+              case CARD_ACTION_PEEK_SELECT:
+                cardDisplay = peekPhaseCard(() => pressed([i, j]), selected, [
+                  i,
+                  j,
+                ]);
+                break;
+              case CARD_ACTION_PEEKING:
+                cardDisplay = peekPhaseCard(null, selected, [i, j], source);
+                break;
+              case CARD_ACTION_TAPPED:
+                cardDisplay = <Card source={source} />;
+                break;
+              default:
+                cardDisplay = <Card source={cardImg.back} />;
+                break;
+            }
+          }
+          return (
+            <PlayerCardWrapper key={key} index={j} rows={hand.length}>
+              {cardDisplay}
+            </PlayerCardWrapper>
+          );
+        })}
+      </HandColumnWrapper>
     );
-  }
+  });
 
   return <Wrapper>{columns}</Wrapper>;
 };
