@@ -1,19 +1,16 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Image} from 'react-native';
 import {DefaultButton} from 'components/UI';
 import styled from 'styled-components/native';
 import shortid from 'shortid';
 import Modal from 'hoc/Modal';
-import CreateGame from 'components/CreateGame/CreateGame';
+import {CreateGame, HomeLogo} from './components';
 import {actions} from 'store/slices';
 import {createDeck} from 'util';
 import {GAME_SCREEN} from 'constants';
 
-const redJoker = require('../../assets/cardImg/jokers/red_joker.png');
-
 const TEXT_GO_TO_GAME = 'go to game';
-const TEXT_CREATE_GAME = 'create game';
+// const TEXT_CREATE_GAME = 'create game';
 
 const Wrapper = styled.View`
   display: flex;
@@ -56,7 +53,7 @@ class HomeScreen extends Component {
             toggleModal={this.toggleModal}
           />
         </Modal>
-        <Image source={redJoker} />
+        <HomeLogo />
         <DefaultButton onPress={this.toggleModal}>
           {TEXT_GO_TO_GAME}
         </DefaultButton>

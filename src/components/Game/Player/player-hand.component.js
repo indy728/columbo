@@ -1,8 +1,8 @@
 import React from 'react';
-import Card from '../../Cards/Card/Card';
+import {Card, peekPhaseCard, swapPhaseCard} from '../Cards';
 import styled from 'styled-components';
 import cardImg from 'assets/cardImg';
-import {matchArrayInArray} from 'shared/utilityFunctions';
+import {cardDimensionByRowCount, cardMarginsByRowCount} from 'util';
 import {
   CARD_ACTION_TAPPED,
   CARD_ACTION_SLAP,
@@ -16,34 +16,11 @@ import {
 } from 'constants';
 
 const Wrapper = styled.View`
-  /* height: 90%; */
-  /* border: 1px dashed grey; */
   flex-direction: row;
   flex-wrap: wrap;
   align-content: space-around;
   justify-content: center;
 `;
-
-const cardDimensionByRowCount = (rows, length) => {
-  let dimension = length;
-
-  if (rows > 3) {
-    dimension *= Math.pow(0.87, rows - 3);
-  }
-  return dimension + 'px';
-};
-
-const cardMarginsByRowCount = (rows, index, length) => {
-  let margin = length;
-
-  if (index === 0) {
-    return 0;
-  }
-  if (rows > 3) {
-    margin *= Math.pow(0.87, rows - 3);
-  }
-  return margin + 'px';
-};
 
 const PlayerCardWrapper = styled.View`
   width: ${({rows}) =>
@@ -65,24 +42,6 @@ const PlayerCardWrapper = styled.View`
 const HandColumnWrapper = styled.View`
   margin-left: ${({rows, index}) => cardMarginsByRowCount(rows, index, 20)};
 `;
-
-const swapPhaseCard = (pressed) => {
-  return <Card source={cardImg.back} onPress={pressed} />;
-};
-
-const peekPhaseCard = (pressed, selected, cardCoordinates, imgSource) => {
-  let isSelected = matchArrayInArray(selected, cardCoordinates) !== -1;
-  let source = cardImg.back;
-
-  if (!pressed) {
-    if (isSelected) {
-      source = imgSource;
-    }
-    isSelected = false;
-  }
-
-  return <Card selected={isSelected} source={source} onPress={pressed} />;
-};
 
 const playerHand = (props) => {
   const {hand, pressed, cardAction, selected} = props;

@@ -99,3 +99,25 @@ export const initDeck = () => {
   });
   return shuffleCards(drawPile);
 };
+
+export const cardDimensionByRowCount = (rows, length) => {
+  let dimension = length;
+
+  if (rows > 3) {
+    dimension *= Math.pow(0.87, rows - 3);
+  }
+  return `${dimension}px`;
+};
+
+export const cardMarginsByRowCount = (rows, index, length) => {
+  if (index === 0) {
+    return 0;
+  }
+
+  let margin = length;
+
+  if (rows > 3) {
+    margin *= Math.pow(0.87, rows - 3);
+  }
+  return `${margin}px`;
+};

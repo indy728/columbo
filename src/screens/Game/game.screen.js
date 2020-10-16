@@ -1,24 +1,22 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components/native';
-import Deck from 'components/Deck/Deck';
-import PlayerAction from 'components/Player/PlayerAction/PlayerAction';
-import Player from 'components/Player/Player';
-import PlayerHand from 'components/Player/PlayerHand/PlayerHand';
+import Deck from 'components/Game/Deck/Deck';
+import PlayerAction from 'screens/Home/components/player-action.component';
+import Player from 'screens/Home/components/player.component';
+import PlayerHand from 'screens/Home/components/player-hand.component';
 import Modal from 'hoc/Modal';
 import {DefaultButton, ActionButton} from 'components/UI';
+import {actions} from 'store/slices';
+import {DateTime} from 'luxon';
 import {
   shuffleCards,
   createDeck,
   findFirstEmptyCardSlot,
   cleanUpHand,
-} from 'util';
-import {
   matchArrayInArray,
   toggleBooleanStateHandler,
-} from '@shared/utilityFunctions';
-import {actions} from 'store/slices';
-import {DateTime} from 'luxon';
+} from 'util';
 import {
   DRAW_PILE,
   DISCARD_PILE,

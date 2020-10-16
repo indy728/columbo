@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
-import Card from '../../Cards/Card/Card';
+import Card from '../Cards/card.component';
 import cardImg from 'assets/cardImg';
 import {DefaultButton, ActionButton} from '@UI';
 import * as actions from '@store/actions';
-import * as storeVariables from '@store/storeVariables';
+import * as storeVariables from 'components/Game/Deck/node_modules/@store/storeVariables';
 
 const Wrapper = styled.View`
   flex: 3;
