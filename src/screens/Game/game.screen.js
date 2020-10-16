@@ -7,14 +7,17 @@ import Player from 'components/Player/Player';
 import PlayerHand from 'components/Player/PlayerHand/PlayerHand';
 import Modal from 'hoc/Modal';
 import {DefaultButton, ActionButton} from 'components/UI';
-import {shuffleCards, createDeck} from 'util';
 import {
-  updateObject,
+  shuffleCards,
+  createDeck,
+  findFirstEmptyCardSlot,
+  cleanUpHand,
+} from 'util';
+import {
   matchArrayInArray,
   toggleBooleanStateHandler,
 } from '@shared/utilityFunctions';
 import {actions} from 'store/slices';
-import {StackActions} from '@react-navigation/native';
 import {DateTime} from 'luxon';
 import {
   DRAW_PILE,
@@ -97,32 +100,15 @@ class CardDemo extends Component {
     }
   }
 
-  findFirstEmptyCardSlot = (hand) => {
-    let i = 0;
-
-    while (i < hand.length) {
-      let j = 0;
-      while (j < 2) {
-        if (!hand[i][j]) {
-          return [i, j];
-        }
-        j++;
-      }
-      i++;
-    }
-    return null;
-  };
-
   dealCardsHandler = () => {
     const {drawPile, player, dealCards} = this.props;
     const {hand} = player;
     const drawCopy = drawPile.map((a) => Object.assign({}, a));
 
     for (let i = 0; i < 4; i++) {
-      let firstEmptyCardSlot = this.findFirstEmptyCardSlot(hand);
+      let firstEmptyCardSlot = findFirstEmptyCardSlot(hand);
       let card = drawCopy.shift();
 
-      console.log('[Game.screen] card: ', card);
       if (!firstEmptyCardSlot) {
         hand.push([card, null]);
       } else {
@@ -136,8 +122,7 @@ class CardDemo extends Component {
   swapCardsHandler = (cardLocationArray) => {
     const {player, discardPile, currentCard, swapCards} = this.props;
     const {hand} = player;
-    const col = cardLocationArray[0];
-    const row = cardLocationArray[1];
+    const [col, row] = cardLocationArray;
 
     discardPile.unshift(hand[col][row]);
     hand[col][row] = currentCard;
@@ -145,44 +130,25 @@ class CardDemo extends Component {
     swapCards(discardPile, hand);
   };
 
-  columnIsEmpty = (column) => {
-    return column[0] === null && column[1] === null;
-  };
-
-  cleanUpHand = (hand, isFront) => {
-    if (isFront) {
-      let column = hand[0];
-      while (hand.length > 1 && this.columnIsEmpty(column)) {
-        hand.shift();
-        column = hand[0];
-      }
-    } else {
-      while (hand.length > 1 && this.columnIsEmpty(hand[hand.length - 1])) {
-        hand.pop();
-      }
-    }
-  };
-
   slapCardHandler = (cardLocationArray) => {
     const {player, discardPile, drawPile, slapCards, swapCards} = this.props;
     const {hand} = player;
-    const col = cardLocationArray[0];
-    const row = cardLocationArray[1];
+    const [col, row] = cardLocationArray;
     const topCard = discardPile[0];
 
     if (hand[col][row] && hand[col][row].value === topCard.value) {
       discardPile.unshift(hand[col][row]);
       hand[col][row] = null;
       if (col === 0) {
-        this.cleanUpHand(hand, true);
+        cleanUpHand(hand, true);
       }
       if (col === hand.length - 1) {
-        this.cleanUpHand(hand, false);
+        cleanUpHand(hand, false);
       }
       slapCards(discardPile, hand);
     } else {
       for (let i = 0; i < 2; i++) {
-        let firstEmptyCardSlot = this.findFirstEmptyCardSlot(hand);
+        let firstEmptyCardSlot = findFirstEmptyCardSlot(hand);
         let card = drawPile.shift();
 
         if (!firstEmptyCardSlot) {
@@ -197,15 +163,15 @@ class CardDemo extends Component {
   };
 
   tappedHandler = () => {
-    const {tapRound} = this.props;
-
     this.setState({tapping: false});
-    tapRound();
+    this.props.tapRound();
   };
 
   peekCardsHandler = (handCoordinates) => {
     const {selected} = this.state;
     const index = matchArrayInArray(selected, handCoordinates);
+
+    console.log('[Game.screen] handCoordinates: ', handCoordinates);
 
     if (index === -1) {
       if (selected.length === 2) {
@@ -222,7 +188,6 @@ class CardDemo extends Component {
   peekPhaseHandler = () => {
     const {selected} = this.state;
     const {phase, updatePhase, launchRound, player} = this.props;
-    const cardPressed = this.peekCardsHandler;
     let buttonPressed = () => updatePhase(PHASE_PEEKING);
     let peekButtonText = 'reveal';
     let action = CARD_ACTION_PEEK_SELECT;
@@ -241,7 +206,7 @@ class CardDemo extends Component {
         <PlayerHand
           hand={player.hand}
           selected={selected}
-          pressed={cardPressed}
+          pressed={this.peekCardsHandler}
           cardAction={action}
         />
         <DefaultButton onPress={buttonPressed} disabled={selected.length !== 2}>
@@ -341,24 +306,24 @@ class CardDemo extends Component {
       round,
     } = this.props;
     const {rounds} = player;
-    let points = 0;
-    let turns = 0;
-    let duration = 0;
-
-    for (let i in rounds) {
-      points += rounds[i].points;
-      turns += rounds[i].turns;
-      duration += this.getRoundDuration(rounds[i]);
-    }
-
     rounds.push(round);
 
     let endGameContent = (
       <>
         <FinalScore>
-          <ScoreText>final score: {points}</ScoreText>
-          <ScoreText>turns taken: {turns}</ScoreText>
-          <ScoreText>time taken: {duration} seconds</ScoreText>
+          <ScoreText>
+            final score: {rounds.reduce((points, r) => points + r.points)}
+          </ScoreText>
+          <ScoreText>
+            turns taken: {rounds.reduce((turns, r) => turns + r.turns)}
+          </ScoreText>
+          <ScoreText>
+            time taken:{' '}
+            {rounds.reduce(
+              (duration, r) => duration + (+r.endTime - +r.startTime) / 1000,
+            )}{' '}
+            seconds
+          </ScoreText>
           <ActionButton
             onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>
             show round details
@@ -380,7 +345,7 @@ class CardDemo extends Component {
     if (this.state.endGameDetails) {
       endGameContent = (
         <>
-          {rounds.map((round, i) => this.getRoundScoreDetails(round, i))}
+          {rounds.map((r, i) => this.getRoundScoreDetails(r, i))}
           <ActionButton
             onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>
             hide details
@@ -394,9 +359,7 @@ class CardDemo extends Component {
 
   render() {
     let modalContent = null;
-    const {discardPile, drawPile, player, phase, gameStatus} = this.props;
-
-    // console.log('[Game.screen] player: ', player);
+    const {discardPile, drawPile, phase, gameStatus} = this.props;
 
     if (!this.props.isDealt) {
       modalContent = (
