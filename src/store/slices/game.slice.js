@@ -36,9 +36,10 @@ const {actions, reducer} = createSlice({
     updateGame: (state, {payload: {updatedAttributes}}) => {
       Object.assign(state, updatedAttributes);
     },
-    updatePhase: (state, {payload: {phase, turns}}) => {
+    updatePhase: (state, {payload: {phase, turns, slappable}}) => {
       !!turns && Object.assign(state.round, {turns});
-      state.slappable = phase === PHASE_DRAW && state.phase !== PHASE_PEEKING;
+      !!slappable && Object.assign(state.slappable, {slappable});
+      // slappable: phase === PHASE_DRAW && state.phase !== PHASE_PEEKING,
       state.phase = phase;
     },
     launchRound: (state, {payload: {startTime}}) => {

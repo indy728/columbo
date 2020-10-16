@@ -1,5 +1,7 @@
 import React from 'react';
 import {matchArrayInArray} from 'util';
+import Card from './card.component';
+import cardImg from 'assets/cardImg';
 
 export const swapPhaseCard = (pressed) => {
   return <Card source={cardImg.back} onPress={pressed} />;

@@ -22,7 +22,7 @@ export default () => {
 
   return (
     <Wrapper>
-      {isDealt && <PlayerHand hand={this.props.player.hand} pressed={null} />}
+      {isDealt && <PlayerHand />}
       <TapButtonWrapper>
         <ActionButton onPress={this.props.tappingHandler}>tap</ActionButton>
       </TapButtonWrapper>
