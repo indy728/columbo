@@ -1,17 +1,15 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components/native';
-import Deck from 'components/Game/Deck/Deck';
-import PlayerAction from 'screens/Home/components/player-action.component';
-import Player from 'screens/Home/components/player.component';
-import PlayerHand from 'screens/Home/components/player-hand.component';
-import Modal from 'hoc/Modal';
+import {Deck} from 'components/Game/Deck';
+import {Player, PlayerHand, PlayerAction} from 'components/Game/Player';
 import {DefaultButton, ActionButton} from 'components/UI';
+import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
 import {
   shuffleCards,
-  createDeck,
+  initDeck as createDeck,
   findFirstEmptyCardSlot,
   cleanUpHand,
   matchArrayInArray,
@@ -82,7 +80,7 @@ const ScoreRow = styled.View`
 const RawScoreValues = ScoreText;
 const PointScore = ScoreText;
 
-class CardDemo extends Component {
+class GameScreen extends Component {
   state = {
     selected: [],
     slapping: false,
@@ -400,9 +398,8 @@ class CardDemo extends Component {
           <Deck
             discardPile={discardPile}
             drawPile={drawPile}
-            pileClickedHandler={this.pileClickedHandler}
+            pressed={this.pileClickedHandler}
             slapping={this.state.slapping}
-            singlePlayer={this.props.singlePlayer}
           />
           <PlayerAction
             slapHandler={() => toggleBooleanStateHandler(this, 'slapping')}
@@ -473,4 +470,4 @@ const mapDispatchToProps = (dispatch) => ({
   // onEndGame: () => dispatch(actions.endGame()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CardDemo);
+export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);

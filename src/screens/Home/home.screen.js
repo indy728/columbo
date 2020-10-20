@@ -6,7 +6,7 @@ import shortid from 'shortid';
 import Modal from 'hoc/Modal';
 import {CreateGame, HomeLogo} from './components';
 import {actions} from 'store/slices';
-import {createDeck} from 'util';
+import {initDeck as createDeck} from 'util';
 import {GAME_SCREEN} from 'constants';
 
 const TEXT_GO_TO_GAME = 'go to game';

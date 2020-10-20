@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card} from './card.component';
+import Card from './card.component';
 import {peekPhaseCard, swapPhaseCard} from './card-phase.component';
 import cardImg from 'assets/cardImg';
 import {

@@ -17,15 +17,17 @@ const TapButtonWrapper = styled.View`
     left: 10px; */
 `;
 
-export default () => {
+const Player = ({tappingHandler}) => {
   const isDealt = useSelector((state) => state.game.isDealt);
 
   return (
     <Wrapper>
       {isDealt && <PlayerHand />}
       <TapButtonWrapper>
-        <ActionButton onPress={this.props.tappingHandler}>tap</ActionButton>
+        <ActionButton onPress={tappingHandler}>tap</ActionButton>
       </TapButtonWrapper>
     </Wrapper>
   );
 };
+
+export default Player;

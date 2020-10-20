@@ -23,7 +23,7 @@ const TextWrapper = styled.Text`
   color: ${(props) => props.theme.palette.white[0]};
 `;
 
-export const actionButton = (props) => {
+export const ActionButton = (props) => {
   const {hidden, disabled, children, onPress, width} = props;
   const buttonProps = {hidden, disabled, onPress, width};
   const textProps = {disabled, children};

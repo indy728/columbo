@@ -10,8 +10,8 @@ const Wrapper = styled.View`
   justify-content: center;
 `;
 
-export default ({pressed = null, cardAction = '', selected = false}) => {
-  const hand = useSelector((state) => state.player.hand);
+const PlayerHand = ({pressed = null, cardAction = '', selected = false}) => {
+  const hand = useSelector((state) => state.game.player.hand);
 
   return (
     <Wrapper>
@@ -40,3 +40,5 @@ export default ({pressed = null, cardAction = '', selected = false}) => {
     </Wrapper>
   );
 };
+
+export default PlayerHand;
