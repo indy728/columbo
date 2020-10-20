@@ -116,18 +116,30 @@ class GameScreen extends Component {
   };
 
   swapCardsHandler = (cardLocationArray) => {
-    const {player, discardPile, currentCard, swapCards} = this.props;
-    const {hand} = player;
+    const {
+      player: {hand},
+      discardPile,
+      currentCard,
+      swapCards,
+      round,
+    } = this.props;
     const [col, row] = cardLocationArray;
 
     discardPile.unshift(hand[col][row]);
     hand[col][row] = currentCard;
 
-    swapCards(discardPile, hand);
+    swapCards(discardPile, hand[col], round.turns + 1);
   };
 
   slapCardHandler = (cardLocationArray) => {
-    const {player, discardPile, drawPile, slapCards, swapCards} = this.props;
+    const {
+      player,
+      discardPile,
+      drawPile,
+      slapCards,
+      swapCards,
+      round,
+    } = this.props;
     const {hand} = player;
     const [col, row] = cardLocationArray;
     const topCard = discardPile[0];
@@ -153,7 +165,7 @@ class GameScreen extends Component {
           hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card;
         }
       }
-      swapCards(drawPile, hand);
+      swapCards(drawPile, hand, round.turns + 1);
     }
     this.setState({slapping: false});
   };
@@ -166,8 +178,6 @@ class GameScreen extends Component {
   peekCardsHandler = (handCoordinates) => {
     const {selected} = this.state;
     const index = matchArrayInArray(selected, handCoordinates);
-
-    console.log('[Game.screen] handCoordinates: ', handCoordinates);
 
     if (index === -1) {
       if (selected.length === 2) {
@@ -391,6 +401,8 @@ class GameScreen extends Component {
       modalContent = this.modalContentByPhase(phase);
     }
 
+    console.log('[game.screen] phase: ', phase);
+
     return (
       <>
         <Modal visible={modalContent !== null}>{modalContent}</Modal>
@@ -425,21 +437,26 @@ const mapStateToProps = ({
   round,
   isDealt,
   gameStatus,
-  drawPile: deck[DRAW_PILE],
-  discardPile: deck[DISCARD_PILE],
+  drawPile: [...deck[DRAW_PILE]],
+  discardPile: [...deck[DISCARD_PILE]],
   currentCard: deck.currentCard,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  drawCard: (pile) => dispatch(actions.drawCard({pile})),
+  drawCard: (pile) => {
+    dispatch(actions.drawCard({pile}));
+    dispatch(actions.updatePhase({phase: PHASE_PLAY}));
+  },
   dealCards: (deck, hand) => {
     dispatch(actions.updatePlayerHand({hand}));
     dispatch(actions.updateDeck({pile: DRAW_PILE, deck}));
     dispatch(actions.updateGame({updatedAttributes: {isDealt: true}}));
   },
-  swapCards: (deck, hand) => {
+  swapCards: (deck, hand, turns) => {
+    console.log('[game.screen] hand: ', hand);
     dispatch(actions.updatePlayerHand({hand}));
-    dispatch(actions.swapCards({pile: DISCARD_PILE, deck}));
+    dispatch(actions.updatePhase({phase: PHASE_DRAW, turns, slappable: true}));
+    dispatch(actions.swapCards({deck}));
   },
   slapCards: (deck) => {
     dispatch(actions.updateDeck({pile: DISCARD_PILE, deck}));

@@ -4,7 +4,7 @@ import Card from './card.component';
 import cardImg from 'assets/cardImg';
 
 export const swapPhaseCard = (pressed) => {
-  return <Card source={cardImg.back} onPress={pressed} />;
+  return <Card source={cardImg.back} pressed={pressed} />;
 };
 
 export const peekPhaseCard = (
@@ -23,5 +23,5 @@ export const peekPhaseCard = (
     isSelected = false;
   }
 
-  return <Card selected={isSelected} source={source} onPress={pressed} />;
+  return <Card selected={isSelected} source={source} pressed={pressed} />;
 };

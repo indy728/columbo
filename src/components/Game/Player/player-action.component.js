@@ -59,14 +59,15 @@ const PlayerAction = ({
       <ActionButtonsWrapper>
         <DefaultButton
           disabled={phase !== PHASE_PLAY}
-          onPress={() =>
+          onPress={() => {
+            discardPile.unshift(currentCard);
             playCard(
               PHASE_DRAW,
               turns + 1,
-              discardPile.unshift(currentCard),
+              discardPile,
               phase === PHASE_PEEKING,
-            )
-          }
+            );
+          }}
           width={175}>
           PLAY
         </DefaultButton>
@@ -81,7 +82,7 @@ const mapStateToProps = (state) => ({
   currentCard: state.deck.currentCard,
   slappable: state.game.slappable,
   turns: state.game.round.turns,
-  discardPile: state.deck[DISCARD_PILE],
+  discardPile: [...state.deck[DISCARD_PILE]],
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -94,7 +95,8 @@ const mapDispatchToProps = (dispatch) => ({
         slappable,
       }),
     );
-    dispatch(actions.updateDeck({pile: DISCARD_PILE, deck}));
+    console.log('[player-action.component] deck: ', deck);
+    dispatch(actions.playCard({pile: DISCARD_PILE, deck}));
   },
   onPlay: (card) => dispatch(actions.playCard(card)),
 });

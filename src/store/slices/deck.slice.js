@@ -26,19 +26,17 @@ const {actions, reducer} = createSlice({
         state.currentCard = state[pile].shift();
       }
     },
-    swapCards: (state, {payload: {pile, deck}}) => {
-      if (state[DISCARD_PILE].length > 0 || pile === DRAW_PILE) {
-        state[pile] = deck;
-        state.currentCard = null;
-      }
+    swapCards: (state, {payload: {deck}}) => {
+      state[DISCARD_PILE] = deck;
+      state.currentCard = null;
     },
     updateDeck: (state, {payload: {pile, deck}}) => {
       if (state[DISCARD_PILE].length > 0 || pile === DRAW_PILE) {
         state[pile] = deck;
       }
     },
-    playCard: (state, {payload: {card}}) => {
-      state[DISCARD_PILE] = card;
+    playCard: (state, {payload: {deck}}) => {
+      state[DISCARD_PILE] = deck;
       state.currentCard = null;
     },
     rebuildDeck: (state, {payload: {shuffledDeck}}) => {
