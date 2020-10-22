@@ -7,6 +7,7 @@ import {DefaultButton, ActionButton} from 'components/UI';
 import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
+import {arrayImmutableReplace} from 'util';
 import {
   shuffleCards,
   initDeck as createDeck,
@@ -38,6 +39,7 @@ import {
   TIME_POINTS_MULTIPLIER,
   HOME_SCREEN,
 } from 'constants';
+import {current} from '@reduxjs/toolkit';
 
 const Wrapper = styled.View`
   flex: 1;
@@ -126,9 +128,14 @@ class GameScreen extends Component {
     const [col, row] = cardLocationArray;
 
     discardPile.unshift(hand[col][row]);
-    hand[col][row] = currentCard;
 
-    swapCards(discardPile, hand[col], round.turns + 1);
+    const newHand = arrayImmutableReplace(
+      hand,
+      col,
+      arrayImmutableReplace(hand[col], row, currentCard),
+    );
+
+    swapCards(discardPile, newHand, round.turns + 1);
   };
 
   slapCardHandler = (cardLocationArray) => {
@@ -401,8 +408,6 @@ class GameScreen extends Component {
       modalContent = this.modalContentByPhase(phase);
     }
 
-    console.log('[game.screen] phase: ', phase);
-
     return (
       <>
         <Modal visible={modalContent !== null}>{modalContent}</Modal>
@@ -453,7 +458,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateGame({updatedAttributes: {isDealt: true}}));
   },
   swapCards: (deck, hand, turns) => {
-    console.log('[game.screen] hand: ', hand);
     dispatch(actions.updatePlayerHand({hand}));
     dispatch(actions.updatePhase({phase: PHASE_DRAW, turns, slappable: true}));
     dispatch(actions.swapCards({deck}));

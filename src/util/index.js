@@ -1,6 +1,6 @@
 export * from './deck.util';
 export {findFirstEmptyCardSlot, cleanUpHand} from './player.util';
-export {shuffleArray, doArraysMatch, matchArrayInArray} from './array.util';
+export * from './array.util';
 export {updateObject} from './object.util';
 export {
   idTransform,
