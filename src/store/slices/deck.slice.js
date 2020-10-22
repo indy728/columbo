@@ -19,6 +19,9 @@ const {actions, reducer} = createSlice({
         deckBuilt: true,
       });
     },
+    dealCards: (state, {payload: {stack}}) => {
+      state[DRAW_PILE] = stack;
+    },
     drawCard: (state, {payload: {pile}}) => {
       // if the draw pile has cards in it, set current card to top card
       // of chosen pile and remove that card from the chosen pile
@@ -26,17 +29,24 @@ const {actions, reducer} = createSlice({
         state.currentCard = state[pile].shift();
       }
     },
-    swapCards: (state, {payload: {deck}}) => {
-      state[DISCARD_PILE] = deck;
+    swapCards: (state, {payload: {stack}}) => {
+      state[DISCARD_PILE] = stack;
       state.currentCard = null;
     },
-    updateDeck: (state, {payload: {pile, deck}}) => {
-      if (state[DISCARD_PILE].length > 0 || pile === DRAW_PILE) {
-        state[pile] = deck;
+    slapCards: (state, {payload: {stack, success}}) => {
+      if (success) {
+        state[DISCARD_PILE] = stack;
+      } else {
+        state[DRAW_PILE] = stack;
       }
     },
-    playCard: (state, {payload: {deck}}) => {
-      state[DISCARD_PILE] = deck;
+    updateDeck: (state, {payload: {pile, stack}}) => {
+      if (state[DISCARD_PILE].length > 0 || pile === DRAW_PILE) {
+        state[pile] = stack;
+      }
+    },
+    playCard: (state, {payload: {stack}}) => {
+      state[DISCARD_PILE] = stack;
       state.currentCard = null;
     },
     rebuildDeck: (state, {payload: {shuffledDeck}}) => {
@@ -53,6 +63,8 @@ export const {
   updateDeck,
   playCard,
   rebuildDeck,
+  dealCards,
+  slapCards,
 } = actions;
 
 export default reducer;

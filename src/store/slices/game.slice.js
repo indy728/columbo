@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {
   PHASE_DRAW,
+  PHASE_PLAY,
   PHASE_PEEKING,
   PHASE_PEEK,
   PHASE_TAPPED,
@@ -9,14 +10,16 @@ import {
   GAME_STATUS_TAPPED,
 } from 'constants';
 
+const getInitialPlayer = () => ({
+  hand: [[null, null]],
+  rounds: [],
+});
+
 const initialState = {
   launched: false,
   phase: PHASE_PEEK,
   slappable: false,
-  player: {
-    hand: [[null, null]],
-    rounds: [],
-  },
+  player: getInitialPlayer(),
   round: {
     turns: 0,
     startTime: null,
@@ -26,21 +29,29 @@ const initialState = {
   gameStatus: GAME_STATUS_PRE_DEAL,
 };
 
+const getInitialState = () => ({
+  launched: false,
+  phase: PHASE_PEEK,
+  slappable: false,
+  player: getInitialPlayer(),
+  round: {
+    turns: 0,
+    startTime: null,
+    endTime: null,
+  },
+  isDealt: false,
+  gameStatus: GAME_STATUS_PRE_DEAL,
+});
+
 const {actions, reducer} = createSlice({
   name: 'game',
-  initialState: {...initialState},
+  initialState,
   reducers: {
     updatePlayerHand: (state, {payload: {hand}}) => {
       Object.assign(state.player, {hand});
     },
     updateGame: (state, {payload: {updatedAttributes}}) => {
       Object.assign(state, updatedAttributes);
-    },
-    updatePhase: (state, {payload: {phase, turns, slappable}}) => {
-      !!turns && Object.assign(state.round, {turns});
-      !!slappable && Object.assign(state.slappable, {slappable});
-      // slappable: phase === PHASE_DRAW && state.phase !== PHASE_PEEKING,
-      state.phase = phase;
     },
     launchRound: (state, {payload: {startTime}}) => {
       Object.assign(state, {
@@ -56,9 +67,39 @@ const {actions, reducer} = createSlice({
         round: Object.assign(state.round, {endTime}),
       });
     },
+    // endRound: () => initialState,
     endRound: (state, {payload: {rounds}}) => {
-      !!rounds && Object.assign(state, rounds);
-      state = {...initialState};
+      return {
+        ...initialState,
+        player: {hand: [[null, null]], rounds},
+      };
+    },
+  },
+  extraReducers: {
+    'deck/playCard': (state) => {
+      state.phase = PHASE_DRAW;
+      state.round.turns += 1;
+      state.slappable = true;
+    },
+    'deck/drawCard': (state) => {
+      state.phase = PHASE_PLAY;
+      state.slappable = false;
+    },
+    'deck/swapCards': (state, {payload: {hand}}) => {
+      state.phase = PHASE_DRAW;
+      state.round.turns += 1;
+      state.slappable = true;
+      state.player.hand = hand;
+    },
+    'deck/dealCards': (state, {payload: {hand}}) => {
+      state.isDealt = true;
+      state.player.hand = hand;
+    },
+    'deck/slapCards': (state, {payload: {hand, success}}) => {
+      if (success) {
+        state.slappable = false;
+      }
+      state.player.hand = hand;
     },
   },
 });

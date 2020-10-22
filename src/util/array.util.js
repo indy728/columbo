@@ -45,3 +45,7 @@ export const arrayImmutableRemove = (array, idx) => {
 export const arrayImmutableReplace = (array, idx, item) => {
   return [...array.slice(0, idx), item, ...array.slice(idx + 1)];
 };
+
+export const arrayImmutablePush = (array, item) => {
+  return [...array, item];
+};

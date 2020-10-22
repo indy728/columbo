@@ -5,13 +5,7 @@ import {Card, CurrentCardWrapper} from '../Cards';
 import cardImg from 'assets/cardImg';
 import {DefaultButton, ActionButton, ActionButtonsWrapper} from 'components/UI';
 import {actions} from 'store/slices';
-import {
-  PHASE_PLAY,
-  PHASE_SWAP,
-  DISCARD_PILE,
-  PHASE_DRAW,
-  PHASE_PEEKING,
-} from 'constants';
+import {PHASE_PLAY, DISCARD_PILE, PHASE_DRAW, PHASE_PEEKING} from 'constants';
 
 const Wrapper = styled.View`
   flex: 3;
@@ -22,26 +16,21 @@ const Wrapper = styled.View`
 const PlayerAction = ({
   currentCard,
   slappable,
-  turns,
   discardPile,
   phase,
-  updatePhase,
   playCard,
+  swapHandler,
   slapHandler,
 }) => {
   let currentCardRender = <CurrentCardWrapper />;
   let actionButton = (
-    <ActionButton
-      disabled={phase !== PHASE_PLAY}
-      onPress={() => updatePhase(PHASE_SWAP)}>
+    <ActionButton disabled={phase !== PHASE_PLAY} onPress={swapHandler}>
       SWAP
     </ActionButton>
   );
 
   if (slappable) {
-    actionButton = (
-      <ActionButton onPress={() => slapHandler()}>SLAP</ActionButton>
-    );
+    actionButton = <ActionButton onPress={slapHandler}>SLAP</ActionButton>;
   }
 
   if (currentCard) {
@@ -61,12 +50,7 @@ const PlayerAction = ({
           disabled={phase !== PHASE_PLAY}
           onPress={() => {
             discardPile.unshift(currentCard);
-            playCard(
-              PHASE_DRAW,
-              turns + 1,
-              discardPile,
-              phase === PHASE_PEEKING,
-            );
+            playCard(discardPile);
           }}
           width={175}>
           PLAY
@@ -81,24 +65,11 @@ const mapStateToProps = (state) => ({
   phase: state.game.phase,
   currentCard: state.deck.currentCard,
   slappable: state.game.slappable,
-  turns: state.game.round.turns,
   discardPile: [...state.deck[DISCARD_PILE]],
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  updatePhase: (phase) => dispatch(actions.updatePhase({phase})),
-  playCard: (phase, turns, deck, slappable) => {
-    dispatch(
-      actions.updatePhase({
-        phase,
-        turns,
-        slappable,
-      }),
-    );
-    console.log('[player-action.component] deck: ', deck);
-    dispatch(actions.playCard({pile: DISCARD_PILE, deck}));
-  },
-  onPlay: (card) => dispatch(actions.playCard(card)),
+  playCard: (stack) => dispatch(actions.playCard({stack})),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerAction);

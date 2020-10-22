@@ -7,7 +7,7 @@ import {DefaultButton, ActionButton} from 'components/UI';
 import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
-import {arrayImmutableReplace} from 'util';
+import {arrayImmutableReplace, arrayImmutablePush} from 'util';
 import {
   shuffleCards,
   initDeck as createDeck,
@@ -39,7 +39,6 @@ import {
   TIME_POINTS_MULTIPLIER,
   HOME_SCREEN,
 } from 'constants';
-import {current} from '@reduxjs/toolkit';
 
 const Wrapper = styled.View`
   flex: 1;
@@ -82,9 +81,18 @@ const ScoreRow = styled.View`
 const RawScoreValues = ScoreText;
 const PointScore = ScoreText;
 
+const replaceCardInHand = (hand, col, row, card) => {
+  return arrayImmutableReplace(
+    hand,
+    col,
+    arrayImmutableReplace(hand[col], row, card),
+  );
+};
+
 class GameScreen extends Component {
   state = {
     selected: [],
+    swapping: false,
     slapping: false,
     tapping: false,
     endGameDetails: false,
@@ -99,22 +107,16 @@ class GameScreen extends Component {
   }
 
   dealCardsHandler = () => {
-    const {drawPile, player, dealCards} = this.props;
-    const {hand} = player;
-    const drawCopy = drawPile.map((a) => Object.assign({}, a));
+    const {drawPile, dealCards} = this.props;
+    const hand = [[], []];
 
-    for (let i = 0; i < 4; i++) {
-      let firstEmptyCardSlot = findFirstEmptyCardSlot(hand);
-      let card = drawCopy.shift();
-
-      if (!firstEmptyCardSlot) {
-        hand.push([card, null]);
-      } else {
-        hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card;
+    for (let i = 0; i < 2; i++) {
+      for (let j = 0; j < 2; j++) {
+        let card = drawPile.shift();
+        hand[i][j] = card;
       }
     }
-
-    dealCards(drawCopy, hand);
+    dealCards(drawPile, hand);
   };
 
   swapCardsHandler = (cardLocationArray) => {
@@ -128,51 +130,47 @@ class GameScreen extends Component {
     const [col, row] = cardLocationArray;
 
     discardPile.unshift(hand[col][row]);
-
-    const newHand = arrayImmutableReplace(
-      hand,
-      col,
-      arrayImmutableReplace(hand[col], row, currentCard),
+    this.setState({swapping: false});
+    swapCards(
+      discardPile,
+      replaceCardInHand(hand, col, row, currentCard),
+      round.turns + 1,
     );
-
-    swapCards(discardPile, newHand, round.turns + 1);
   };
 
   slapCardHandler = (cardLocationArray) => {
     const {
-      player,
+      player: {hand},
       discardPile,
       drawPile,
       slapCards,
-      swapCards,
-      round,
     } = this.props;
-    const {hand} = player;
     const [col, row] = cardLocationArray;
     const topCard = discardPile[0];
+    let newHand;
+    const slappedCard = hand[col][row];
 
-    if (hand[col][row] && hand[col][row].value === topCard.value) {
-      discardPile.unshift(hand[col][row]);
-      hand[col][row] = null;
+    if (slappedCard && slappedCard.value === topCard.value) {
+      discardPile.unshift(slappedCard);
+      newHand = replaceCardInHand(hand, col, row, null);
       if (col === 0) {
-        cleanUpHand(hand, true);
+        cleanUpHand(newHand, true);
       }
-      if (col === hand.length - 1) {
-        cleanUpHand(hand, false);
+      if (col === newHand.length - 1) {
+        cleanUpHand(newHand, false);
       }
-      slapCards(discardPile, hand);
+      slapCards(discardPile, newHand, true);
     } else {
-      for (let i = 0; i < 2; i++) {
-        let firstEmptyCardSlot = findFirstEmptyCardSlot(hand);
-        let card = drawPile.shift();
+      const firstEmptyCardSlot = findFirstEmptyCardSlot(hand);
+      let card = drawPile.shift();
 
-        if (!firstEmptyCardSlot) {
-          hand.push([card, null]);
-        } else {
-          hand[firstEmptyCardSlot[0]][firstEmptyCardSlot[1]] = card;
-        }
+      if (!firstEmptyCardSlot) {
+        newHand = arrayImmutablePush(hand, [card, null]);
+      } else {
+        const [i, j] = firstEmptyCardSlot;
+        newHand = replaceCardInHand(hand, i, j, card);
       }
-      swapCards(drawPile, hand, round.turns + 1);
+      slapCards(drawPile, newHand, false);
     }
     this.setState({slapping: false});
   };
@@ -200,8 +198,8 @@ class GameScreen extends Component {
 
   peekPhaseHandler = () => {
     const {selected} = this.state;
-    const {phase, updatePhase, launchRound, player} = this.props;
-    let buttonPressed = () => updatePhase(PHASE_PEEKING);
+    const {phase, updateGame, launchRound, player} = this.props;
+    let buttonPressed = () => updateGame({phase: PHASE_PEEKING});
     let peekButtonText = 'reveal';
     let action = CARD_ACTION_PEEK_SELECT;
 
@@ -236,31 +234,24 @@ class GameScreen extends Component {
   };
 
   modalContentByPhase = (phase) => {
-    const {player, updatePhase, round} = this.props;
+    const {
+      player: {hand, rounds},
+      round,
+      endRound,
+    } = this.props;
+
+    console.log('[game.screen] phase: ', phase);
 
     switch (phase) {
       case PHASE_PEEK:
       case PHASE_PEEKING:
         return this.peekPhaseHandler();
-      case PHASE_SWAP:
-        return (
-          <>
-            <PlayerHand
-              hand={player.hand}
-              pressed={this.swapCardsHandler}
-              cardAction={CARD_ACTION_SWAP}
-            />
-            <ActionButton onPress={() => updatePhase(PHASE_PLAY)}>
-              Cancel
-            </ActionButton>
-          </>
-        );
       case PHASE_TAPPED:
         return (
           <>
             {this.getRoundScoreDetails(round)}
-            <PlayerHand hand={player.hand} cardAction={CARD_ACTION_TAPPED} />
-            <ActionButton onPress={this.props.onEndRound}>
+            <PlayerHand hand={hand} cardAction={CARD_ACTION_TAPPED} />
+            <ActionButton onPress={() => endRound(rounds)}>
               next round
             </ActionButton>
             <ActionButton onPress={this.tappedHandler}>tap now</ActionButton>
@@ -372,9 +363,19 @@ class GameScreen extends Component {
 
   render() {
     let modalContent = null;
-    const {discardPile, drawPile, phase, gameStatus} = this.props;
+    const {
+      discardPile,
+      drawPile,
+      phase,
+      gameStatus,
+      slappable,
+      player,
+      isDealt,
+    } = this.props;
 
-    if (!this.props.isDealt) {
+    console.log('[game.screen] slappable: ', slappable);
+
+    if (!isDealt) {
       modalContent = (
         <DefaultButton onPress={this.dealCardsHandler}>deal</DefaultButton>
       );
@@ -394,6 +395,19 @@ class GameScreen extends Component {
           </ActionButton>
         </>
       );
+    } else if (this.state.swapping) {
+      modalContent = (
+        <>
+          <PlayerHand
+            hand={player.hand}
+            pressed={this.swapCardsHandler}
+            cardAction={CARD_ACTION_SWAP}
+          />
+          <ActionButton onPress={() => this.setState({swapping: false})}>
+            Cancel
+          </ActionButton>
+        </>
+      );
     } else if (this.state.tapping) {
       modalContent = (
         <>
@@ -408,9 +422,11 @@ class GameScreen extends Component {
       modalContent = this.modalContentByPhase(phase);
     }
 
+    console.log('[game.screen] isDealt: ', isDealt);
+
     return (
       <>
-        <Modal visible={modalContent !== null}>{modalContent}</Modal>
+        <Modal visible={!!modalContent}>{modalContent}</Modal>
         <Wrapper>
           <Deck
             discardPile={discardPile}
@@ -419,13 +435,14 @@ class GameScreen extends Component {
             slapping={this.state.slapping}
           />
           <PlayerAction
+            swapHandler={() => toggleBooleanStateHandler(this, 'swapping')}
             slapHandler={() => toggleBooleanStateHandler(this, 'slapping')}
           />
           <Player
             tappingHandler={() => toggleBooleanStateHandler(this, 'tapping')}
           />
         </Wrapper>
-        <ActionButton onPress={this.props.onEndGame} />
+        {/* <ActionButton onPress={this.props.onEndGame} /> */}
       </>
     );
   }
@@ -448,25 +465,11 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  drawCard: (pile) => {
-    dispatch(actions.drawCard({pile}));
-    dispatch(actions.updatePhase({phase: PHASE_PLAY}));
-  },
-  dealCards: (deck, hand) => {
-    dispatch(actions.updatePlayerHand({hand}));
-    dispatch(actions.updateDeck({pile: DRAW_PILE, deck}));
-    dispatch(actions.updateGame({updatedAttributes: {isDealt: true}}));
-  },
-  swapCards: (deck, hand, turns) => {
-    dispatch(actions.updatePlayerHand({hand}));
-    dispatch(actions.updatePhase({phase: PHASE_DRAW, turns, slappable: true}));
-    dispatch(actions.swapCards({deck}));
-  },
-  slapCards: (deck) => {
-    dispatch(actions.updateDeck({pile: DISCARD_PILE, deck}));
-    dispatch(actions.updateGame({updatedAttributes: {slappable: false}}));
-  },
-  updatePhase: (phase, turns) => dispatch(actions.updatePhase({phase, turns})),
+  drawCard: (pile) => dispatch(actions.drawCard({pile})),
+  dealCards: (stack, hand) => dispatch(actions.dealCards({stack, hand})),
+  swapCards: (stack, hand) => dispatch(actions.swapCards({stack, hand})),
+  slapCards: (stack, hand, success) =>
+    dispatch(actions.slapCards({stack, hand, success})),
   rebuildDeck: (shuffledDeck) => dispatch(actions.rebuildDeck({shuffledDeck})),
   launchRound: () =>
     dispatch(actions.launchRound({startTime: DateTime.local()})),
@@ -475,6 +478,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.tapRound({endTime: DateTime.local()}));
   },
   endRound: (rounds) => dispatch(actions.endRound({rounds})),
+  updateGame: (updatedAttributes) =>
+    dispatch(actions.updateGame({updatedAttributes})),
   // onDrawCard: (card) => dispatch(actions.drawCard(card)),
   // onDealCards: (drawPile, player) =>
   //   dispatch(actions.dealCards(drawPile, player)),
