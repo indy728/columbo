@@ -67,7 +67,6 @@ const {actions, reducer} = createSlice({
         round: Object.assign(state.round, {endTime}),
       });
     },
-    // endRound: () => initialState,
     endRound: (state, {payload: {rounds}}) => {
       return {
         ...initialState,

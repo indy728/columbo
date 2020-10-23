@@ -54,6 +54,12 @@ const {actions, reducer} = createSlice({
       state[DISCARD_PILE] = [];
     },
   },
+  extraReducers: {
+    'game/endRound': (state) => {
+      state.currentCard = null;
+      state[DISCARD_PILE] = [];
+    },
+  },
 });
 
 export const {
