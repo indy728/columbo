@@ -1,4 +1,5 @@
 import React from 'react';
+import {useWindowDimensions} from 'react-native';
 import {useSelector} from 'react-redux';
 import {getCardDisplay, HandColumnWrapper, PlayerCardWrapper} from '../Cards';
 import styled from 'styled-components';
@@ -12,6 +13,7 @@ const Wrapper = styled.View`
 
 const PlayerHand = ({pressed = null, cardAction = '', selected = false}) => {
   const hand = useSelector((state) => state.game.player.hand);
+  const deviceWidth = useWindowDimensions().width;
 
   return (
     <Wrapper>
@@ -29,7 +31,11 @@ const PlayerHand = ({pressed = null, cardAction = '', selected = false}) => {
               );
 
               return (
-                <PlayerCardWrapper key={key} index={j} rows={hand.length}>
+                <PlayerCardWrapper
+                  key={key}
+                  index={j}
+                  rows={hand.length}
+                  deviceWidth={deviceWidth}>
                   {cardDisplay}
                 </PlayerCardWrapper>
               );

@@ -1,4 +1,5 @@
 import React from 'react';
+import {useWindowDimensions} from 'react-native';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 import {Card, CurrentCardWrapper} from '../Cards';
@@ -22,7 +23,9 @@ const PlayerAction = ({
   swapHandler,
   slapHandler,
 }) => {
-  let currentCardRender = <CurrentCardWrapper />;
+  const deviceWidth = useWindowDimensions().width;
+
+  let currentCardRender = <CurrentCardWrapper deviceWidth={deviceWidth} />;
   let actionButton = (
     <ActionButton disabled={phase !== PHASE_PLAY} onPress={swapHandler}>
       SWAP
@@ -36,7 +39,7 @@ const PlayerAction = ({
   if (currentCard) {
     const {value, suit} = currentCard;
     currentCardRender = (
-      <CurrentCardWrapper>
+      <CurrentCardWrapper deviceWidth={deviceWidth}>
         <Card source={cardImg[suit][value]} />
       </CurrentCardWrapper>
     );

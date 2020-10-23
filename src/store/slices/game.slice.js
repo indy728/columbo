@@ -29,20 +29,6 @@ const initialState = {
   gameStatus: GAME_STATUS_PRE_DEAL,
 };
 
-const getInitialState = () => ({
-  launched: false,
-  phase: PHASE_PEEK,
-  slappable: false,
-  player: getInitialPlayer(),
-  round: {
-    turns: 0,
-    startTime: null,
-    endTime: null,
-  },
-  isDealt: false,
-  gameStatus: GAME_STATUS_PRE_DEAL,
-});
-
 const {actions, reducer} = createSlice({
   name: 'game',
   initialState,

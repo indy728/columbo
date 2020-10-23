@@ -15,14 +15,26 @@ const TapButtonWrapper = styled.View`
   /* position: absolute;
     bottom: 0px;
     left: 10px; */
+  flex: 3;
+  justify-content: center;
+`;
+const HandWrapper = styled.View`
+  flex: 7;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Player = ({tappingHandler}) => {
   const isDealt = useSelector((state) => state.game.isDealt);
+  const renderHand = (
+    <HandWrapper>
+      <PlayerHand />
+    </HandWrapper>
+  );
 
   return (
     <Wrapper>
-      {isDealt && <PlayerHand />}
+      {isDealt && renderHand}
       <TapButtonWrapper>
         <ActionButton onPress={tappingHandler}>tap</ActionButton>
       </TapButtonWrapper>

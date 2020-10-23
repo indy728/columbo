@@ -1,12 +1,19 @@
 import React from 'react';
+import {useWindowDimensions} from 'react-native';
 import styled from 'styled-components';
 import {Card} from '../Cards';
 import cardImg from 'assets/cardImg';
-import {CARD_PIXEL_HEIGHT, CARD_PIXEL_WIDTH} from 'constants';
+import {CARD_PIXEL_HEIGHT, CARD_PIXEL_WIDTH, DEVICE_MAX_WIDTH} from 'constants';
 
 const Wrapper = styled.View`
-  width: ${() => 1.5 * CARD_PIXEL_WIDTH + 'px'};
-  height: ${() => 1.5 * CARD_PIXEL_HEIGHT + 'px'};
+  width: ${({deviceWidth}) => {
+    const sizeMultiplier = (1.5 * +deviceWidth) / DEVICE_MAX_WIDTH;
+    return sizeMultiplier * CARD_PIXEL_WIDTH + 'px';
+  }};
+  height: ${({deviceWidth}) => {
+    const sizeMultiplier = (1.5 * +deviceWidth) / DEVICE_MAX_WIDTH;
+    return sizeMultiplier * CARD_PIXEL_HEIGHT + 'px';
+  }};
   background-color: ${({theme}) => theme.palette.emptyCardSlot};
   shadow-opacity: ${({length}) => 0.8 * (length / 36)};
   position: relative;
@@ -32,7 +39,11 @@ const Pile = ({face, pile, pressed}) => {
     );
   });
 
-  return <Wrapper length={pile.length}>{renderPile}</Wrapper>;
+  return (
+    <Wrapper length={pile.length} deviceWidth={useWindowDimensions().width}>
+      {renderPile}
+    </Wrapper>
+  );
 };
 
 export default Pile;

@@ -40,7 +40,7 @@ import {
 
 const Wrapper = styled.View`
   flex: 1;
-  padding-top: 50px;
+  padding-top: 20px;
   background-color: ${({theme}) => theme.palette.grayscale[5]};
 `;
 
@@ -477,27 +477,11 @@ const mapDispatchToProps = (dispatch) => ({
   rebuildDeck: (shuffledDeck) => dispatch(actions.rebuildDeck({shuffledDeck})),
   launchRound: () =>
     dispatch(actions.launchRound({startTime: DateTime.local()})),
-  tapRound: () => {
-    dispatch(actions.initDeck({initialDeck: createDeck()}));
-    dispatch(actions.tapRound({endTime: DateTime.local()}));
-  },
-  endRound: (rounds) => dispatch(actions.endRound({rounds})),
+  tapRound: () => dispatch(actions.tapRound({endTime: DateTime.local()})),
+  endRound: (rounds) =>
+    dispatch(actions.endRound({rounds, initialDeck: createDeck()})),
   updateGame: (updatedAttributes) =>
     dispatch(actions.updateGame({updatedAttributes})),
-  // onDrawCard: (card) => dispatch(actions.drawCard(card)),
-  // onDealCards: (drawPile, player) =>
-  //   dispatch(actions.dealCards(drawPile, player)),
-  // onSwapCards: (discard, player) =>
-  //   dispatch(actions.swapCards(discard, player)),
-  // onSlapCards: (discard, player) => dispatch(actions.slapCard(discard, player)),
-  // onUpdatePhase: (phase) => dispatch(actions.updatePhase(phase)),
-  // onEmptyDrawPile: (discardPile) =>
-  //   dispatch(actions.rebuildDrawPileFromDiscardPile(discardPile)),
-  // onLaunchRound: (startTime) => dispatch(actions.launchRound(startTime)),
-  // onTapRound: (endTime) => dispatch(actions.tapRound(endTime)),
-  // onEndRound: () => dispatch(actions.endRound()),
-  // onInitDeck: () => dispatch(actions.initDeck()),
-  // onEndGame: () => dispatch(actions.endGame()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);

@@ -4,21 +4,28 @@ import {
   CARD_PIXEL_HEIGHT,
   CARD_PIXEL_WIDTH,
   CARD_SIZE_HAND_MULTIPLIER,
+  DEVICE_MAX_WIDTH,
   SINGLE_CARD_SHADOW_OPACITY,
 } from 'constants';
 
 export const PlayerCardWrapper = styled.View`
-  width: ${({rows}) =>
-    cardDimensionByRowCount(
+  width: ${({rows, deviceWidth}) => {
+    const sizeMultiplier = +deviceWidth / DEVICE_MAX_WIDTH;
+
+    return cardDimensionByRowCount(
       rows,
-      CARD_PIXEL_WIDTH * CARD_SIZE_HAND_MULTIPLIER,
-    )};
-  height: ${({rows}) =>
-    cardDimensionByRowCount(
+      sizeMultiplier * CARD_PIXEL_WIDTH * CARD_SIZE_HAND_MULTIPLIER,
+    );
+  }};
+  height: ${({rows, deviceWidth}) => {
+    const sizeMultiplier = +deviceWidth / DEVICE_MAX_WIDTH;
+
+    return cardDimensionByRowCount(
       rows,
-      CARD_PIXEL_HEIGHT * CARD_SIZE_HAND_MULTIPLIER,
-    )};
-  margin-top: ${({rows, index}) => cardMarginsByRowCount(rows, index, 35)};
+      sizeMultiplier * CARD_PIXEL_HEIGHT * CARD_SIZE_HAND_MULTIPLIER,
+    );
+  }};
+  margin-top: ${({rows, index}) => cardMarginsByRowCount(rows, index, 20)};
   background-color: ${({theme}) => theme.palette.grayscale[4]};
   shadow-opacity: ${({children}) =>
     children ? SINGLE_CARD_SHADOW_OPACITY : 0};
@@ -29,8 +36,14 @@ export const HandColumnWrapper = styled.View`
 `;
 
 export const CurrentCardWrapper = styled.View`
-  width: ${() => 2 * CARD_PIXEL_WIDTH + 'px'};
-  height: ${() => 2 * CARD_PIXEL_HEIGHT + 'px'};
+  width: ${({deviceWidth}) => {
+    const sizeMultiplier = (2 * +deviceWidth) / DEVICE_MAX_WIDTH;
+    return sizeMultiplier * CARD_PIXEL_WIDTH + 'px';
+  }};
+  height: ${({deviceWidth}) => {
+    const sizeMultiplier = (2 * +deviceWidth) / DEVICE_MAX_WIDTH;
+    return sizeMultiplier * CARD_PIXEL_HEIGHT + 'px';
+  }};
   background-color: ${({theme}) => theme.palette.grayscale[4]};
   shadow-opacity: ${({children}) =>
     children ? SINGLE_CARD_SHADOW_OPACITY : 0};
