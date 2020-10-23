@@ -22,8 +22,6 @@ import {
   PHASE_DRAW,
   PHASE_PEEK,
   PHASE_PEEKING,
-  PHASE_PLAY,
-  PHASE_SWAP,
   PHASE_TAPPED,
   CARD_ACTION_PEEK_SELECT,
   CARD_ACTION_PEEKING,
@@ -240,8 +238,6 @@ class GameScreen extends Component {
       endRound,
     } = this.props;
 
-    console.log('[game.screen] phase: ', phase);
-
     switch (phase) {
       case PHASE_PEEK:
       case PHASE_PEEKING:
@@ -249,9 +245,10 @@ class GameScreen extends Component {
       case PHASE_TAPPED:
         return (
           <>
-            {this.getRoundScoreDetails(round)}
+            {this.getRoundScoreDetails()}
             <PlayerHand hand={hand} cardAction={CARD_ACTION_TAPPED} />
-            <ActionButton onPress={() => endRound(rounds)}>
+            <ActionButton
+              onPress={() => endRound(arrayImmutablePush(rounds, round))}>
               next round
             </ActionButton>
             <ActionButton onPress={this.tappedHandler}>tap now</ActionButton>
@@ -262,20 +259,32 @@ class GameScreen extends Component {
     }
   };
 
-  getRoundDuration = (round) => {
+  getRoundDuration = () => {
+    const {round} = this.props;
     return (+round.endTime - +round.startTime) / 1000;
   };
 
-  getRoundScoreDetails = (round, index = 0) => {
-    const {points, turns} = round;
-    const roundDuration = this.getRoundDuration(round);
-    const cardPoints = Math.max(
-      0,
-      (MAX_CARD_POINTS - (points > 4 ? points + (points - 4) * 5 : points)) *
-        CARD_POINTS_MULTIPLIER,
-    );
-    const turnsPoints = MAX_TURNS_POINTS - turns * TURNS_POINTS_MULTIPLIER;
-    const timePoints = MAX_TIME_POINTS - roundDuration * TIME_POINTS_MULTIPLIER;
+  getHandValue = () => {
+    const {
+      player: {hand},
+    } = this.props;
+
+    return hand.flat().reduce((p, card) => {
+      return p + +card.points;
+    }, 0);
+  };
+
+  getRoundScoreDetails = (index = 0) => {
+    const {
+      round: {turns},
+    } = this.props;
+    const roundDuration = this.getRoundDuration();
+    const points = this.getHandValue();
+    const cardPoints = (4 - points) * CARD_POINTS_MULTIPLIER;
+    const turnsPoints =
+      points > 4 ? 0 : MAX_TURNS_POINTS - turns * TURNS_POINTS_MULTIPLIER;
+    const timePoints =
+      points > 4 ? 0 : MAX_TIME_POINTS - roundDuration * TIME_POINTS_MULTIPLIER;
 
     return (
       <FinalScore key={index}>
@@ -368,12 +377,9 @@ class GameScreen extends Component {
       drawPile,
       phase,
       gameStatus,
-      slappable,
       player,
       isDealt,
     } = this.props;
-
-    console.log('[game.screen] slappable: ', slappable);
 
     if (!isDealt) {
       modalContent = (
@@ -421,8 +427,6 @@ class GameScreen extends Component {
     } else {
       modalContent = this.modalContentByPhase(phase);
     }
-
-    console.log('[game.screen] isDealt: ', isDealt);
 
     return (
       <>
