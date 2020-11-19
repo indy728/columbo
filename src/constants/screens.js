@@ -1,2 +1,3 @@
 export const HOME_SCREEN = 'HOME_SCREEN';
 export const GAME_SCREEN = 'GAME_SCREEN';
+export const SETTINGS_SCREEN = 'SETTINGS_SCREEN';

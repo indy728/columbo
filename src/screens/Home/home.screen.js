@@ -49,6 +49,7 @@ class HomeScreen extends Component {
       <Wrapper>
         <Modal visible={this.state.isModalVisible}>
           <CreateGame
+            navigation={this.props.navigation}
             createGameHandler={this.createGameHandler}
             toggleModal={this.toggleModal}
           />

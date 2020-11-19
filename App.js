@@ -8,8 +8,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import createAppStore from 'store/configureStore';
 import theme from 'themes/default';
 import {ThemeProvider} from 'styled-components';
-import {HomeScreen, GameScreen} from 'screens';
-import {HOME_SCREEN, GAME_SCREEN} from 'constants';
+import {HomeScreen, GameScreen, SettingsScreen} from 'screens';
+import {HOME_SCREEN, GAME_SCREEN, SETTINGS_SCREEN} from 'constants';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +30,13 @@ const App = () => (
           <Stack.Screen
             name={HOME_SCREEN}
             component={HomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={SETTINGS_SCREEN}
+            component={SettingsScreen}
             options={{
               headerShown: false,
             }}

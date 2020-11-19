@@ -270,6 +270,9 @@ class GameScreen extends Component {
     } = this.props;
 
     return hand.flat().reduce((p, card) => {
+      if (!card) {
+        return p;
+      }
       return p + +card.points;
     }, 0);
   };
