@@ -43,3 +43,4 @@ export const TIME_POINTS_MULTIPLIER = 1000;
 export const DEVICE_MAX_WIDTH = 450;
 
 export * from './screens';
+export * from './style';
