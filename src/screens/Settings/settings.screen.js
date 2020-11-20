@@ -4,6 +4,7 @@ import {SettingsForm} from './components';
 
 const Wrapper = styled.View`
   padding: 40px 20px;
+  flex: 1;
 `;
 
 const BackButton = styled.TouchableOpacity`

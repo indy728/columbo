@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const defaultValues = {
+  gamesPerRound: 1,
   multipliers: {
     cards: 5000,
     turns: 1000,
