@@ -4,7 +4,7 @@ import {MIN_TOUCHABLE} from 'constants';
 export const Wrapper = styled.View`
   width: ${({width = '100%'}) => width};
   flex-flow: ${({flow = 'row'}) => flow};
-  justify-content: ${({justify = 'space-around'}) => justify};
+  justify-content: ${({justify = 'space-evenly'}) => justify};
 `;
 
 export const RadioOpacity = styled.TouchableOpacity`

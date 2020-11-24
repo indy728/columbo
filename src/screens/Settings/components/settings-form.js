@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import {useForm, Controller} from 'react-hook-form';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
 import Slider from '@react-native-community/slider';
-import {RadioGroup, DefaultButton} from 'components/UI';
+import {RadioGroup, DefaultButton, DefaultForm} from 'components/UI';
+import {actions} from 'store/slices';
 
 const Wrapper = styled.View`
   padding: 20px;
@@ -15,45 +17,94 @@ const FormWrapper = styled.ScrollView`
   max-height: 700px;
   background: green;
 `;
+
 const ActionsWrapper = styled.View`
   margin-top: 20px;
   max-height: 200px;
   padding: 10px;
-  flex: 1;
+  flex-grow: 1;
+  background: red;
   justify-content: space-between;
   align-items: center;
 `;
 
-const Input = styled.TextInput`
-  height: 40px;
-  border: 2px solid black;
+const SliderInput = styled(Controller)`
+  margin: 20px 0;
 `;
 
-const Button = styled.Button``;
+const FormHeader = styled.View`
+  align-items: center;
+`;
+const FormHeaderText = styled.Text`
+  font-family: 'Academy Engraved LET';
+  font-weight: bold;
+  font-size: 40px;
+`;
 
-const FormHeader = styled.View``;
-const FormHeaderText = styled.Text``;
+const FormElement = styled.View`
+  padding: 20px 0;
+  margin-bottom: ${({isLast}) => (isLast ? '20px' : '0')};
+`;
 
-const FormElement = styled.View``;
-const FormElementHeader = styled.Text``;
-const FormElementValue = styled.Text``;
+const FormElementHeader = styled.Text`
+  align-self: center;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-family: 'HoeflerText-Black';
+`;
+const FormElementValue = styled.Text`
+  align-self: center;
+  margin-top: 10px;
+  font-size: 20px;
+`;
 
-export default () => {
+const SettingsForm = ({
+  settings: {
+    cardsBonus: {multiplier: cardsX},
+    timeBonus: {multiplier: timeX, max: timeMax},
+    turnsBonus: {multiplier: turnsX, max: turnsMax},
+  },
+  updateSettings,
+  goBack,
+}) => {
+  console.log(
+    '[settings-form] cardsX, turnsX, timeX, turnsMax, timeMax,: ',
+    cardsX,
+    turnsX,
+    timeX,
+    turnsMax,
+    timeMax,
+  );
+
   const roundSettings = useForm();
   const scoreSettings = useForm();
   const [settings, setSettings] = useState({
-    cardsX: 5000,
-    turnsX: 1000,
-    timeX: 1000,
-    turnsMax: 100000,
-    timeMax: 100000,
+    cardsX,
+    turnsX,
+    timeX,
+    turnsMax,
+    timeMax,
   });
   const [changed, setChanged] = useState(false);
   const onSubmit = (data) => console.log(data);
-  const submitForms = (data) => {
-    console.log('[settings-form] data: ', data);
-    // scoreSettings.handleSubmit(onSubmit(data));
-    // roundSettings.handleSubmit(onSubmit(data));
+  const returnNewSettings = () => {
+    const {cardsX, turnsX, timeX, turnsMax, timeMax} = settings;
+
+    const newState = {
+      turnsBonus: {
+        multiplier: turnsX,
+        max: turnsMax,
+      },
+      timeBonus: {
+        multiplier: timeX,
+        max: timeMax,
+      },
+      cardsBonus: {
+        multiplier: cardsX,
+      },
+    };
+
+    updateSettings(newState);
     setChanged(false);
   };
 
@@ -74,21 +125,21 @@ export default () => {
   const settingsAttributes = [
     {
       name: 'cardsX',
-      title: 'Card Score Multiplier',
+      title: 'Card Penalty Multiplier',
       min: 0,
       max: 10000,
       step: 50,
     },
     {
       name: 'turnsX',
-      title: 'Turns Score Multiplier',
+      title: 'Turns Penalty Multiplier',
       min: 0,
       max: 10000,
       step: 50,
     },
     {
       name: 'timeX',
-      title: 'Time Score Multiplier',
+      title: 'Time Penalty Multiplier',
       min: 0,
       max: 10000,
       step: 50,
@@ -97,46 +148,51 @@ export default () => {
       name: 'turnsMax',
       title: 'Turns Max Points',
       min: 0,
-      max: 100000,
+      max: 500000,
       step: 500,
     },
     {
       name: 'timeMax',
       title: 'Time Max Points',
       min: 0,
-      max: 100000,
+      max: 500000,
       step: 500,
     },
   ];
 
   return (
     <Wrapper>
-      <FormWrapper>
+      <DefaultForm flexGrow={3} maxWidth="500px">
         <FormHeader>
           <FormHeaderText>Round Settings</FormHeaderText>
-
-          <Controller
-            control={roundSettings.control}
-            defaultValue={1}
-            name="games"
-            render={({onChange}) => (
-              <RadioGroup
-                options={gamesPerRound}
-                setGames={(val) => {
-                  setChanged(true);
-                  onChange(val);
-                }}
-              />
-            )}
-          />
+          <FormElement isLast>
+            <FormElementHeader>How many games in a round?</FormElementHeader>
+            <Controller
+              control={roundSettings.control}
+              defaultValue={1}
+              name="games"
+              render={({onChange}) => (
+                <RadioGroup
+                  options={gamesPerRound}
+                  setGames={(val) => {
+                    setChanged(true);
+                    onChange(val);
+                  }}
+                />
+              )}
+            />
+          </FormElement>
         </FormHeader>
         <FormHeader>
           <FormHeaderText>Score Settings</FormHeaderText>
         </FormHeader>
-        {settingsAttributes.map(({name, title, min, max, step}) => (
-          <FormElement key={name}>
+        {settingsAttributes.map(({name, title, min, max, step}, i) => (
+          <FormElement
+            key={name}
+            isLast={i === settingsAttributes.length - 1}
+            idx={0}>
             <FormElementHeader>{title}</FormElementHeader>
-            <Controller
+            <SliderInput
               control={scoreSettings.control}
               name={name}
               defaultValue={settings[name]}
@@ -154,13 +210,28 @@ export default () => {
             <FormElementValue>{settings[name]}</FormElementValue>
           </FormElement>
         ))}
-      </FormWrapper>
+      </DefaultForm>
       <ActionsWrapper>
-        <DefaultButton disabled={!changed} width="80%" onPress={submitForms}>
+        <DefaultButton
+          disabled={!changed}
+          width="80%"
+          onPress={scoreSettings.handleSubmit(returnNewSettings)}>
           Update
         </DefaultButton>
-        <DefaultButton width="80%">done</DefaultButton>
+        <DefaultButton width="80%" margin="40px 0 0 0" onPress={goBack}>
+          done
+        </DefaultButton>
       </ActionsWrapper>
     </Wrapper>
   );
 };
+
+const mapStateToProps = (state) => ({
+  settings: state.settings,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  updateSettings: (settings) => dispatch(actions.updateSettings({settings})),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsForm);

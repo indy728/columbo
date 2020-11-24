@@ -14,9 +14,9 @@ const defaultValues = {
 };
 
 const initialState = {
-  bonusThreshold: {
-    active: true,
-  },
+  // bonusThreshold: {
+  //   active: true,
+  // },
   turnsBonus: {
     multiplier: defaultValues.multipliers.turns,
     max: defaultValues.max.turns,

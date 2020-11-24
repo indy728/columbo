@@ -1,6 +1,6 @@
 import deckReducer, * as deckActions from './deck.slice';
 import gameReducer, * as gameActions from './game.slice';
-import settingsReducer, * as settingsActions from './game.slice';
+import settingsReducer, * as settingsActions from './settings.slice';
 
 export default {
   deck: deckReducer,

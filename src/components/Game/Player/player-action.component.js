@@ -55,7 +55,7 @@ const PlayerAction = ({
             discardPile.unshift(currentCard);
             playCard(discardPile);
           }}
-          width={175}>
+          width={'175px'}>
           PLAY
         </DefaultButton>
         {actionButton}

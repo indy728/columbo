@@ -12,3 +12,4 @@ export {
 } from './string.util';
 export {} from './form.util';
 export {toggleBooleanStateHandler} from './state.util';
+export * from './fonts.util';

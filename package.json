@@ -10,6 +10,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@fortawesome/react-native-fontawesome": "^0.2.6",
     "@react-native-community/masked-view": "^0.1.5",
     "@react-native-community/picker": "^1.8.1",
     "@react-native-community/slider": "^3.0.3",
@@ -37,6 +40,7 @@
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
     "react-native-spinkit": "^1.5.0",
+    "react-native-svg": "^12.1.0",
     "react-native-unimodules": "~0.7.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.3.6",

@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import {Deck} from 'components/Game/Deck';
 import {Player, PlayerHand, PlayerAction} from 'components/Game/Player';
 import {DefaultButton, ActionButton} from 'components/UI';
+import {GameLayout} from './components';
 import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
@@ -433,7 +434,7 @@ class GameScreen extends Component {
     return (
       <>
         <Modal visible={!!modalContent}>{modalContent}</Modal>
-        <Wrapper>
+        {/* <Wrapper>
           <Deck
             discardPile={discardPile}
             drawPile={drawPile}
@@ -447,7 +448,8 @@ class GameScreen extends Component {
           <Player
             tappingHandler={() => toggleBooleanStateHandler(this, 'tapping')}
           />
-        </Wrapper>
+        </Wrapper> */}
+        <GameLayout />
         {/* <ActionButton onPress={this.props.onEndGame} /> */}
       </>
     );
