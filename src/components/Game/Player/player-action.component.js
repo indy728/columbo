@@ -9,14 +9,15 @@ import {actions} from 'store/slices';
 import {PHASE_PLAY, DISCARD_PILE, PHASE_DRAW, PHASE_PEEKING} from 'constants';
 
 const Wrapper = styled.View`
-  flex: 3;
+  width: 100%;
+  max-width: 450px;
+  padding: 40px 20px;
   align-items: center;
   justify-content: space-around;
 `;
 
 const PlayerAction = ({
   currentCard,
-  slappable,
   discardPile,
   phase,
   playCard,
@@ -24,41 +25,23 @@ const PlayerAction = ({
   slapHandler,
 }) => {
   const deviceWidth = useWindowDimensions().width;
-
-  let currentCardRender = <CurrentCardWrapper deviceWidth={deviceWidth} />;
-  let actionButton = (
-    <ActionButton disabled={phase !== PHASE_PLAY} onPress={swapHandler}>
-      SWAP
-    </ActionButton>
-  );
-
-  if (slappable) {
-    actionButton = <ActionButton onPress={slapHandler}>SLAP</ActionButton>;
-  }
-
-  if (currentCard) {
-    const {value, suit} = currentCard;
-    currentCardRender = (
-      <CurrentCardWrapper deviceWidth={deviceWidth}>
-        <Card source={cardImg[suit][value]} />
-      </CurrentCardWrapper>
-    );
-  }
+  const {value, suit} = currentCard;
 
   return (
     <Wrapper>
-      {currentCardRender}
+      <CurrentCardWrapper deviceWidth={deviceWidth}>
+        <Card source={cardImg[suit][value]} />
+      </CurrentCardWrapper>
       <ActionButtonsWrapper>
-        <DefaultButton
-          disabled={phase !== PHASE_PLAY}
+        <ActionButton
           onPress={() => {
             discardPile.unshift(currentCard);
             playCard(discardPile);
           }}
           width={'175px'}>
           PLAY
-        </DefaultButton>
-        {actionButton}
+        </ActionButton>
+        <ActionButton onPress={swapHandler}>SWAP</ActionButton>
       </ActionButtonsWrapper>
     </Wrapper>
   );
@@ -67,7 +50,6 @@ const PlayerAction = ({
 const mapStateToProps = (state) => ({
   phase: state.game.phase,
   currentCard: state.deck.currentCard,
-  slappable: state.game.slappable,
   discardPile: [...state.deck[DISCARD_PILE]],
 });
 

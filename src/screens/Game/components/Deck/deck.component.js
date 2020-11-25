@@ -4,11 +4,10 @@ import Pile from './pile.component';
 import {DISCARD_PILE, DRAW_PILE} from 'constants';
 
 const Wrapper = styled.View`
-  flex: 1.5;
+  flex: 1;
   flex-flow: row;
   align-items: center;
   justify-content: space-evenly;
-  /* max-width: 450px; */
 `;
 
 const Deck = () => {

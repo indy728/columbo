@@ -38,9 +38,7 @@ const Pile = ({
 }) => {
   const renderPile = [];
   const pile = [...deck[pileName]];
-  let cardSource = cardImg.back;
   const draw = () => {
-    console.log('[pile.component] pileName: ', pileName);
     const drawable =
       phase === PHASE_DRAW && (!singlePlayer || pileName !== DISCARD_PILE);
 
@@ -49,9 +47,7 @@ const Pile = ({
 
   pile.forEach((card) => {
     const {value, suit} = card;
-    if (face) {
-      cardSource = cardImg[suit][value];
-    }
+    const cardSource = face ? cardImg[suit][value] : cardImg.back;
 
     renderPile.unshift(
       <Card key={`${value}-of-${suit}`} pressed={draw} source={cardSource} />,

@@ -35,9 +35,9 @@ const Player = ({tappingHandler}) => {
   return (
     <Wrapper>
       {isDealt && renderHand}
-      <TapButtonWrapper>
+      {/* <TapButtonWrapper>
         <ActionButton onPress={tappingHandler}>tap</ActionButton>
-      </TapButtonWrapper>
+      </TapButtonWrapper> */}
     </Wrapper>
   );
 };

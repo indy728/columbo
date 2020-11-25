@@ -4,55 +4,60 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCog, faHome} from '@fortawesome/free-solid-svg-icons';
 import {Deck} from './Deck';
 import {Player} from 'components/Game/Player';
+import {CallButton} from './Actions';
 
 const Wrapper = styled.View`
   flex: 1;
-  background-color: skyblue;
+  background-color: ${({
+    theme: {
+      palette: {grayscale},
+    },
+  }) => grayscale[2]};
 `;
 
 const DeckAndDiscardWrapper = styled.View`
   flex: 2;
-  background-color: green;
 `;
+
+const PlayerActionsWrapper = styled.View`
+  height: 110px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CallWrapper = styled(PlayerActionsWrapper)``;
 
 const HandWrapper = styled.View`
   flex: 3;
-  background-color: orange;
-`;
-
-const Text = styled.Text`
-  color: white;
-  font-size: 24px;
 `;
 
 const FooterWrapper = styled.View`
-  height: 110px;
-  padding: 0 40px;
-  background-color: red;
+  height: 74px;
+  padding: 10px 40px;
+  background-color: rgba(0, 0, 0, 0.6);
   flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+
+const FooterButton = styled.TouchableOpacity`
+  height: 54px;
+  padding: 6px 12px;
+  border-radius: 22px;
+  overflow: hidden;
   align-items: center;
   justify-content: space-between;
 `;
 
-const HomeButton = styled.TouchableOpacity`
-  height: 44px;
-  width: 44px;
-  border-radius: 22px;
-  background: blue;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-`;
+const FooterButtonText = styled.Text`
+  font-size: ${({children}) => {
+    const size = 16 - (children.length - 4);
 
-const TapButton = styled.TouchableOpacity`
-  height: 44px;
-  /* width: 44px; */
-  border-radius: 22px;
-  padding-horizontal: 40px;
-  background: blue;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
+    return `${Math.min(size, 16)}px`;
+  }};
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
 `;
 
 const SettingsButton = styled.TouchableOpacity`
@@ -67,7 +72,7 @@ const SettingsButton = styled.TouchableOpacity`
 
 const Footer = () => (
   <>
-    <HomeButton>
+    <FooterButton>
       <FontAwesomeIcon
         icon={faHome}
         size={24}
@@ -76,11 +81,9 @@ const Footer = () => (
           transform: [{translateY: -1}],
         }}
       />
-    </HomeButton>
-    <TapButton>
-      <Text>Tap Now</Text>
-    </TapButton>
-    <SettingsButton>
+      <FooterButtonText>Home</FooterButtonText>
+    </FooterButton>
+    <FooterButton>
       <FontAwesomeIcon
         icon={faCog}
         size={24}
@@ -88,7 +91,8 @@ const Footer = () => (
           color: 'white',
         }}
       />
-    </SettingsButton>
+      <FooterButtonText>options</FooterButtonText>
+    </FooterButton>
   </>
 );
 
@@ -97,9 +101,13 @@ const GameLayout = () => (
     <DeckAndDiscardWrapper>
       <Deck />
     </DeckAndDiscardWrapper>
+    <PlayerActionsWrapper>{/* <CardActionButtons />   */}</PlayerActionsWrapper>
     <HandWrapper>
       <Player />
     </HandWrapper>
+    <CallWrapper>
+      <CallButton />
+    </CallWrapper>
     <FooterWrapper>
       <Footer />
     </FooterWrapper>

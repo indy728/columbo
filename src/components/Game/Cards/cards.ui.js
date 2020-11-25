@@ -19,6 +19,7 @@ export const PlayerCardWrapper = styled.View`
   }};
   height: ${({rows, deviceWidth}) => {
     const sizeMultiplier = +deviceWidth / DEVICE_MAX_WIDTH;
+    console.log('[cards.ui] sizeMultiplier: ', sizeMultiplier);
 
     return cardDimensionByRowCount(
       rows,
