@@ -25,7 +25,7 @@ const Wrapper = styled.View`
   background-color: ${({theme}) => theme.palette.emptyCardSlot};
   shadow-opacity: ${({length}) => 0.8 * (length / 36)};
   position: relative;
-  transform: rotate(270deg);
+  /* transform: rotate(270deg); */
 `;
 
 const Pile = ({
@@ -40,6 +40,7 @@ const Pile = ({
   const pile = [...deck[pileName]];
   let cardSource = cardImg.back;
   const draw = () => {
+    console.log('[pile.component] pileName: ', pileName);
     const drawable =
       phase === PHASE_DRAW && (!singlePlayer || pileName !== DISCARD_PILE);
 

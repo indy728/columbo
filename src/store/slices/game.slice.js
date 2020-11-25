@@ -17,6 +17,7 @@ const getInitialPlayer = () => ({
 
 const initialState = {
   launched: false,
+  singlePlayer: true,
   phase: PHASE_PEEK,
   slappable: false,
   player: getInitialPlayer(),

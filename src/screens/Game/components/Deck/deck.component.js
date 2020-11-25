@@ -7,7 +7,8 @@ const Wrapper = styled.View`
   flex: 1.5;
   flex-flow: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  /* max-width: 450px; */
 `;
 
 const Deck = () => {

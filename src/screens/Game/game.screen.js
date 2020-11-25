@@ -448,9 +448,9 @@ class GameScreen extends Component {
           <Player
             tappingHandler={() => toggleBooleanStateHandler(this, 'tapping')}
           />
-        </Wrapper> */}
+        </Wrapper>
+        <ActionButton onPress={this.props.onEndGame} /> */}
         <GameLayout />
-        {/* <ActionButton onPress={this.props.onEndGame} /> */}
       </>
     );
   }

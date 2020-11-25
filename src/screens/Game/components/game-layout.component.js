@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCog, faHome} from '@fortawesome/free-solid-svg-icons';
+import {Deck} from './Deck';
+import {Player} from 'components/Game/Player';
 
 const Wrapper = styled.View`
   flex: 1;
@@ -9,12 +11,12 @@ const Wrapper = styled.View`
 `;
 
 const DeckAndDiscardWrapper = styled.View`
-  flex: 1;
+  flex: 2;
   background-color: green;
 `;
 
 const HandWrapper = styled.View`
-  flex: 2;
+  flex: 3;
   background-color: orange;
 `;
 
@@ -63,33 +65,43 @@ const SettingsButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
+const Footer = () => (
+  <>
+    <HomeButton>
+      <FontAwesomeIcon
+        icon={faHome}
+        size={24}
+        style={{
+          color: 'white',
+          transform: [{translateY: -1}],
+        }}
+      />
+    </HomeButton>
+    <TapButton>
+      <Text>Tap Now</Text>
+    </TapButton>
+    <SettingsButton>
+      <FontAwesomeIcon
+        icon={faCog}
+        size={24}
+        style={{
+          color: 'white',
+        }}
+      />
+    </SettingsButton>
+  </>
+);
+
 const GameLayout = () => (
   <Wrapper>
-    <DeckAndDiscardWrapper>{/* <Deck /> */}</DeckAndDiscardWrapper>
-    <HandWrapper>{/* <PlayerHand /> */}</HandWrapper>
+    <DeckAndDiscardWrapper>
+      <Deck />
+    </DeckAndDiscardWrapper>
+    <HandWrapper>
+      <Player />
+    </HandWrapper>
     <FooterWrapper>
-      <HomeButton>
-        <FontAwesomeIcon
-          icon={faHome}
-          size={24}
-          style={{
-            color: 'white',
-            transform: [{translateY: -1}],
-          }}
-        />
-      </HomeButton>
-      <TapButton>
-        <Text>Tap Now</Text>
-      </TapButton>
-      <SettingsButton>
-        <FontAwesomeIcon
-          icon={faCog}
-          size={24}
-          style={{
-            color: 'white',
-          }}
-        />
-      </SettingsButton>
+      <Footer />
     </FooterWrapper>
   </Wrapper>
 );
