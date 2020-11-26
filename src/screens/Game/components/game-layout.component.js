@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCog, faHome} from '@fortawesome/free-solid-svg-icons';
 import {Deck} from './Deck';
 import {Player} from 'components/Game/Player';
-import {CallButton} from './Actions';
+import {CallButton, CardActions} from './Actions';
 
 const Wrapper = styled.View`
   flex: 1;
@@ -23,6 +23,8 @@ const PlayerActionsWrapper = styled.View`
   height: 110px;
   align-items: center;
   justify-content: center;
+  flex-direction: row;
+  flex: 1;
 `;
 
 const CallWrapper = styled(PlayerActionsWrapper)``;
@@ -96,17 +98,19 @@ const Footer = () => (
   </>
 );
 
-const GameLayout = () => (
+const GameLayout = ({setAction}) => (
   <Wrapper>
     <DeckAndDiscardWrapper>
       <Deck />
     </DeckAndDiscardWrapper>
-    <PlayerActionsWrapper>{/* <CardActionButtons />   */}</PlayerActionsWrapper>
+    <PlayerActionsWrapper>
+      <CardActions slap={() => setAction('slapping', true)} />
+    </PlayerActionsWrapper>
     <HandWrapper>
       <Player />
     </HandWrapper>
     <CallWrapper>
-      <CallButton />
+      <CallButton call={() => setAction('calling', true)} />
     </CallWrapper>
     <FooterWrapper>
       <Footer />

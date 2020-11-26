@@ -1,5 +1,4 @@
 import React from 'react';
-import {TouchableOpacity, Text} from 'react-native';
 import styled from 'styled-components';
 
 const ButtonWrapper = styled.TouchableOpacity`
@@ -7,10 +6,15 @@ const ButtonWrapper = styled.TouchableOpacity`
   height: 50px;
   margin: ${({margin = '0'}) => margin};
   border-radius: ${({radius = '10px'}) => radius};
-  background-color: ${(props) => {
-    return props.disabled
-      ? props.theme.palette.button.default.active
-      : props.theme.palette.button.default.disabled;
+  background-color: ${({
+    disabled,
+    theme: {
+      palette: {button},
+    },
+  }) => {
+    return disabled
+      ? button.default.background[1]
+      : button.default.background[0];
   }};
   display: ${({hidden}) => (hidden ? 'none' : 'flex')};
   align-items: center;
@@ -20,10 +24,13 @@ const ButtonWrapper = styled.TouchableOpacity`
 const TextWrapper = styled.Text`
   font-size: 20px;
   text-transform: uppercase;
-  color: ${(props) => {
-    return props.disabled
-      ? props.theme.palette.grayscale[1]
-      : props.theme.palette.white[0];
+  color: ${({
+    disabled,
+    theme: {
+      palette: {button},
+    },
+  }) => {
+    return disabled ? button.default.text[1] : button.default.text[0];
   }};
 `;
 

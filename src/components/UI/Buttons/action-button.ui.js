@@ -6,11 +6,13 @@ const ButtonWrapper = styled.TouchableOpacity`
   height: 50px;
   margin: 10px 0;
   border-radius: 10px;
-  background-color: ${({disabled, bgColor, theme: {palette}}) => {
-    if (bgColor) {
-      return bgColor;
-    }
-    return disabled ? palette.primary[0] : palette.primary[2];
+  background-color: ${({
+    disabled,
+    theme: {
+      palette: {button},
+    },
+  }) => {
+    return disabled ? button.action.background[1] : button.action.background[0];
   }};
   display: ${(props) => (props.hidden ? 'none' : 'flex')};
   align-items: center;
@@ -21,15 +23,20 @@ const TextWrapper = styled.Text`
   font-size: 20px;
   font-weight: bold;
   text-transform: uppercase;
-  color: ${(props) => props.theme.palette.white[0]};
+  color: ${({
+    disabled,
+    theme: {
+      palette: {button},
+    },
+  }) => {
+    return disabled ? button.action.text[1] : button.action.text[0];
+  }};
 `;
 
 export const ActionButton = (props) => {
   const {hidden, disabled, children, onPress, width} = props;
   const buttonProps = {hidden, disabled, onPress, width};
   const textProps = {disabled, children};
-
-  console.log('[action-button.ui] typeof children: ', typeof children);
 
   return (
     <ButtonWrapper {...buttonProps}>

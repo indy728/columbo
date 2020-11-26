@@ -93,7 +93,7 @@ class GameScreen extends Component {
     selected: [],
     swapping: false,
     slapping: false,
-    tapping: false,
+    calling: false,
     endGameDetails: false,
   };
 
@@ -175,7 +175,7 @@ class GameScreen extends Component {
   };
 
   tappedHandler = () => {
-    this.setState({tapping: false});
+    this.setState({calling: false});
     this.props.tapRound();
   };
 
@@ -382,7 +382,7 @@ class GameScreen extends Component {
       currentCard,
       player: {hand},
     } = this.props;
-    const {slapping, swapping, tapping} = this.state;
+    const {slapping, swapping, calling} = this.state;
 
     if (!isDealt) {
       return (
@@ -424,12 +424,12 @@ class GameScreen extends Component {
           slapHandler={() => toggleBooleanStateHandler(this, 'slapping')}
         />
       );
-    } else if (tapping) {
+    } else if (calling) {
       return (
         <>
           <ActionButton onPress={this.tappedHandler}>tap now</ActionButton>
           <ActionButton
-            onPress={() => toggleBooleanStateHandler(this, 'tapping')}>
+            onPress={() => toggleBooleanStateHandler(this, 'calling')}>
             Cancel
           </ActionButton>
         </>
@@ -440,37 +440,14 @@ class GameScreen extends Component {
   };
 
   render() {
-    const {
-      discardPile,
-      drawPile,
-      phase,
-      gameStatus,
-      player,
-      isDealt,
-      currentCard,
-    } = this.props;
     const modalContent = this.getModalContent();
 
     return (
       <>
         <Modal visible={!!modalContent}>{modalContent}</Modal>
-        {/* <Wrapper>
-          <Deck
-            discardPile={discardPile}
-            drawPile={drawPile}
-            pressed={this.pileClickedHandler}
-            slapping={this.state.slapping}
-          />
-          <PlayerAction
-            swapHandler={() => toggleBooleanStateHandler(this, 'swapping')}
-            slapHandler={() => toggleBooleanStateHandler(this, 'slapping')}
-          />
-          <Player
-            tappingHandler={() => toggleBooleanStateHandler(this, 'tapping')}
-          />
-        </Wrapper>
-        <ActionButton onPress={this.props.onEndGame} /> */}
-        <GameLayout />
+        <GameLayout
+          setAction={(action, value) => this.setState({[action]: value})}
+        />
       </>
     );
   }

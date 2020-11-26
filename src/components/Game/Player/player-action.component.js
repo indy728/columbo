@@ -22,7 +22,6 @@ const PlayerAction = ({
   phase,
   playCard,
   swapHandler,
-  slapHandler,
 }) => {
   const deviceWidth = useWindowDimensions().width;
   const {value, suit} = currentCard;

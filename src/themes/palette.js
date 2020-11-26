@@ -3,13 +3,21 @@ export default palette = {
   secondary: ['#ec9205', '#ec9d24', '#ecad4c', '#ecbf7a', '#ffe2b5', '#fff7eb'],
   danger: ['#d32f2f', '#f44336', '#f8877f', '#ffcdd2'],
   button: {
+    /*
+      [theme]: {
+        [name]: {
+          background: [active, disabled],
+          text: [active, disabled]
+        }
+      }
+    */
     default: {
-      active: '#455a64',
-      disabled: '#263238',
+      background: ['#263238', '#263238'],
+      text: ['#fff', '#cfd8dc'],
     },
     action: {
-      active: '#ffecb3',
-      disabled: '#ffc107',
+      background: ['#ffc107', '#ffecb3'],
+      text: ['#fff', '#cfd8dc'],
     },
   },
   emptyCardSlot: '#b0bec5',
