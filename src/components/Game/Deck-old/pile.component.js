@@ -2,7 +2,7 @@ import React from 'react';
 import {useWindowDimensions} from 'react-native';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
-import {Card} from 'components/Game/Cards';
+import {Card} from '../components/Cards';
 import cardImg from 'assets/cardImg';
 import {
   CARD_PIXEL_HEIGHT,

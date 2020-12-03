@@ -31,3 +31,12 @@ export const cleanUpHand = (hand, isFront) => {
     }
   }
 };
+
+export const getHandValue = (hand) => {
+  return hand.flat().reduce((p, card) => {
+    if (!card) {
+      return p;
+    }
+    return p + +card.points;
+  }, 0);
+};

@@ -4,7 +4,7 @@ import {
   PHASE_PLAY,
   PHASE_PEEKING,
   PHASE_PEEK,
-  PHASE_TAPPED,
+  PHASE_END_GAME,
   GAME_STATUS_PRE_DEAL,
   GAME_STATUS_LAUNCHED,
   GAME_STATUS_TAPPED,
@@ -47,10 +47,10 @@ const {actions, reducer} = createSlice({
         round: Object.assign(state.round, {startTime}),
       });
     },
-    tapRound: (state, {payload: {endTime}}) => {
+    showGameSummary: (state, {payload: {endTime}}) => {
       Object.assign(state, {
         gameStatus: GAME_STATUS_TAPPED,
-        phase: PHASE_TAPPED,
+        phase: PHASE_END_GAME,
         round: Object.assign(state.round, {endTime}),
       });
     },
@@ -95,7 +95,7 @@ export const {
   updateGame,
   updatePhase,
   launchRound,
-  tapRound,
+  showGameSummary,
   endRound,
 } = actions;
 

@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components/native';
-import {Deck} from 'components/Game/Deck';
-import {Player, PlayerHand, PlayerAction} from 'components/Game/Player';
+import {Player, PlayerHand, PlayerAction} from './components/Player';
 import {DefaultButton, ActionButton} from 'components/UI';
 import {GameLayout} from './components';
 import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
 import {arrayImmutableReplace, arrayImmutablePush} from 'util';
+import {EndGameModalContent} from './components/Modal';
 import {
   shuffleCards,
   initDeck as createDeck,
@@ -24,7 +24,7 @@ import {
   PHASE_PLAY,
   PHASE_PEEK,
   PHASE_PEEKING,
-  PHASE_TAPPED,
+  PHASE_END_GAME,
   CARD_ACTION_PEEK_SELECT,
   CARD_ACTION_PEEKING,
   CARD_ACTION_SLAP,
@@ -45,40 +45,11 @@ const Wrapper = styled.View`
   background-color: ${({theme}) => theme.palette.grayscale[5]};
 `;
 
-const FinalScore = styled.View`
-  width: 90%;
-  padding: 30px 10px;
-  margin-bottom: 50px;
-  background-color: ${({theme}) => theme.palette.grayscale[1]};
-  align-items: center;
-`;
+const View = styled.View``;
+const Text = styled.Text``;
 
-const ScoreDetails = styled.View`
-  height: 100%;
-`;
-
-const Points = styled.View`
-  height: 100%;
-`;
-
-const ScoreText = styled.Text`
-  font-size: 16px;
-  text-transform: uppercase;
-  color: ${({theme}) => theme.palette.white[0]};
-  text-align: center;
-`;
-
-const ScoreRow = styled.View`
-  width: 100%;
-  margin: 10px 0;
-  padding: 0 15px;
-
-  flex-flow: row;
-  justify-content: space-between;
-`;
-
-const RawScoreValues = ScoreText;
-const PointScore = ScoreText;
+// const RawScoreValues = ScoreText;
+// const PointScore = ScoreText;
 
 const replaceCardInHand = (hand, col, row, card) => {
   return arrayImmutableReplace(
@@ -176,7 +147,7 @@ class GameScreen extends Component {
 
   tappedHandler = () => {
     this.setState({calling: false});
-    this.props.tapRound();
+    this.props.showGameSummary();
   };
 
   peekCardsHandler = (handCoordinates) => {
@@ -244,136 +215,75 @@ class GameScreen extends Component {
       case PHASE_PEEK:
       case PHASE_PEEKING:
         return this.peekPhaseHandler();
-      case PHASE_TAPPED:
+      case PHASE_END_GAME:
         return (
-          <>
-            {this.getRoundScoreDetails()}
-            <PlayerHand hand={hand} cardAction={CARD_ACTION_TAPPED} />
-            <ActionButton
-              onPress={() => endRound(arrayImmutablePush(rounds, round))}>
-              next round
-            </ActionButton>
-            <ActionButton onPress={this.tappedHandler}>tap now</ActionButton>
-          </>
+          <EndGameModalContent
+            endRound={() => endRound(arrayImmutablePush(rounds, round))}
+          />
         );
       default:
         return null;
     }
   };
 
-  getRoundDuration = () => {
-    const {round} = this.props;
-    return (+round.endTime - +round.startTime) / 1000;
-  };
+  // setEndGameContent = () => {
+  //   const {
+  //     player,
+  //     endRound,
+  //     navigation: {navigate},
+  //     round,
+  //   } = this.props;
+  //   const {rounds} = player;
+  //   rounds.push(round);
 
-  getHandValue = () => {
-    const {
-      player: {hand},
-    } = this.props;
+  //   let endGameContent = (
+  //     <>
+  //       <FinalScore>
+  //         <ScoreText>
+  //           final score: {rounds.reduce((points, r) => points + r.points)}
+  //         </ScoreText>
+  //         <ScoreText>
+  //           turns taken: {rounds.reduce((turns, r) => turns + r.turns)}
+  //         </ScoreText>
+  //         <ScoreText>
+  //           time taken:{' '}
+  //           {rounds.reduce(
+  //             (duration, r) => duration + (+r.endTime - +r.startTime) / 1000,
+  //           )}{' '}
+  //           seconds
+  //         </ScoreText>
+  //         <ActionButton
+  //           onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>
+  //           show round details
+  //         </ActionButton>
+  //       </FinalScore>
+  //       <DefaultButton onPress={() => endRound(rounds)}>
+  //         play again
+  //       </DefaultButton>
+  //       <DefaultButton
+  //         onPress={() => {
+  //           endRound();
+  //           navigate(HOME_SCREEN);
+  //         }}>
+  //         home screen
+  //       </DefaultButton>
+  //     </>
+  //   );
 
-    return hand.flat().reduce((p, card) => {
-      if (!card) {
-        return p;
-      }
-      return p + +card.points;
-    }, 0);
-  };
+  //   if (this.state.endGameDetails) {
+  //     endGameContent = (
+  //       <>
+  //         {rounds.map((r, i) => this.getRoundScoreDetails(r, i))}
+  //         <ActionButton
+  //           onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>
+  //           hide details
+  //         </ActionButton>
+  //       </>
+  //     );
+  //   }
 
-  getRoundScoreDetails = (index = 0) => {
-    const {
-      round: {turns},
-    } = this.props;
-    const roundDuration = this.getRoundDuration();
-    const points = this.getHandValue();
-    const cardPoints = (4 - points) * CARD_POINTS_MULTIPLIER;
-    const turnsPoints =
-      points > 4 ? 0 : MAX_TURNS_POINTS - turns * TURNS_POINTS_MULTIPLIER;
-    const timePoints =
-      points > 4 ? 0 : MAX_TIME_POINTS - roundDuration * TIME_POINTS_MULTIPLIER;
-
-    return (
-      <FinalScore key={index}>
-        <ScoreRow>
-          <RawScoreValues>hand value: {points}</RawScoreValues>
-          <PointScore>{cardPoints}</PointScore>
-        </ScoreRow>
-        <ScoreRow>
-          <RawScoreValues>turns taken: {turns}</RawScoreValues>
-          <PointScore>{turnsPoints}</PointScore>
-        </ScoreRow>
-        <ScoreRow>
-          <RawScoreValues>
-            time: {Math.floor(roundDuration)} seconds
-          </RawScoreValues>
-          <PointScore>{timePoints}</PointScore>
-        </ScoreRow>
-        <ScoreRow>
-          <ScoreText>
-            Total Points: {cardPoints + turnsPoints + timePoints}
-          </ScoreText>
-        </ScoreRow>
-      </FinalScore>
-    );
-  };
-
-  setEndGameContent = () => {
-    const {
-      player,
-      endRound,
-      navigation: {navigate},
-      round,
-    } = this.props;
-    const {rounds} = player;
-    rounds.push(round);
-
-    let endGameContent = (
-      <>
-        <FinalScore>
-          <ScoreText>
-            final score: {rounds.reduce((points, r) => points + r.points)}
-          </ScoreText>
-          <ScoreText>
-            turns taken: {rounds.reduce((turns, r) => turns + r.turns)}
-          </ScoreText>
-          <ScoreText>
-            time taken:{' '}
-            {rounds.reduce(
-              (duration, r) => duration + (+r.endTime - +r.startTime) / 1000,
-            )}{' '}
-            seconds
-          </ScoreText>
-          <ActionButton
-            onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>
-            show round details
-          </ActionButton>
-        </FinalScore>
-        <DefaultButton onPress={() => endRound(rounds)}>
-          play again
-        </DefaultButton>
-        <DefaultButton
-          onPress={() => {
-            endRound();
-            navigate(HOME_SCREEN);
-          }}>
-          home screen
-        </DefaultButton>
-      </>
-    );
-
-    if (this.state.endGameDetails) {
-      endGameContent = (
-        <>
-          {rounds.map((r, i) => this.getRoundScoreDetails(r, i))}
-          <ActionButton
-            onPress={() => toggleBooleanStateHandler(this, 'endGameDetails')}>
-            hide details
-          </ActionButton>
-        </>
-      );
-    }
-
-    return endGameContent;
-  };
+  //   return endGameContent;
+  // };
 
   getModalContent = () => {
     const {
@@ -427,7 +337,10 @@ class GameScreen extends Component {
     } else if (calling) {
       return (
         <>
-          <ActionButton onPress={this.tappedHandler}>tap now</ActionButton>
+          <View>
+            <Text>Are you sure?</Text>
+          </View>
+          <ActionButton onPress={this.tappedHandler}>call it</ActionButton>
           <ActionButton
             onPress={() => toggleBooleanStateHandler(this, 'calling')}>
             Cancel
@@ -478,7 +391,8 @@ const mapDispatchToProps = (dispatch) => ({
   rebuildDeck: (shuffledDeck) => dispatch(actions.rebuildDeck({shuffledDeck})),
   launchRound: () =>
     dispatch(actions.launchRound({startTime: DateTime.local()})),
-  tapRound: () => dispatch(actions.tapRound({endTime: DateTime.local()})),
+  showGameSummary: () =>
+    dispatch(actions.showGameSummary({endTime: DateTime.local()})),
   endRound: (rounds) =>
     dispatch(actions.endRound({rounds, initialDeck: createDeck()})),
   updateGame: (updatedAttributes) =>

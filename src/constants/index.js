@@ -4,7 +4,7 @@ export const PHASE_SWAP = 'PHASE_SWAP';
 export const PHASE_SLAP = 'PHASE_SLAP';
 export const PHASE_PEEK = 'PHASE_PEEK';
 export const PHASE_PEEKING = 'PHASE_PEEKING';
-export const PHASE_TAPPED = 'PHASE_TAPPED';
+export const PHASE_END_GAME = 'PHASE_END_GAME';
 
 export const GAME_STATUS_PRE_DEAL = 'GAME_STATUS_PRE_DEAL';
 export const GAME_STATUS_DEALT = 'GAME_STATUS_DEALT';

@@ -96,11 +96,11 @@ const launchRound = (state, action) => {
 
 const tapRound = (state, action) => {
   // action.gameStatus = storeVariables.GAME_STATUS_TAPPED
-  // action.phase = storeVariables.PHASE_TAPPED
+  // action.phase = storeVariables.PHASE_END_GAME
 
   let updatedState = updateGameStatus(state, storeVariables.GAME_STATUS_TAPPED);
 
-  updatedState = updatePhase(updatedState, storeVariables.PHASE_TAPPED);
+  updatedState = updatePhase(updatedState, storeVariables.PHASE_END_GAME);
 
   const updatedRound = updateObject(updatedState.round, {
     endTime: action.endTime,
