@@ -2,9 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 
 const ButtonWrapper = styled.TouchableOpacity`
-  width: ${({width = '350px'}) => width};
+  width: ${({width = '300px'}) => width};
+  max-width: ${({maxWidth = '100%'}) => maxWidth};
   height: 50px;
   margin: ${({margin = '0'}) => margin};
+  margin-top: ${({mt = '0'}) => mt};
+  margin-left: ${({ml = '0'}) => ml};
   border-radius: ${({radius = '10px'}) => radius};
   background-color: ${({
     disabled,
@@ -34,8 +37,16 @@ const TextWrapper = styled.Text`
   }};
 `;
 
-const DefaultButton = ({hidden, disabled, children, onPress, width}) => {
-  const buttonProps = {hidden, disabled, onPress, width};
+const DefaultButton = ({
+  hidden,
+  disabled,
+  children,
+  onPress,
+  width,
+  mt,
+  ...props
+}) => {
+  const buttonProps = {hidden, disabled, onPress, width, mt};
   const textProps = {disabled, children};
 
   return (

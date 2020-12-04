@@ -1,2 +1,1 @@
-export {default as CreateGame} from './create-game.component';
-export {default as HomeLogo} from './home-logo.component';
+export {default as HomeLayout} from './home-layout.component';
