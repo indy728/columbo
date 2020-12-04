@@ -12,7 +12,7 @@ export default palette = {
       }
     */
     default: {
-      background: ['#263238', '#263238'],
+      background: ['#263238', '#546e7a'],
       text: ['#fff', '#cfd8dc'],
     },
     action: {

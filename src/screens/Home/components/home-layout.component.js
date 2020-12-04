@@ -24,8 +24,8 @@ const HomeButtonsContainer = styled.View`
 `;
 
 const LogoSizeWrapper = styled.View`
-  height: 60%;
-  width: 350px;
+  height: 80%;
+  aspect-ratio: 0.6;
 `;
 
 const HomeButtonsWrapper = styled.View``;

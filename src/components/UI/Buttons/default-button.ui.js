@@ -12,12 +12,10 @@ const ButtonWrapper = styled.TouchableOpacity`
   background-color: ${({
     disabled,
     theme: {
-      palette: {button},
+      palette: {button, disabled: disabledBackground},
     },
   }) => {
-    return disabled
-      ? button.default.background[1]
-      : button.default.background[0];
+    return disabled ? disabledBackground : button.default.background[0];
   }};
   display: ${({hidden}) => (hidden ? 'none' : 'flex')};
   align-items: center;

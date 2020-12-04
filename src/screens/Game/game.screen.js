@@ -8,7 +8,7 @@ import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
 import {arrayImmutableReplace, arrayImmutablePush} from 'util';
-import {EndGameModalContent} from './components/Modal';
+import {EndGameModalContent, PeekPhaseModalContent} from './components/Modal';
 import {
   shuffleCards,
   initDeck as createDeck,
@@ -201,12 +201,20 @@ class GameScreen extends Component {
       round,
       endRound,
       phase,
+      updateGame,
+      launchRound,
     } = this.props;
 
     switch (phase) {
       case PHASE_PEEK:
       case PHASE_PEEKING:
-        return this.peekPhaseHandler();
+        return (
+          <PeekPhaseModalContent
+            phase={phase}
+            updateGame={updateGame}
+            launchRound={launchRound}
+          />
+        );
       case PHASE_END_GAME:
         return (
           <EndGameModalContent

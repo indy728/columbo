@@ -11,7 +11,7 @@ const Wrapper = styled.View`
   justify-content: center;
 `;
 
-const PlayerHand = ({pressed = null, cardAction = '', selected = false}) => {
+const PlayerHand = ({pressed = null, cardAction = '', selected = []}) => {
   const hand = useSelector((state) => state.game.player.hand);
   const deviceWidth = useWindowDimensions().width;
 
