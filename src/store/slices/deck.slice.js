@@ -55,6 +55,12 @@ const {actions, reducer} = createSlice({
     },
   },
   extraReducers: {
+    'game/quitGame': (state, {payload: {initialDeck}}) => {
+      state.currentCard = null;
+      state[DISCARD_PILE] = [];
+      state[DRAW_PILE] = initialDeck;
+      state.deckBuilt = true;
+    },
     'game/endRound': (state, {payload: {initialDeck}}) => {
       state.currentCard = null;
       state[DISCARD_PILE] = [];

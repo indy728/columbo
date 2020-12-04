@@ -11,12 +11,6 @@ const Wrapper = styled.View`
   flex: 1;
   justify-content: space-around;
 `;
-const FormWrapper = styled.ScrollView`
-  padding: 20px;
-  flex: 5;
-  max-height: 700px;
-  background: green;
-`;
 
 const ActionsWrapper = styled.View`
   margin-top: 20px;
@@ -58,6 +52,24 @@ const FormElementValue = styled.Text`
   font-size: 20px;
 `;
 
+const createSettingsObject = (settings) => {
+  const {cardsX, turnsX, timeX, turnsMax, timeMax} = settings;
+
+  return {
+    turnsBonus: {
+      multiplier: turnsX,
+      max: turnsMax,
+    },
+    timeBonus: {
+      multiplier: timeX,
+      max: timeMax,
+    },
+    cardsBonus: {
+      multiplier: cardsX,
+    },
+  };
+};
+
 const SettingsForm = ({
   settings: {
     cardsBonus: {multiplier: cardsX},
@@ -88,21 +100,7 @@ const SettingsForm = ({
   const [changed, setChanged] = useState(false);
   const onSubmit = (data) => console.log(data);
   const returnNewSettings = () => {
-    const {cardsX, turnsX, timeX, turnsMax, timeMax} = settings;
-
-    const newState = {
-      turnsBonus: {
-        multiplier: turnsX,
-        max: turnsMax,
-      },
-      timeBonus: {
-        multiplier: timeX,
-        max: timeMax,
-      },
-      cardsBonus: {
-        multiplier: cardsX,
-      },
-    };
+    const newState = createSettingsObject(settings);
 
     updateSettings(newState);
     setChanged(false);

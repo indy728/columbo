@@ -17,6 +17,7 @@ const initialState = {
   // bonusThreshold: {
   //   active: true,
   // },
+  gamesPerRound: defaultValues.gamesPerRound,
   turnsBonus: {
     multiplier: defaultValues.multipliers.turns,
     max: defaultValues.max.turns,

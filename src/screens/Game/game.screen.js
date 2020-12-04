@@ -142,53 +142,6 @@ class GameScreen extends Component {
     this.props.showGameSummary();
   };
 
-  peekCardsHandler = (handCoordinates) => {
-    const {selected} = this.state;
-    const index = matchArrayInArray(selected, handCoordinates);
-
-    if (index === -1) {
-      if (selected.length === 2) {
-        return;
-      }
-      selected.unshift(handCoordinates);
-    } else {
-      selected.splice(index, 1);
-    }
-
-    this.setState({selected});
-  };
-
-  peekPhaseHandler = () => {
-    const {selected} = this.state;
-    const {phase, updateGame, launchRound, player} = this.props;
-    let buttonPressed = () => updateGame({phase: PHASE_PEEKING});
-    let peekButtonText = 'reveal';
-    let action = CARD_ACTION_PEEK_SELECT;
-
-    if (phase === PHASE_PEEKING) {
-      buttonPressed = () => {
-        this.setState({selected: []});
-        launchRound();
-      };
-      peekButtonText = 'ready';
-      action = CARD_ACTION_PEEKING;
-    }
-
-    return (
-      <>
-        <PlayerHand
-          hand={player.hand}
-          selected={selected}
-          pressed={this.peekCardsHandler}
-          cardAction={action}
-        />
-        <DefaultButton onPress={buttonPressed} disabled={selected.length !== 2}>
-          {peekButtonText}
-        </DefaultButton>
-      </>
-    );
-  };
-
   pileClickedHandler = (pile) => {
     const {phase, drawCard} = this.props;
 
@@ -197,7 +150,7 @@ class GameScreen extends Component {
 
   modalContentByPhase = () => {
     const {
-      player: {hand, rounds},
+      player: {rounds},
       round,
       endRound,
       phase,

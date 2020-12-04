@@ -60,6 +60,7 @@ const {actions, reducer} = createSlice({
         player: {hand: [[null, null]], rounds},
       };
     },
+    quitGame: () => initialState,
   },
   extraReducers: {
     'deck/playCard': (state) => {
@@ -97,6 +98,7 @@ export const {
   launchRound,
   showGameSummary,
   endRound,
+  quitGame,
 } = actions;
 
 export default reducer;
