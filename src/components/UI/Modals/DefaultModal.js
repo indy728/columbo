@@ -1,9 +1,9 @@
-import React from 'react'
-import { Modal } from 'react-native'
-import styled from 'styled-components'
+import React from 'react';
+import {Modal} from 'react-native';
+import styled from 'styled-components';
 
 const Wrapper = styled.Modal`
-    /* height: 100%;
+  /* height: 100%;
     width: 100%;
     background: rgba(0, 0, 0, 0.8);
     position: absolute;
@@ -12,14 +12,10 @@ const Wrapper = styled.Modal`
     z-index: 999;
     align-items: center;
     justify-content: center; */
-`
+`;
 
-const defaultModal = props => {
-    return (
-        <Wrapper {...props} 
-            animationType = "slide"
-            />
-    )
-}
+const DefaultModal = (props) => {
+  return <Wrapper {...props} animationType="slide" />;
+};
 
-export default defaultModal
+export default DefaultModal;

@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import styled from 'styled-components/native';
-import {Player, PlayerHand} from './components/Player';
 import {DefaultButton, ActionButton} from 'components/UI';
 import {GameLayout} from './components';
 import Modal from 'hoc/Modal';
@@ -13,12 +11,11 @@ import {
   PeekPhaseModalContent,
   PlayerActionModalContent,
   SlapSwapModalContent,
+  CallingModalContent,
 } from './components/Modal';
 import {
   shuffleCards,
   initDeck as createDeck,
-  findFirstEmptyCardSlot,
-  cleanUpHand,
   toggleBooleanStateHandler,
 } from 'util';
 import {
@@ -33,25 +30,11 @@ import {
   GAME_STATUS_POST_GAME,
 } from 'constants';
 
-const Wrapper = styled.View`
-  flex: 1;
-  padding-top: 20px;
-  background-color: ${({theme}) => theme.palette.grayscale[5]};
-`;
-
-const View = styled.View``;
-const Text = styled.Text``;
+// const View = styled.View``;
+// const Text = styled.Text``;
 
 // const RawScoreValues = ScoreText;
 // const PointScore = ScoreText;
-
-// const replaceCardInHand = (hand, col, row, card) => {
-//   return arrayImmutableReplace(
-//     hand,
-//     col,
-//     arrayImmutableReplace(hand[col], row, card),
-//   );
-// };
 
 class GameScreen extends Component {
   state = {
@@ -83,71 +66,9 @@ class GameScreen extends Component {
     dealCards(drawPile, hand);
   };
 
-  swapCardsHandler = (cardLocationArray) => {
-    const {
-      player: {hand},
-      discardPile,
-      currentCard,
-      swapCards,
-      round,
-    } = this.props;
-    const [col, row] = cardLocationArray;
-
-    discardPile.unshift(hand[col][row]);
-    this.setState({swapping: false});
-    swapCards(
-      discardPile,
-      replaceCardInHand(hand, col, row, currentCard),
-      round.turns + 1,
-    );
-  };
-
-  slapCardHandler = (cardLocationArray) => {
-    const {
-      player: {hand},
-      discardPile,
-      drawPile,
-      slapCards,
-    } = this.props;
-    const [col, row] = cardLocationArray;
-    const topCard = discardPile[0];
-    let newHand;
-    const slappedCard = hand[col][row];
-
-    if (slappedCard && slappedCard.value === topCard.value) {
-      discardPile.unshift(slappedCard);
-      newHand = replaceCardInHand(hand, col, row, null);
-      if (col === 0) {
-        cleanUpHand(newHand, true);
-      }
-      if (col === newHand.length - 1) {
-        cleanUpHand(newHand, false);
-      }
-      slapCards(discardPile, newHand, true);
-    } else {
-      const firstEmptyCardSlot = findFirstEmptyCardSlot(hand);
-      let card = drawPile.shift();
-
-      if (!firstEmptyCardSlot) {
-        newHand = arrayImmutablePush(hand, [card, null]);
-      } else {
-        const [i, j] = firstEmptyCardSlot;
-        newHand = replaceCardInHand(hand, i, j, card);
-      }
-      slapCards(drawPile, newHand, false);
-    }
-    this.setState({slapping: false});
-  };
-
   tappedHandler = () => {
     this.setState({calling: false});
     this.props.showGameSummary();
-  };
-
-  pileClickedHandler = (pile) => {
-    const {phase, drawCard} = this.props;
-
-    return phase === PHASE_DRAW && drawCard(pile);
   };
 
   modalContentByPhase = () => {
@@ -241,12 +162,7 @@ class GameScreen extends Component {
   // };
 
   getModalContent = () => {
-    const {
-      isDealt,
-      gameStatus,
-      currentCard,
-      player: {hand},
-    } = this.props;
+    const {isDealt, gameStatus, currentCard, showGameSummary} = this.props;
     const {slapping, swapping, calling} = this.state;
 
     if (!isDealt) {
@@ -264,18 +180,6 @@ class GameScreen extends Component {
           }
         />
       );
-    } else if (swapping) {
-      return (
-        <>
-          <PlayerHand
-            pressed={this.swapCardsHandler}
-            cardAction={CARD_ACTION_SWAP}
-          />
-          <ActionButton onPress={() => this.setState({swapping: false})}>
-            Cancel
-          </ActionButton>
-        </>
-      );
     } else if (currentCard) {
       return (
         <PlayerActionModalContent
@@ -285,16 +189,10 @@ class GameScreen extends Component {
       );
     } else if (calling) {
       return (
-        <>
-          <View>
-            <Text>Are you sure?</Text>
-          </View>
-          <ActionButton onPress={this.tappedHandler}>call it</ActionButton>
-          <ActionButton
-            onPress={() => toggleBooleanStateHandler(this, 'calling')}>
-            Cancel
-          </ActionButton>
-        </>
+        <CallingModalContent
+          call={showGameSummary}
+          cancel={() => toggleBooleanStateHandler(this, 'calling')}
+        />
       );
     } else {
       return this.modalContentByPhase();

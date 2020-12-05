@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export const ModalContentWrapper = styled.View`
-  padding: 10% 10%;
+  padding-vertical: 10%;
+  padding-horizontal: 2%;
   border-radius: 20px;
   background-color: ${({
     theme: {

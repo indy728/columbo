@@ -20,7 +20,7 @@ export default {
       text: ['#fff', '#cfd8dc'],
     },
     blue: {
-      background: ['#99ddff', '#e6f7ff'],
+      background: ['#4d4dff', '#ccccff'],
       text: ['#fff', '#cfd8dc'],
     },
     red: {
