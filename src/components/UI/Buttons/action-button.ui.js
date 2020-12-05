@@ -11,8 +11,9 @@ const ButtonWrapper = styled.TouchableOpacity`
     theme: {
       palette: {button},
     },
+    color = 'default',
   }) => {
-    return disabled ? button.action.background[1] : button.action.background[0];
+    return disabled ? button[color].background[1] : button[color].background[0];
   }};
   display: ${(props) => (props.hidden ? 'none' : 'flex')};
   align-items: center;
@@ -22,20 +23,22 @@ const ButtonWrapper = styled.TouchableOpacity`
 const TextWrapper = styled.Text`
   font-size: 20px;
   font-weight: bold;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: ${({
     disabled,
     theme: {
       palette: {button},
     },
+    color = 'default',
   }) => {
-    return disabled ? button.action.text[1] : button.action.text[0];
+    return disabled ? button[color].text[1] : button[color].text[0];
   }};
 `;
 
 export const ActionButton = (props) => {
-  const {hidden, disabled, children, onPress, width} = props;
-  const buttonProps = {hidden, disabled, onPress, width};
+  const {hidden, disabled, children, onPress, styleProps} = props;
+  const buttonProps = {hidden, disabled, onPress, ...styleProps};
   const textProps = {disabled, children};
 
   return (

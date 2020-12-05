@@ -1,4 +1,4 @@
-export default palette = {
+export default {
   primary: ['#0d1113', '#263238', '#37474f', '#455a64'],
   secondary: ['#ec9205', '#ec9d24', '#ecad4c', '#ecbf7a', '#ffe2b5', '#fff7eb'],
   danger: ['#d32f2f', '#f44336', '#f8877f', '#ffcdd2'],
@@ -15,8 +15,16 @@ export default palette = {
       background: ['#263238', '#546e7a'],
       text: ['#fff', '#cfd8dc'],
     },
-    action: {
+    yellow: {
       background: ['#ffc107', '#ffecb3'],
+      text: ['#fff', '#cfd8dc'],
+    },
+    blue: {
+      background: ['#99ddff', '#e6f7ff'],
+      text: ['#fff', '#cfd8dc'],
+    },
+    red: {
+      background: ['#ff99dd', '#ffe6f7'],
       text: ['#fff', '#cfd8dc'],
     },
   },

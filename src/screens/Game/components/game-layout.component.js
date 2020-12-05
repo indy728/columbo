@@ -7,6 +7,7 @@ import {CallButton, CardActions} from './Actions';
 
 const Wrapper = styled.View`
   flex: 1;
+  padding-top: 32px;
   background-color: ${({
     theme: {
       palette: {grayscale},

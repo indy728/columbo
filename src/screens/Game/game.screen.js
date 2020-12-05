@@ -1,20 +1,24 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components/native';
-import {Player, PlayerHand, PlayerAction} from './components/Player';
+import {Player, PlayerHand} from './components/Player';
 import {DefaultButton, ActionButton} from 'components/UI';
 import {GameLayout} from './components';
 import Modal from 'hoc/Modal';
 import {actions} from 'store/slices';
 import {DateTime} from 'luxon';
 import {arrayImmutableReplace, arrayImmutablePush} from 'util';
-import {EndGameModalContent, PeekPhaseModalContent} from './components/Modal';
+import {
+  EndGameModalContent,
+  PeekPhaseModalContent,
+  PlayerActionModalContent,
+  SlapSwapModalContent,
+} from './components/Modal';
 import {
   shuffleCards,
   initDeck as createDeck,
   findFirstEmptyCardSlot,
   cleanUpHand,
-  matchArrayInArray,
   toggleBooleanStateHandler,
 } from 'util';
 import {
@@ -24,8 +28,6 @@ import {
   PHASE_PEEK,
   PHASE_PEEKING,
   PHASE_END_GAME,
-  CARD_ACTION_PEEK_SELECT,
-  CARD_ACTION_PEEKING,
   CARD_ACTION_SLAP,
   CARD_ACTION_SWAP,
   GAME_STATUS_POST_GAME,
@@ -43,13 +45,13 @@ const Text = styled.Text``;
 // const RawScoreValues = ScoreText;
 // const PointScore = ScoreText;
 
-const replaceCardInHand = (hand, col, row, card) => {
-  return arrayImmutableReplace(
-    hand,
-    col,
-    arrayImmutableReplace(hand[col], row, card),
-  );
-};
+// const replaceCardInHand = (hand, col, row, card) => {
+//   return arrayImmutableReplace(
+//     hand,
+//     col,
+//     arrayImmutableReplace(hand[col], row, card),
+//   );
+// };
 
 class GameScreen extends Component {
   state = {
@@ -253,25 +255,19 @@ class GameScreen extends Component {
       );
     } else if (gameStatus === GAME_STATUS_POST_GAME) {
       return this.setEndGameContent();
-    } else if (slapping) {
+    } else if (slapping || swapping) {
       return (
-        <>
-          <PlayerHand
-            hand={hand}
-            pressed={this.slapCardHandler}
-            cardAction={CARD_ACTION_SLAP}
-          />
-          <ActionButton
-            onPress={() => toggleBooleanStateHandler(this, 'slapping')}>
-            Cancel
-          </ActionButton>
-        </>
+        <SlapSwapModalContent
+          actionType={slapping ? CARD_ACTION_SLAP : CARD_ACTION_SWAP}
+          toggleState={() =>
+            toggleBooleanStateHandler(this, slapping ? 'slapping' : 'swapping')
+          }
+        />
       );
     } else if (swapping) {
       return (
         <>
           <PlayerHand
-            hand={hand}
             pressed={this.swapCardsHandler}
             cardAction={CARD_ACTION_SWAP}
           />
@@ -282,7 +278,7 @@ class GameScreen extends Component {
       );
     } else if (currentCard) {
       return (
-        <PlayerAction
+        <PlayerActionModalContent
           swapHandler={() => toggleBooleanStateHandler(this, 'swapping')}
           slapHandler={() => toggleBooleanStateHandler(this, 'slapping')}
         />
