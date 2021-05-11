@@ -20,7 +20,7 @@
     "eslint-import-resolver-webpack": "^0.13.0",
     "expo": "~36.0.0",
     "install-peerdeps": "^2.0.3",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "luxon": "^1.25.0",
     "prop-types": "^15.7.2",
     "pubnub": "^4.27.4",
