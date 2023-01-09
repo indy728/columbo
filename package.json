@@ -21,7 +21,7 @@
     "expo": "~36.0.0",
     "install-peerdeps": "^2.0.3",
     "lodash": "^4.17.19",
-    "luxon": "^1.25.0",
+    "luxon": "^2.5.2",
     "prop-types": "^15.7.2",
     "pubnub": "^4.27.4",
     "pubnub-react": "^2.0.0",
